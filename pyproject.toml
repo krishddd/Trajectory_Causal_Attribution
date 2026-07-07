@@ -1,0 +1,80 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-replay"
+version = "0.1.0"
+description = "Record AI agent trajectories and find which step caused a failure via counterfactual step-ablation replay."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "agent-replay contributors" }]
+keywords = [
+    "llm",
+    "agents",
+    "debugging",
+    "causal-inference",
+    "counterfactual",
+    "replay",
+    "observability",
+    "shapley",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Zero runtime dependencies: the core library uses only the Python standard library.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/agent-replay/agent-replay"
+Repository = "https://github.com/agent-replay/agent-replay"
+Issues = "https://github.com/agent-replay/agent-replay/issues"
+
+[project.optional-dependencies]
+langchain = ["langchain-core>=0.1"]
+openai = ["openai>=1.0"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.4", "build>=1.0"]
+
+[project.scripts]
+agent-replay = "agent_replay.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_replay"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/agent_replay", "README.md", "LICENSE", "examples", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W"]
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# The report module embeds a CSS/HTML template as an f-string; wrapping those
+# long style lines would hurt readability, not help it.
+"src/agent_replay/report.py" = ["E501"]
+# Tests and examples favour readable, self-documenting lines over a hard cap.
+"tests/**" = ["E501"]
+"examples/**" = ["E501"]
+
+[tool.coverage.run]
+source = ["agent_replay"]
+branch = true

@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Tooling
+.ruff_cache/
+.mypy_cache/
+
+# Generated artifacts
+*.sqlite
+*.sqlite-journal
+report.html
+report.json
+demo.sqlite
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Research source material (not published)
+*.docx
