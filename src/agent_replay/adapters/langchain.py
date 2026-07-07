@@ -65,7 +65,14 @@ class AgentReplayCallbackHandler:
         run_id = str(kwargs.get("run_id", ""))
         info = self._pending.pop(run_id, {"prompts": None})
         text = _extract_llm_text(response)
-        self._ctx.llm("langchain_llm", produce=lambda: text, prompts=info.get("prompts"))
+        # Observation-only: the handler sees the produced text, not the policy, so
+        # this step cannot be genuinely resampled (marked non-attributable).
+        self._ctx.llm(
+            "langchain_llm",
+            produce=lambda: text,
+            resamplable=False,
+            prompts=info.get("prompts"),
+        )
 
     # -- Tool callbacks -------------------------------------------------------
 
@@ -78,7 +85,12 @@ class AgentReplayCallbackHandler:
         run_id = str(kwargs.get("run_id", ""))
         info = self._pending.pop(run_id, {"name": "tool", "input": None})
         out = output if isinstance(output, (str, int, float, bool, dict, list)) else str(output)
-        self._ctx.tool(info.get("name", "tool"), produce=lambda: out, input=info.get("input"))
+        self._ctx.tool(
+            info.get("name", "tool"),
+            produce=lambda: out,
+            resamplable=False,
+            input=info.get("input"),
+        )
 
 
 def _extract_llm_text(response: Any) -> str:

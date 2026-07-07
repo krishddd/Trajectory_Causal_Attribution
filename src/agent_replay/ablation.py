@@ -35,9 +35,6 @@ class AblationEngine:
         self.verifier = verifier
         self.fail_threshold = fail_threshold
         self.base_seed = base_seed
-        # Deterministic, unique seed stream per (plan-tag, rollout) so that
-        # independent value-function evaluations never accidentally share draws.
-        self._seed_salt = 0
 
     def is_fail(self, result: Any) -> bool:
         return float(self.verifier(result)) < self.fail_threshold

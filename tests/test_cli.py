@@ -112,6 +112,31 @@ def test_report_regeneration(tmp_path, capsys):
     assert (tmp_path / "regen.html").exists()
 
 
+def test_list_command(tmp_path, capsys):
+    db = str(tmp_path / "cli_list.sqlite")
+    main(
+        [
+            "record",
+            "--db",
+            db,
+            "--session",
+            "sess-a",
+            "--agent",
+            AGENT,
+            "--verifier",
+            VERIFIER,
+            "--seed",
+            "1",
+        ]
+    )
+    capsys.readouterr()
+    rc = main(["list", "--db", db])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "sess-a" in out
+    assert "steps" in out
+
+
 def test_invalid_entrypoint_raises(tmp_path):
     db = str(tmp_path / "x.sqlite")
     try:

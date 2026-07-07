@@ -59,17 +59,26 @@ def _print_summary(result: AttributionResult) -> None:
     outcome = "FAILED" if result.failed else "PASSED"
     print(f"Outcome:      {outcome} (verifier score: {result.outcome_score:.3f})")
     print(f"Method:       {result.method}  ({result.rollouts} rollouts/step)")
+    print(f"Mode:         {result.mode}")
     print("-" * 60)
     if result.point_of_commitment is not None:
-        print(f"Point-of-Commitment: step {result.point_of_commitment}")
+        label = "Save-Point" if result.mode == "credit" else "Point-of-Commitment"
+        print(f"{label}: step {result.point_of_commitment}")
     if result.culprit is not None:
         c = result.culprit
         score = c.shapley if c.shapley is not None else c.attribution
-        print(
-            f"[RESULT] Failure attributed to step {c.index} "
-            f"({c.kind} {c.name}) with score {score:.3f}. "
-            f"CI [{c.ci.low:.3f}, {c.ci.high:.3f}]"
-        )
+        if result.mode == "credit":
+            print(
+                f"[RESULT] Success most secured by step {c.index} "
+                f"({c.kind} {c.name}); re-decision risk {score:.3f}. "
+                f"CI [{c.ci.low:.3f}, {c.ci.high:.3f}]"
+            )
+        else:
+            print(
+                f"[RESULT] Failure attributed to step {c.index} "
+                f"({c.kind} {c.name}) with score {score:.3f}. "
+                f"CI [{c.ci.low:.3f}, {c.ci.high:.3f}]"
+            )
     else:
         print("[RESULT] No step reached the attribution significance threshold.")
     if result.repair is not None:
@@ -125,6 +134,9 @@ def cmd_attribute(args: argparse.Namespace) -> int:
             method=args.method,
             permutation_pairs=args.permutation_pairs,
             repair=args.repair,
+            fail_threshold=args.fail_threshold,
+            base_seed=args.base_seed,
+            on_success=args.on_success,
         )
         store.save_attribution(result)
     _print_summary(result)
@@ -169,6 +181,8 @@ def _result_from_dict(data: dict) -> AttributionResult:
                 ci=ci(s["ci"]),
                 shapley=s.get("shapley"),
                 shapley_ci=ci(s.get("shapley_ci")),
+                resamplable=s.get("resamplable", True),
+                screened=s.get("screened", False),
             )
         )
     repair = None
@@ -184,9 +198,23 @@ def _result_from_dict(data: dict) -> AttributionResult:
         steps=steps,
         point_of_commitment=data.get("point_of_commitment"),
         culprit_index=data.get("culprit_index"),
+        mode=data.get("mode", "failure"),
         repair=repair,
         meta=data.get("meta", {}),
     )
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    with CheckpointStore(args.db) as store:
+        sessions = store.list_sessions()
+        if not sessions:
+            print("(no sessions)")
+            return 0
+        for sid in sessions:
+            traj = store.load_trajectory(sid)
+            score = "n/a" if traj.outcome_score is None else f"{traj.outcome_score:.3f}"
+            print(f"{sid}\t{len(traj)} steps\toutcome {score}")
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -208,6 +236,10 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--seed", type=int, default=0)
     pr.set_defaults(func=cmd_record)
 
+    pl = sub.add_parser("list", help="list recorded sessions in a store")
+    pl.add_argument("--db", required=True, help="SQLite checkpoint store path")
+    pl.set_defaults(func=cmd_list)
+
     prp = sub.add_parser("replay", parents=[common_agent], help="deterministically replay a run")
     prp.add_argument("--verifier", help="verifier entrypoint module:function")
     prp.set_defaults(func=cmd_replay)
@@ -218,6 +250,27 @@ def build_parser() -> argparse.ArgumentParser:
     pa.add_argument("--method", choices=["contrastive", "shapley", "both"], default="contrastive")
     pa.add_argument("--permutation-pairs", type=int, default=8, dest="permutation_pairs")
     pa.add_argument("--repair", action="store_true", help="also search for a minimal repair")
+    pa.add_argument(
+        "--fail-threshold",
+        type=float,
+        default=0.5,
+        dest="fail_threshold",
+        help="outcome score below this counts as failure (default 0.5)",
+    )
+    pa.add_argument(
+        "--base-seed",
+        type=int,
+        default=1_000,
+        dest="base_seed",
+        help="base seed for the rollout seed stream",
+    )
+    pa.add_argument(
+        "--on-success",
+        choices=["error", "credit"],
+        default="error",
+        dest="on_success",
+        help="behaviour when the run passed: error (default) or credit analysis",
+    )
     pa.add_argument("--out", help="output report basename (writes .json and .html)")
     pa.set_defaults(func=cmd_attribute)
 

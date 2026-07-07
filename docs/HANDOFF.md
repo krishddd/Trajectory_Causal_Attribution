@@ -176,15 +176,22 @@ payloads (with a `--unsafe-pickle` opt-in given pickle's security model).
 
 ## 4. Upgrade roadmap (ordered; each milestone independently shippable)
 
-### v0.2 — Soundness (do this first)
-1. **Idempotency-key cassette matching** (§2.1) — the single most important change.
-2. Passing-run guard / credit mode (§2.2).
-3. `resamplable` step flag + non-resamplable reporting (§2.3).
-4. Serialization strictness (§2.4). 5. Dead-code cleanup (§2.5). 6. CLI flags (§2.6).
-7. New tests: branching-agent Shapley regression; AND-failure and OR-failure fixture
-   agents proving Shapley splits credit ~50/50 where single-step ablation reports
-   ~2.0 total / ~0.0 total (this is the paper's own motivating example and is
-   currently untested).
+### v0.2 — Soundness ✅ SHIPPED (v0.2.0)
+1. ✅ **Idempotency-key cassette matching** (§2.1) — `Step.op_key` binding in
+   `replayer.py`; legacy `match="position"` retained. Branching agents now sound.
+2. ✅ Passing-run guard + credit mode (§2.2) — `attribute(on_success=...)`,
+   `SuccessfulRunError`, `AttributionResult.mode`.
+3. ✅ `resamplable` step flag + non-resamplable serving/reporting (§2.3).
+4. ✅ Serialization strictness (§2.4) — `NonSerializableStepError`.
+5. ✅ Dead-code cleanup (§2.5) — `_seed_salt` removed, `_Removed` sentinel.
+6. ✅ CLI flags + `list` command (§2.6).
+7. ✅ New tests: `test_branching.py` (cross-contamination regression + position-mode
+   contrast), `test_synthetic_scm.py` (AND/OR credit split, quantitative efficiency
+   axiom, pivotal-step localisation), `test_soundness.py` (guard/credit/strict/flag).
+
+   Result: **75 tests pass**, ruff clean, wheel builds. Remaining low-priority
+   items from §2.5/§2.6 still open: `ablate_from`'s unused `n` (kept for API
+   symmetry), OpenAI temperature==0 warning, WAL/thread-safety.
 
 ### v0.3 — Coverage of the paper's algebra
 1. **`edit-context` intervention:** record `s_i` (a digest of the visible context) per

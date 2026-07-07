@@ -32,12 +32,20 @@ def _bar(value: float, max_abs: float) -> str:
     )
 
 
-def _step_row(s: "StepAttribution", is_culprit: bool, is_poc: bool, max_abs: float) -> str:
+def _step_row(
+    s: "StepAttribution", is_culprit: bool, is_poc: bool, max_abs: float, mode: str
+) -> str:
     flags = []
     if is_culprit:
-        flags.append('<span class="tag culprit">culprit</span>')
+        label = "save point" if mode == "credit" else "culprit"
+        flags.append(f'<span class="tag culprit">{label}</span>')
     if is_poc:
-        flags.append('<span class="tag poc">point-of-commitment</span>')
+        poc_label = "save point" if mode == "credit" else "point-of-commitment"
+        flags.append(f'<span class="tag poc">{poc_label}</span>')
+    if not s.resamplable:
+        flags.append('<span class="tag observed">observed-only</span>')
+    if s.screened:
+        flags.append('<span class="tag observed">screened</span>')
     flag_html = " ".join(flags)
     shap = _fmt(s.shapley) if s.shapley is not None else "&ndash;"
     ci = s.ci
@@ -59,12 +67,14 @@ def render_html(result: "AttributionResult") -> str:
     steps = result.steps
     max_abs = max((abs(s.attribution) for s in steps), default=1.0) or 1.0
 
+    mode = result.mode
     rows = "\n".join(
         _step_row(
             s,
             is_culprit=(s.index == result.culprit_index),
             is_poc=(s.index == result.point_of_commitment),
             max_abs=max_abs,
+            mode=mode,
         )
         for s in steps
     )
@@ -75,12 +85,22 @@ def render_html(result: "AttributionResult") -> str:
     culprit = result.culprit
     if culprit is not None:
         score = culprit.shapley if culprit.shapley is not None else culprit.attribution
-        verdict = (
-            f"Failure attributed to <b>step {culprit.index}</b> "
-            f"(<code>{html.escape(culprit.kind)}:{html.escape(culprit.name)}</code>) "
-            f"with score <b>{_fmt(score)}</b>. "
-            f"95% CI [{_fmt(culprit.ci.low)}, {_fmt(culprit.ci.high)}]."
-        )
+        if mode == "credit":
+            verdict = (
+                f"Success most secured by <b>step {culprit.index}</b> "
+                f"(<code>{html.escape(culprit.kind)}:{html.escape(culprit.name)}</code>): "
+                f"re-deciding it introduces the greatest failure risk "
+                f"<b>{_fmt(score)}</b>. 95% CI [{_fmt(culprit.ci.low)}, {_fmt(culprit.ci.high)}]."
+            )
+        else:
+            verdict = (
+                f"Failure attributed to <b>step {culprit.index}</b> "
+                f"(<code>{html.escape(culprit.kind)}:{html.escape(culprit.name)}</code>) "
+                f"with score <b>{_fmt(score)}</b>. "
+                f"95% CI [{_fmt(culprit.ci.low)}, {_fmt(culprit.ci.high)}]."
+            )
+    elif mode == "credit":
+        verdict = "No single step significantly secured the successful outcome."
     else:
         verdict = "No single step reached the significance threshold for attribution."
 
@@ -135,6 +155,7 @@ def render_html(result: "AttributionResult") -> str:
   .tag {{ font-size:10px; padding:1px 6px; border-radius:999px; margin-left:6px; }}
   .tag.culprit {{ background:var(--accent); color:#fff; }}
   .tag.poc {{ background:#2c3e50; color:#8ecae6; }}
+  .tag.observed {{ background:#3a2f14; color:#e0b050; }}
   .barwrap {{ position:relative; background:#0c1116; border-radius:4px; height:18px; min-width:120px; }}
   .bar {{ height:100%; border-radius:4px; }}
   .barval {{ position:absolute; right:6px; top:0; font-size:11px; line-height:18px; }}
@@ -153,6 +174,7 @@ def render_html(result: "AttributionResult") -> str:
   <h1>Trajectory Causal Attribution Report</h1>
   <div class="sub">session <code>{html.escape(result.session_id)}</code>
     &middot; method <code>{html.escape(result.method)}</code>
+    &middot; mode <code>{html.escape(mode)}</code>
     &middot; {result.rollouts} rollouts/step</div>
 
   <div class="card banner">
@@ -160,8 +182,8 @@ def render_html(result: "AttributionResult") -> str:
     <div class="kv">
       <div><span>Total steps</span><b>{result.total_steps}</b></div>
       <div><span>Outcome score</span><b>{_fmt(result.outcome_score)}</b></div>
-      <div><span>Point of commitment</span><b>{result.point_of_commitment if result.point_of_commitment is not None else "&ndash;"}</b></div>
-      <div><span>Culprit step</span><b>{result.culprit_index if result.culprit_index is not None else "&ndash;"}</b></div>
+      <div><span>{"Save point" if mode == "credit" else "Point of commitment"}</span><b>{result.point_of_commitment if result.point_of_commitment is not None else "&ndash;"}</b></div>
+      <div><span>{"Key step" if mode == "credit" else "Culprit step"}</span><b>{result.culprit_index if result.culprit_index is not None else "&ndash;"}</b></div>
     </div>
   </div>
 

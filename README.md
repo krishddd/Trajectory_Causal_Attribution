@@ -21,10 +21,12 @@ on the *Who&When* benchmark).
 
 - 🎯 **Causal, not correlational** — real `do()`-calculus interventions on a replayable trajectory.
 - 🧩 **Framework-agnostic** — a tiny decorator/wrapper API that works with *any* Python agent. Optional LangChain / OpenAI-SDK adapters included.
+- 🌿 **Branch-safe** — live replay calls bind to recorded steps by **idempotency key** (kind + name + inputs), so agents whose step sequence depends on earlier outputs are attributed correctly, not just linear ones.
 - 💾 **Checkpointed** — SQLite store with content-addressable, deduplicated blobs and a Merkle-linked step chain.
 - 🔁 **Deterministic replay** — the VCR/cassette pattern: recorded steps are served verbatim; only ablated steps re-run.
 - 📊 **Rigorous** — Wilson score + bootstrap confidence intervals, antithetic Shapley sampling, no coalition caching.
 - 🛠 **Actionable** — searches for a *minimal counterfactual repair* and emits an HTML + JSON failure-attribution report.
+- 🔎 **Honest** — attributing a *passing* run raises by default (or runs the symmetric **credit** analysis: which step secured success); observation-only / non-resamplable steps are flagged, never silently scored zero.
 - 🪶 **Zero runtime dependencies** — pure Python standard library.
 
 ---

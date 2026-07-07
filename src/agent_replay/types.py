@@ -27,15 +27,35 @@ class StepKind(str, Enum):
 
 @dataclass
 class Step:
-    """A single recorded operation in a trajectory (one node of the SCM)."""
+    """A single recorded operation in a trajectory (one node of the SCM).
+
+    ``resamplable`` records whether the step carries a genuine stochastic policy
+    that can be re-run counterfactually. Steps captured by observation-only
+    adapters (e.g. a LangChain callback that only sees the produced text) or with
+    no ``produce`` policy are marked ``resamplable=False``: they cannot be truly
+    ablated, so the replayer always serves their recorded output and the scorer
+    surfaces them as non-attributable rather than silently reporting a spurious
+    zero.
+    """
 
     index: int
     kind: StepKind
     name: str
     inputs: Dict[str, Any]
     output: Any
+    resamplable: bool = True
     parent_hash: str = ""
     step_hash: str = ""
+
+    def op_key(self) -> str:
+        """Content-addressable identity of the *operation* (kind + name + inputs).
+
+        This is the idempotency key used to match a live replay call to its
+        recorded counterpart, independent of call position — so that when an
+        upstream ablation changes the control flow, a held step is only served
+        from the cassette when the *same* operation actually recurs.
+        """
+        return content_hash({"kind": self.kind.value, "name": self.name, "inputs": self.inputs})
 
     def compute_hashes(self, parent_hash: str) -> None:
         """Populate the Merkle-style ``parent_hash`` / ``step_hash`` fields.
@@ -46,11 +66,7 @@ class Step:
         document, reduced to the essentials).
         """
         self.parent_hash = parent_hash
-        self.step_hash = link_hash(
-            parent_hash,
-            content_hash({"kind": self.kind.value, "name": self.name, "inputs": self.inputs}),
-            content_hash(self.output),
-        )
+        self.step_hash = link_hash(parent_hash, self.op_key(), content_hash(self.output))
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -65,6 +81,7 @@ class Step:
             name=d["name"],
             inputs=d["inputs"],
             output=d["output"],
+            resamplable=d.get("resamplable", True),
             parent_hash=d.get("parent_hash", ""),
             step_hash=d.get("step_hash", ""),
         )
@@ -160,6 +177,8 @@ class StepAttribution:
     ci: ConfidenceInterval
     shapley: Optional[float] = None
     shapley_ci: Optional[ConfidenceInterval] = None
+    resamplable: bool = True
+    screened: bool = False  # True when a pre-filter skipped causal evaluation
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -196,6 +215,7 @@ class AttributionResult:
     steps: List[StepAttribution]
     point_of_commitment: Optional[int]
     culprit_index: Optional[int]
+    mode: str = "failure"  # "failure" (attribute blame) or "credit" (attribute rescue)
     repair: Optional[Repair] = None
     meta: Dict[str, Any] = field(default_factory=dict)
 
@@ -219,6 +239,7 @@ class AttributionResult:
             "steps": [s.to_dict() for s in self.steps],
             "point_of_commitment": self.point_of_commitment,
             "culprit_index": self.culprit_index,
+            "mode": self.mode,
             "repair": self.repair.to_dict() if self.repair else None,
             "meta": self.meta,
         }

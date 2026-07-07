@@ -29,6 +29,7 @@ import random
 from typing import List, Optional, Set
 
 from .ablation import AblationEngine
+from .errors import SuccessfulRunError
 from .stats import bootstrap_diff_interval, mean
 from .types import (
     AttributionResult,
@@ -86,6 +87,7 @@ def contrastive_attribution(
                 p_fail_ablated=p_abl,
                 attribution=p_kept - p_abl,
                 ci=ci,
+                resamplable=step.resamplable,
             )
         )
     return out
@@ -95,10 +97,14 @@ def point_of_commitment(steps: List[StepAttribution]) -> Optional[int]:
     """Latest step whose attribution CI strictly excludes zero.
 
     Beyond this point the failure is structurally locked in: resampling no longer
-    systematically changes the outcome, so its interval brackets zero.
+    systematically changes the outcome, so its interval brackets zero. Steps that
+    are not resamplable cannot be a commitment locus (they were never truly
+    ablated) and are skipped.
     """
     latest: Optional[int] = None
     for s in steps:
+        if not s.resamplable:
+            continue
         if s.ci.excludes_zero() and s.attribution > 0:
             if latest is None or s.index > latest:
                 latest = s.index
@@ -169,6 +175,7 @@ def shapley_attribution(
                 shapley_ci=ConfidenceInterval(
                     point=phi, low=low, high=high, method="shapley-marginals"
                 ),
+                resamplable=step.resamplable,
             )
         )
     return out
@@ -198,6 +205,13 @@ def _bootstrap_mean_ci(
     return (pct(alpha / 2), pct(1 - alpha / 2))
 
 
+def _negate(step: StepAttribution) -> None:
+    """Flip a step's contrastive score and CI in place (failure ⇄ credit)."""
+    step.attribution = -step.attribution
+    lo, hi = step.ci.low, step.ci.high
+    step.ci = ConfidenceInterval(point=-step.ci.point, low=-hi, high=-lo, method=step.ci.method)
+
+
 def attribute(
     trajectory: Trajectory,
     agent_fn,
@@ -210,11 +224,21 @@ def attribute(
     base_seed: int = 1_000,
     repair: bool = False,
     repair_candidates: Optional[dict] = None,
+    on_success: str = "error",
 ) -> AttributionResult:
     """Run the full attribution pipeline and return an :class:`AttributionResult`.
 
     ``method`` is ``"contrastive"`` (Phase 1 only), ``"shapley"`` (Phase 2 only),
     or ``"both"`` (contrastive localisation + Shapley credit split).
+
+    Attribution is only meaningful for a *failing* trajectory. ``on_success``
+    controls what happens when the factual run passed:
+
+    * ``"error"`` (default) — raise :class:`~agent_replay.errors.SuccessfulRunError`.
+    * ``"credit"`` — run the symmetric **credit** analysis: which step most
+      secured the success (the latest step whose re-decision would introduce a
+      significant failure risk). Scores are the sign-flipped contrastive
+      differences and ``mode`` is set to ``"credit"``.
     """
     engine = AblationEngine(
         agent_fn, trajectory, verifier, fail_threshold=fail_threshold, base_seed=base_seed
@@ -228,6 +252,19 @@ def attribute(
         else float(verifier(factual_result))
     )
     failed = outcome_score < fail_threshold
+
+    if not failed:
+        if on_success == "error":
+            raise SuccessfulRunError(
+                f"Run '{trajectory.session_id}' passed (score {outcome_score:.3f} >= "
+                f"threshold {fail_threshold}); failure attribution is undefined. Pass "
+                f"on_success='credit' for the symmetric 'which step secured success' "
+                f"analysis, or check your verifier/fail_threshold."
+            )
+        if on_success != "credit":
+            raise ValueError(f"on_success must be 'error' or 'credit', got {on_success!r}")
+
+    mode = "credit" if not failed else "failure"
 
     contrastive: List[StepAttribution] = []
     shapley: List[StepAttribution] = []
@@ -254,8 +291,15 @@ def attribute(
     else:
         steps = contrastive
 
-    # The point-of-commitment is defined by the contrastive difference CIs; for
-    # Shapley-only runs it is undefined and the culprit falls back to argmax phi.
+    # In credit mode the contrastive score is p_kept - p_ablated <= 0; flip it so
+    # a positive "credit" measures the failure risk a step's re-decision averts.
+    if mode == "credit" and method in ("contrastive", "both"):
+        for s in steps:
+            _negate(s)
+
+    # The point-of-commitment (or, in credit mode, the "save point") is defined by
+    # the contrastive difference CIs; for Shapley-only runs it is undefined and the
+    # culprit falls back to argmax phi.
     poc = point_of_commitment(steps) if method in ("contrastive", "both") else None
 
     culprit_index = _select_culprit(steps, poc)
@@ -270,9 +314,11 @@ def attribute(
         steps=steps,
         point_of_commitment=poc,
         culprit_index=culprit_index,
+        mode=mode,
     )
 
-    if repair and culprit_index is not None:
+    # Repair only applies to a genuine failure (flip fail→success).
+    if repair and mode == "failure" and culprit_index is not None:
         from .repair import find_minimal_repair
 
         result.repair = find_minimal_repair(

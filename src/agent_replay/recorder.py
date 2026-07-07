@@ -15,9 +15,11 @@ re-invokes it under different replay plans.
 
 from __future__ import annotations
 
+import json
 import random
 from typing import Any, Callable, Dict, List, Optional
 
+from .errors import NonSerializableStepError
 from .types import Step, StepKind, Trajectory
 
 
@@ -36,17 +38,38 @@ class AgentContext:
 
     # -- public operation API -------------------------------------------------
 
-    def llm(self, name: str, produce: Optional[Callable[[], Any]] = None, **inputs: Any) -> Any:
+    def llm(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
         """Record/replay an LLM call named ``name``."""
-        return self._op(StepKind.LLM, name, produce, inputs)
+        return self._op(StepKind.LLM, name, produce, inputs, resamplable)
 
-    def tool(self, name: str, produce: Optional[Callable[[], Any]] = None, **inputs: Any) -> Any:
+    def tool(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
         """Record/replay a tool call named ``name``."""
-        return self._op(StepKind.TOOL, name, produce, inputs)
+        return self._op(StepKind.TOOL, name, produce, inputs, resamplable)
 
-    def memory(self, name: str, produce: Optional[Callable[[], Any]] = None, **inputs: Any) -> Any:
+    def memory(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
         """Record/replay a memory operation named ``name``."""
-        return self._op(StepKind.MEMORY, name, produce, inputs)
+        return self._op(StepKind.MEMORY, name, produce, inputs, resamplable)
 
     # -- subclass hook --------------------------------------------------------
 
@@ -56,16 +79,31 @@ class AgentContext:
         name: str,
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
+        resamplable: Optional[bool] = None,
     ) -> Any:
         raise NotImplementedError
+
+
+def _check_serializable(kind: StepKind, name: str, label: str, value: Any) -> None:
+    """Raise :class:`NonSerializableStepError` if ``value`` is not JSON-native."""
+    try:
+        json.dumps(value)
+    except (TypeError, ValueError) as exc:
+        raise NonSerializableStepError(
+            f"{label} of step '{kind.value}:{name}' is not JSON-serialisable "
+            f"({type(value).__name__}): {exc}. Recorded payloads must round-trip "
+            f"as JSON; convert it to a plain dict/list/str, or pass "
+            f"strict_serialization=False to record it best-effort (lossy)."
+        ) from exc
 
 
 class RecordContext(AgentContext):
     """Context that executes every policy and captures the factual trajectory."""
 
-    def __init__(self, seed: int) -> None:
+    def __init__(self, seed: int, *, strict_serialization: bool = True) -> None:
         super().__init__(seed)
         self.steps: List[Step] = []
+        self.strict_serialization = strict_serialization
 
     def _op(
         self,
@@ -73,11 +111,26 @@ class RecordContext(AgentContext):
         name: str,
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
+        resamplable: Optional[bool] = None,
     ) -> Any:
         idx = self._idx
         self._idx += 1
         output = produce() if produce is not None else None
-        step = Step(index=idx, kind=kind, name=name, inputs=dict(inputs), output=output)
+        # A step with no policy cannot be re-drawn counterfactually. Default its
+        # resamplability from whether a policy was supplied, unless overridden.
+        if resamplable is None:
+            resamplable = produce is not None
+        if self.strict_serialization:
+            _check_serializable(kind, name, "inputs", inputs)
+            _check_serializable(kind, name, "output", output)
+        step = Step(
+            index=idx,
+            kind=kind,
+            name=name,
+            inputs=dict(inputs),
+            output=output,
+            resamplable=resamplable,
+        )
         parent = self.steps[-1].step_hash if self.steps else ""
         step.compute_hashes(parent)
         self.steps.append(step)
@@ -91,15 +144,20 @@ def record(
     session_id: str,
     seed: int = 0,
     verifier: Optional[Callable[[Any], float]] = None,
+    strict_serialization: bool = True,
 ) -> Trajectory:
     """Run ``agent_fn`` once, capturing a :class:`Trajectory`.
 
     ``agent_fn`` is called as ``agent_fn(ctx, **task)``. If a ``verifier`` is
     supplied, the returned result is scored and stored on the trajectory so the
     factual outcome is known without re-running.
+
+    With ``strict_serialization`` (default), any step input/output that is not
+    JSON-serialisable raises :class:`~agent_replay.errors.NonSerializableStepError`
+    at record time, rather than silently degrading to a string on store.
     """
     task = dict(task or {})
-    ctx = RecordContext(seed)
+    ctx = RecordContext(seed, strict_serialization=strict_serialization)
     result = agent_fn(ctx, **task)
     traj = Trajectory(
         session_id=session_id,

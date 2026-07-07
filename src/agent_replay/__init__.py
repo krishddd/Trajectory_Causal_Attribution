@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from .ablation import AblationEngine
 from .attribution import attribute
+from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .recorder import AgentContext, record
 from .repair import find_minimal_repair
 from .replayer import ReplayContext, ReplayPlan, replay
@@ -36,7 +37,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "Session",
@@ -48,6 +49,9 @@ __all__ = [
     "AgentContext",
     "AblationEngine",
     "CheckpointStore",
+    "AgentReplayError",
+    "NonSerializableStepError",
+    "SuccessfulRunError",
     "find_minimal_repair",
     "Trajectory",
     "Step",

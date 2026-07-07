@@ -63,6 +63,30 @@ The single-step contrastive intervention for step `i` is
 stochastic step — the SCM is a sequential dependency chain — and the plan models
 exactly that.
 
+### Binding live calls to recorded steps (idempotency keys)
+
+Plan indices name *recorded* steps, but a counterfactual rollout may take a
+different path than the factual run, so live calls must be bound to recorded
+steps carefully. The replayer matches by **idempotency key** — `Step.op_key` =
+`content_hash(kind, name, inputs)` — consuming recorded steps in order, **not** by
+call position. A held step is served from the cassette only when the very same
+operation actually recurs; if an upstream ablation changed the control flow so
+that operation no longer occurs (or occurs with different inputs), the timeline
+has diverged at that point and the call is resampled live.
+
+This is the VCR/idempotency-key semantics the research prescribes, and it is what
+keeps **branching** agents sound: positional matching would serve one step's
+recorded output into a *different* operation, corrupting any coalition plan whose
+held set is non-contiguous (i.e. every Shapley evaluation). For a strictly linear
+agent, key-in-order matching is identical to positional matching, so this
+generalises the behaviour without changing it. Legacy positional matching remains
+available via `replay(..., match="position")` for debugging.
+
+A step recorded without a genuine stochastic policy (`resamplable=False` — e.g.
+captured by an observation-only adapter) can never be truly re-drawn, so the
+replayer always serves its recorded output and the scorer marks it
+non-attributable rather than reporting a spurious zero.
+
 ## Why magnitude fails, and the Point-of-Commitment Rule
 
 Because resampling an early step re-rolls the fatal late step too, an early,

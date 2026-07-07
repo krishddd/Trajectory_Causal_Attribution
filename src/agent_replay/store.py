@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS steps (
     output_hash  TEXT NOT NULL,
     step_hash    TEXT NOT NULL,
     parent_hash  TEXT NOT NULL,
+    resamplable  INTEGER NOT NULL DEFAULT 1,
     PRIMARY KEY (session_id, idx),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
@@ -64,7 +65,16 @@ class CheckpointStore:
         self._conn = sqlite3.connect(path)
         self._conn.execute("PRAGMA foreign_keys = ON")
         self._conn.executescript(_SCHEMA)
+        self._migrate()
         self._conn.commit()
+
+    def _migrate(self) -> None:
+        """Add columns introduced after a store was first created (idempotent)."""
+        cols = {r[1] for r in self._conn.execute("PRAGMA table_info(steps)").fetchall()}
+        if "resamplable" not in cols:
+            self._conn.execute(
+                "ALTER TABLE steps ADD COLUMN resamplable INTEGER NOT NULL DEFAULT 1"
+            )
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -119,8 +129,9 @@ class CheckpointStore:
             output_hash = self.put_blob(step.output)
             self._conn.execute(
                 """INSERT INTO steps
-                   (session_id, idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (session_id, idx, kind, name, inputs_hash, output_hash, step_hash,
+                    parent_hash, resamplable)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     traj.session_id,
                     step.index,
@@ -130,6 +141,7 @@ class CheckpointStore:
                     output_hash,
                     step.step_hash,
                     step.parent_hash,
+                    1 if step.resamplable else 0,
                 ),
             )
         self._conn.commit()
@@ -154,11 +166,13 @@ class CheckpointStore:
             meta=json.loads(meta_json),
         )
         step_rows = self._conn.execute(
-            """SELECT idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash
+            """SELECT idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash,
+                      resamplable
                FROM steps WHERE session_id = ? ORDER BY idx""",
             (session_id,),
         ).fetchall()
-        for idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash in step_rows:
+        for row in step_rows:
+            idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash, resamplable = row
             traj.steps.append(
                 Step(
                     index=idx,
@@ -166,6 +180,7 @@ class CheckpointStore:
                     name=name,
                     inputs=self.get_blob(inputs_hash),
                     output=self.get_blob(output_hash),
+                    resamplable=bool(resamplable),
                     parent_hash=parent_hash,
                     step_hash=step_hash,
                 )
