@@ -126,6 +126,43 @@ def test_install_missing_sdk_strict_raises():
         del instrument.RECIPES["_absent2_"]
 
 
+def test_patched_instance_method_key_is_stable():
+    """Regression: self (a captured arg) must not leak its memory address into the key."""
+    mod = _install_dummy_sdk()
+    try:
+        instrument.patch("dummy_sdk.Client.create", "llm", "dummy.create")
+
+        def agent(**task):
+            # Fresh client each run, as would happen across processes.
+            return mod.Client().create(prompt=task["p"])
+
+        t1 = record(agent, {"p": "hi"}, session_id="k1", seed=0, pass_context=False)
+        t2 = record(agent, {"p": "hi"}, session_id="k2", seed=0, pass_context=False)
+        # Idempotency key is stable -> cross-process replay will match.
+        assert t1.steps[0].op_key() == t2.steps[0].op_key()
+        # No memory address leaked into captured inputs.
+        assert "0x" not in str(t1.steps[0].inputs)
+    finally:
+        instrument.unpatch("dummy_sdk.Client.create")
+        del sys.modules["dummy_sdk"]
+
+
+def test_reserved_kwarg_names_do_not_collide():
+    @instrument.tool
+    def fn(name=None, produce=None, resamplable=None, q=None):
+        return {"got": [name, produce, resamplable, q]}
+
+    def agent(**task):
+        # These kwarg names shadow the context-op parameters.
+        return fn(name="a", produce="b", resamplable="c", q="d")
+
+    traj = record(agent, {}, session_id="collide", seed=0, pass_context=False)
+    assert len(traj) == 1
+    assert traj.result["got"] == ["a", "b", "c", "d"]
+    # Captured inputs were renamed to avoid the clash.
+    assert "name_" in traj.steps[0].inputs
+
+
 def test_record_agent_end_to_end():
     @instrument.tool
     def step(i):

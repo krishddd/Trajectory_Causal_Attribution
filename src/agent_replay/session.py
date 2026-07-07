@@ -49,10 +49,25 @@ class Session:
         seed: int = 0,
         verifier: Optional[Callable[[Any], float]] = None,
         persist: bool = True,
+        strict_serialization: bool = True,
+        pass_context: bool = True,
     ) -> Trajectory:
-        """Record one run of ``agent_fn`` and (by default) persist it."""
+        """Record one run of ``agent_fn`` and (by default) persist it.
+
+        ``strict_serialization`` and ``pass_context`` are forwarded to
+        :func:`agent_replay.record` (set ``pass_context=False`` for
+        auto-instrumented agents that take no explicit ``ctx``).
+        """
         session_id = session_id or f"sess_{uuid.uuid4().hex[:12]}"
-        traj = _record(agent_fn, task, session_id=session_id, seed=seed, verifier=verifier)
+        traj = _record(
+            agent_fn,
+            task,
+            session_id=session_id,
+            seed=seed,
+            verifier=verifier,
+            strict_serialization=strict_serialization,
+            pass_context=pass_context,
+        )
         if persist:
             self.store.save_trajectory(traj)
         return traj

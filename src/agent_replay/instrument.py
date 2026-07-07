@@ -57,12 +57,19 @@ __all__ = [
 CaptureFn = Callable[[tuple, dict], Dict[str, Any]]
 
 
+# Keyword names reserved by the context ops; captured inputs colliding with these
+# are renamed so ``op(name, produce=..., resamplable=..., **inputs)`` never clashes.
+_RESERVED_INPUT_KEYS = frozenset({"name", "produce", "resamplable"})
+
+
 def _default_capture(args: tuple, kwargs: dict) -> Dict[str, Any]:
     """Best-effort JSON-friendly snapshot of a call's arguments (for the cassette key).
 
     Positional args are captured as ``args``; keyword args are captured by name.
-    Non-JSON-native values are stringified so they can still key/serialise; the
-    recorder's strict check still applies to the step *output*.
+    Non-JSON-native values are reduced to a **stable** ``<TypeName>`` token rather
+    than ``repr`` — ``repr`` embeds the object's memory address, which would make
+    the idempotency key non-deterministic across processes and silently break
+    replay of any patched instance method (where ``self`` is a captured arg).
     """
 
     def safe(v: Any) -> Any:
@@ -72,14 +79,21 @@ def _default_capture(args: tuple, kwargs: dict) -> Dict[str, Any]:
             return [safe(x) for x in v]
         if isinstance(v, dict):
             return {str(k): safe(x) for k, x in v.items()}
-        return repr(v)
+        return f"<{type(v).__name__}>"
 
     captured: Dict[str, Any] = {}
     if args:
         captured["args"] = [safe(a) for a in args]
     for k, v in kwargs.items():
-        captured[k] = safe(v)
+        captured[str(k)] = safe(v)
     return captured
+
+
+def _sanitize_inputs(inputs: Dict[str, Any]) -> Dict[str, Any]:
+    """Rename any input keys that would collide with the context op parameters."""
+    if not any(k in _RESERVED_INPUT_KEYS for k in inputs):
+        return inputs
+    return {(f"{k}_" if k in _RESERVED_INPUT_KEYS else k): v for k, v in inputs.items()}
 
 
 def record_step(
@@ -104,7 +118,7 @@ def record_step(
             ctx = current_context()
             if ctx is None:
                 return fn(*args, **kwargs)
-            inputs = (capture or _default_capture)(args, kwargs)
+            inputs = _sanitize_inputs((capture or _default_capture)(args, kwargs))
             op = getattr(ctx, kind)
             return op(
                 step_name,

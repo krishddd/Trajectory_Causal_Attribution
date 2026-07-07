@@ -4,6 +4,28 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.3.1] — Instrumentation bug-fix audit
+
+### Fixed
+- **Non-deterministic idempotency keys for patched instance methods.**
+  `instrument`'s default argument capture used `repr()` for non-JSON objects,
+  which embeds the object's memory address. Any patched instance method (every
+  SDK recipe, where `self` is a captured arg) therefore produced a key that
+  changed across processes, so a cross-process `record` → `attribute` (e.g. via
+  the CLI) silently resampled every "held" step instead of serving the cassette.
+  Non-JSON values are now reduced to a stable `<TypeName>` token.
+- **Reserved-keyword collision.** Instrumenting a callable whose argument is named
+  `name`, `produce`, or `resamplable` raised `TypeError` (clash with the context
+  op parameters). Such captured keys are now renamed.
+
+### Added / Changed
+- `Session.record()` forwards `strict_serialization=` and `pass_context=` (so the
+  ergonomic facade also supports auto-instrumented, `ctx`-free agents).
+- CLI `attribute` on a passing run prints a friendly hint (use `--on-success
+  credit`) instead of an uncaught `SuccessfulRunError` traceback.
+- Documented the concurrency limitation: the ambient context propagates to
+  `asyncio` tasks but not to raw worker threads; recording is single-threaded.
+
 ## [0.3.0] — Universal adapters & explainability
 
 ### Added

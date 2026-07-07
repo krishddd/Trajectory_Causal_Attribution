@@ -71,6 +71,18 @@ instrument.unpatch("my_framework.LLM.complete")
 Or import a trajectory recorded elsewhere (OpenTelemetry GenAI spans, JSONL
 traces) — see `docs/RESEARCH_NOTES.md` §6 for the planned `interop` importers.
 
+### Concurrency (important)
+
+The ambient context is a `contextvars.ContextVar`. It **propagates to `asyncio`
+tasks** automatically, so async agents record correctly. It does **not** propagate
+into raw worker threads (`ThreadPoolExecutor`, `threading.Thread`) — instrumented
+calls made from a spawned thread will see no active context and pass through
+un-recorded. Recording itself is single-threaded by design (the trajectory is an
+ordered sequence). For thread-parallel frameworks, either record with the explicit
+`ctx` style (option 1) driving a serialized step order, or run the agent
+sequentially/async when capturing a trajectory. This only affects *recording*;
+attribution replays are already run one rollout at a time.
+
 ### Resampling & side effects
 
 A wrapped call's `produce` policy *re-invokes the real callable* during

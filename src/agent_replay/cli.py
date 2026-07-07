@@ -122,22 +122,29 @@ def cmd_replay(args: argparse.Namespace) -> int:
 
 
 def cmd_attribute(args: argparse.Namespace) -> int:
+    from .errors import SuccessfulRunError
+
     agent_fn = _load_entrypoint(args.agent)
     verifier = _load_entrypoint(args.verifier)
     with CheckpointStore(args.db) as store:
         traj = store.load_trajectory(args.session)
-        result = attribute(
-            traj,
-            agent_fn,
-            verifier,
-            rollouts=args.rollouts,
-            method=args.method,
-            permutation_pairs=args.permutation_pairs,
-            repair=args.repair,
-            fail_threshold=args.fail_threshold,
-            base_seed=args.base_seed,
-            on_success=args.on_success,
-        )
+        try:
+            result = attribute(
+                traj,
+                agent_fn,
+                verifier,
+                rollouts=args.rollouts,
+                method=args.method,
+                permutation_pairs=args.permutation_pairs,
+                repair=args.repair,
+                fail_threshold=args.fail_threshold,
+                base_seed=args.base_seed,
+                on_success=args.on_success,
+            )
+        except SuccessfulRunError as exc:
+            print(f"Nothing to attribute: {exc}")
+            print("Re-run with --on-success credit to analyse which step secured success.")
+            return 1
         store.save_attribution(result)
         explanation = result.explain(traj)
     _print_summary(result)
