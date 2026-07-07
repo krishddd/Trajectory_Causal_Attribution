@@ -4,6 +4,42 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.3.0] — Universal adapters & explainability
+
+### Added
+- **Universal instrumentation (`agent_replay.instrument`)** — connect *any*
+  framework, not just LangChain. Built on an ambient `contextvars` context so
+  agents need no explicit `ctx`:
+  - `@instrument.tool` / `@instrument.llm` / `@instrument.memory` decorators and
+    `instrument.wrap(fn, kind, name)` to record any callable.
+  - `instrument.patch(dotted_target, kind)` / `unpatch` / `install(*frameworks)` /
+    `installed(...)` context manager — monkeypatch unmodified SDK call sites,
+    driven by a data-only `RECIPES` registry (OpenAI, Anthropic, Cohere, Google
+    GenAI, Mistral, LiteLLM, LangChain, LlamaIndex, CrewAI, AutoGen). Best-effort:
+    absent SDKs are skipped. Adding a framework = one registry entry.
+  - `instrument.record_agent(agent_fn, task, frameworks=(...))` — record an
+    auto-instrumented agent that takes no `ctx`.
+  - `record`/`replay`/`attribute`/`AblationEngine` gained `pass_context=` so the
+    ablation engine re-runs auto-instrumented agents identically.
+- **Explainability (`agent_replay.explain`)** — a traceable, plain-language
+  narrative over an attribution result (methods unchanged; presentation only):
+  - `explain(result, trajectory)` / `result.explain(trajectory)` →
+    an `Explanation` with **what / where / why / fix / confidence** plus a
+    per-step **causal trace** labelling each step *decisive*, *locked-in*,
+    *contributing*, *observed-only*, or *benign* — tracing the run from first
+    action to the point of no return, with the numbers behind every claim.
+  - `Explanation.to_text()` (ASCII-safe), `.to_markdown()`, `.to_dict()`,
+    `.from_dict()`.
+  - The HTML report gains an **Explanation panel** with a colour-coded trace; the
+    JSON report embeds an `explanation` section; the CLI prints the narrative
+    (suppress with `--no-explain`) and embeds it in generated reports.
+- Docs: `docs/frameworks.md` (three ways to connect any framework),
+  `examples/connect_any_framework.py`.
+
+### Changed
+- Repository renamed to `Trajectory_Causal_Attribution` (importable package
+  remains `agent_replay`).
+
 ## [0.2.0] — Soundness
 
 The v0.2 milestone hardens the causal engine so attribution is correct for

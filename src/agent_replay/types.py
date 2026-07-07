@@ -244,19 +244,32 @@ class AttributionResult:
             "meta": self.meta,
         }
 
-    def to_json(self, path: str) -> str:
-        """Write the JSON report and return the path."""
+    def explain(self, trajectory: Any = None) -> Any:
+        """Return a traceable :class:`~agent_replay.explain.Explanation` of this result.
+
+        Passing the recorded ``trajectory`` lets the explanation name the actual
+        decisive action, not just the step position.
+        """
+        from .explain import explain as _explain
+
+        return _explain(self, trajectory)
+
+    def to_json(self, path: str, explanation: Any = None) -> str:
+        """Write the JSON report (optionally embedding an explanation) and return the path."""
         import json
 
+        data = self.to_dict()
+        if explanation is not None:
+            data["explanation"] = explanation.to_dict()
         with open(path, "w", encoding="utf-8") as fh:
-            json.dump(self.to_dict(), fh, indent=2, default=str)
+            json.dump(data, fh, indent=2, default=str)
         return path
 
-    def to_html(self, path: str) -> str:
-        """Write the standalone HTML report and return the path."""
+    def to_html(self, path: str, explanation: Any = None) -> str:
+        """Write the standalone HTML report (optionally with a narrative panel)."""
         from .report import render_html
 
-        html = render_html(self)
+        html = render_html(self, explanation=explanation)
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(html)
         return path

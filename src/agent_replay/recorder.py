@@ -19,6 +19,7 @@ import json
 import random
 from typing import Any, Callable, Dict, List, Optional
 
+from ._ambient import bind_context, unbind_context
 from .errors import NonSerializableStepError
 from .types import Step, StepKind, Trajectory
 
@@ -145,12 +146,19 @@ def record(
     seed: int = 0,
     verifier: Optional[Callable[[Any], float]] = None,
     strict_serialization: bool = True,
+    pass_context: bool = True,
 ) -> Trajectory:
     """Run ``agent_fn`` once, capturing a :class:`Trajectory`.
 
-    ``agent_fn`` is called as ``agent_fn(ctx, **task)``. If a ``verifier`` is
-    supplied, the returned result is scored and stored on the trajectory so the
-    factual outcome is known without re-running.
+    By default ``agent_fn`` is called as ``agent_fn(ctx, **task)`` (the explicit
+    context style). With ``pass_context=False`` it is called as ``agent_fn(**task)``
+    and steps are captured via the *ambient* context instead — the mode used by
+    :mod:`agent_replay.instrument` to record framework agents that own their own
+    call signature. The ambient context is published for the duration of the run
+    in either case, so auto-instrumented callables work in both styles.
+
+    If a ``verifier`` is supplied, the returned result is scored and stored on the
+    trajectory so the factual outcome is known without re-running.
 
     With ``strict_serialization`` (default), any step input/output that is not
     JSON-serialisable raises :class:`~agent_replay.errors.NonSerializableStepError`
@@ -158,7 +166,11 @@ def record(
     """
     task = dict(task or {})
     ctx = RecordContext(seed, strict_serialization=strict_serialization)
-    result = agent_fn(ctx, **task)
+    token = bind_context(ctx)
+    try:
+        result = agent_fn(ctx, **task) if pass_context else agent_fn(**task)
+    finally:
+        unbind_context(token)
     traj = Trajectory(
         session_id=session_id,
         task=task,

@@ -12,7 +12,7 @@ opened directly or emailed as a single file.
 from __future__ import annotations
 
 import html
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .types import AttributionResult, StepAttribution
@@ -62,7 +62,44 @@ def _step_row(
       </tr>"""
 
 
-def render_html(result: "AttributionResult") -> str:
+def _render_explanation(explanation: Any) -> str:
+    """Render the traceable narrative panel from an Explanation, if provided."""
+    if explanation is None:
+        return ""
+    roles = {
+        "decisive": "#c0392b",
+        "locked-in": "#7f8c8d",
+        "contributing": "#b9770e",
+        "observed-only": "#8e44ad",
+        "benign": "#3a4553",
+    }
+    trace_rows = []
+    for t in explanation.trace:
+        color = roles.get(t.role, "#3a4553")
+        action = "" if t.action is None else f" &mdash; <code>{html.escape(str(t.action))}</code>"
+        trace_rows.append(
+            f'<li><span class="rolebadge" style="background:{color}">{html.escape(t.role)}</span> '
+            f"<b>step {t.index}</b> <code>{html.escape(t.kind)}:{html.escape(t.name)}</code>"
+            f"{action}<br><span class='tracenote'>{html.escape(t.note)}</span></li>"
+        )
+    return f"""
+  <div class="card explain">
+    <h1 style="font-size:16px">Explanation</h1>
+    <p class="verdict">{html.escape(explanation.headline)}</p>
+    <div class="kv2">
+      <div><span>What</span>{html.escape(explanation.what)}</div>
+      <div><span>Where</span>{html.escape(explanation.where)}</div>
+      <div><span>Why</span>{html.escape(explanation.why)}</div>
+      <div><span>Fix</span>{html.escape(explanation.fix)}</div>
+      <div><span>Confidence</span>{html.escape(explanation.confidence)}</div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin:14px 0 4px">
+      Causal trace (first action &rarr; point of no return)</p>
+    <ul class="trace">{"".join(trace_rows)}</ul>
+  </div>"""
+
+
+def render_html(result: "AttributionResult", explanation: Any = None) -> str:
     """Render ``result`` to a complete, standalone HTML document string."""
     steps = result.steps
     max_abs = max((abs(s.attribution) for s in steps), default=1.0) or 1.0
@@ -105,6 +142,7 @@ def render_html(result: "AttributionResult") -> str:
         verdict = "No single step reached the significance threshold for attribution."
 
     repair_html = _render_repair(result)
+    explanation_html = _render_explanation(explanation)
 
     # Timeline: a row of nodes coloured by responsibility.
     nodes = []
@@ -156,6 +194,14 @@ def render_html(result: "AttributionResult") -> str:
   .tag.culprit {{ background:var(--accent); color:#fff; }}
   .tag.poc {{ background:#2c3e50; color:#8ecae6; }}
   .tag.observed {{ background:#3a2f14; color:#e0b050; }}
+  .kv2 {{ display:grid; gap:8px; margin-top:8px; font-size:13px; }}
+  .kv2 div span {{ display:inline-block; min-width:88px; color:var(--muted);
+                   font-size:11px; text-transform:uppercase; letter-spacing:.5px; }}
+  ul.trace {{ list-style:none; padding:0; margin:6px 0 0; }}
+  ul.trace li {{ padding:6px 0; border-bottom:1px solid #232b36; font-size:13px; }}
+  .rolebadge {{ display:inline-block; font-size:10px; padding:1px 6px; border-radius:999px;
+               color:#fff; margin-right:6px; }}
+  .tracenote {{ color:var(--muted); font-size:12px; }}
   .barwrap {{ position:relative; background:#0c1116; border-radius:4px; height:18px; min-width:120px; }}
   .bar {{ height:100%; border-radius:4px; }}
   .barval {{ position:absolute; right:6px; top:0; font-size:11px; line-height:18px; }}
@@ -191,6 +237,8 @@ def render_html(result: "AttributionResult") -> str:
     <p class="verdict">{verdict}</p>
     <div class="timeline">{timeline}</div>
   </div>
+
+  {explanation_html}
 
   <div class="card">
     <table>

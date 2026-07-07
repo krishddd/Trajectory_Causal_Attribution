@@ -27,6 +27,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional, Set
 
+from ._ambient import bind_context, unbind_context
 from .hashing import content_hash
 from .recorder import AgentContext
 from .types import StepKind, Trajectory
@@ -184,7 +185,18 @@ def replay(
     *,
     seed: int,
     match: str = "key",
+    pass_context: bool = True,
 ) -> Any:
-    """Execute ``agent_fn`` once under ``plan`` and return its result."""
+    """Execute ``agent_fn`` once under ``plan`` and return its result.
+
+    ``pass_context`` mirrors :func:`agent_replay.record`: ``True`` calls
+    ``agent_fn(ctx, **task)``; ``False`` calls ``agent_fn(**task)`` and relies on
+    the ambient context (auto-instrumented agents). The ambient context is always
+    published for the duration of the run.
+    """
     ctx = ReplayContext(trajectory, plan, seed, match=match)
-    return agent_fn(ctx, **trajectory.task)
+    token = bind_context(ctx)
+    try:
+        return agent_fn(ctx, **trajectory.task) if pass_context else agent_fn(**trajectory.task)
+    finally:
+        unbind_context(token)

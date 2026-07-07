@@ -225,6 +225,7 @@ def attribute(
     repair: bool = False,
     repair_candidates: Optional[dict] = None,
     on_success: str = "error",
+    pass_context: bool = True,
 ) -> AttributionResult:
     """Run the full attribution pipeline and return an :class:`AttributionResult`.
 
@@ -241,7 +242,12 @@ def attribute(
       differences and ``mode`` is set to ``"credit"``.
     """
     engine = AblationEngine(
-        agent_fn, trajectory, verifier, fail_threshold=fail_threshold, base_seed=base_seed
+        agent_fn,
+        trajectory,
+        verifier,
+        fail_threshold=fail_threshold,
+        base_seed=base_seed,
+        pass_context=pass_context,
     )
 
     # Establish the factual outcome.

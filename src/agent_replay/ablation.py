@@ -29,12 +29,14 @@ class AblationEngine:
         *,
         fail_threshold: float = 0.5,
         base_seed: int = 1_000,
+        pass_context: bool = True,
     ) -> None:
         self.agent_fn = agent_fn
         self.trajectory = trajectory
         self.verifier = verifier
         self.fail_threshold = fail_threshold
         self.base_seed = base_seed
+        self.pass_context = pass_context
 
     def is_fail(self, result: Any) -> bool:
         return float(self.verifier(result)) < self.fail_threshold
@@ -56,7 +58,9 @@ class AblationEngine:
         fails: List[bool] = []
         for k in range(rollouts):
             seed = self.base_seed + 1_000_003 * (seed_tag + 1) + k
-            result = replay(self.agent_fn, self.trajectory, plan, seed=seed)
+            result = replay(
+                self.agent_fn, self.trajectory, plan, seed=seed, pass_context=self.pass_context
+            )
             fails.append(self.is_fail(result))
         return fails
 

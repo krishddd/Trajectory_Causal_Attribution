@@ -194,30 +194,71 @@ not depend on them.
 
 ---
 
-## Framework adapters
+## Connect any framework
 
-**OpenAI SDK** — wrap a client so every `chat.completions.create` becomes a recorded `llm` step:
+Three ways to feed steps in, from explicit to fully automatic — all produce the
+same `Trajectory`. Full guide: [`docs/frameworks.md`](docs/frameworks.md).
 
-```python
-from openai import OpenAI
-from agent_replay.adapters.openai_sdk import wrap_openai
-
-def agent(ctx, prompt):
-    client = wrap_openai(OpenAI(), ctx, name="draft")
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}])
-    return resp["choices"][0]["message"]["content"]
-```
-
-**LangChain** — attach a callback handler:
+**Decorate any callable** (no `ctx` threading — uses an ambient context):
 
 ```python
-from agent_replay.adapters.langchain import AgentReplayCallbackHandler
+from agent_replay import instrument
 
-def agent(ctx, prompt):
-    handler = AgentReplayCallbackHandler(ctx)
-    return chain.invoke(prompt, config={"callbacks": [handler]})
+@instrument.tool
+def search(q): ...
+@instrument.llm
+def answer(ctx): ...
+
+def agent(question):                       # no ctx parameter
+    return {"answer": answer(search(question))}
+
+traj   = instrument.record_agent(agent, {"question": "..."}, session_id="s", verifier=v)
+result = attribute(traj, agent, v, pass_context=False)
 ```
+
+**Auto-instrument an unmodified SDK** via the data-only recipe registry
+(OpenAI, Anthropic, Cohere, Google GenAI, Mistral, LiteLLM, LangChain,
+LlamaIndex, CrewAI, AutoGen — best-effort, absent SDKs skipped):
+
+```python
+from agent_replay import instrument
+instrument.available_frameworks()          # -> the list above
+with instrument.installed("openai", "langchain"):
+    traj = instrument.record_agent(run_my_crew, {...}, session_id="s", verifier=v)
+```
+
+Not in the registry? Patch any dotted callable — this is how the recipes work,
+so it covers every framework: `instrument.patch("my_fw.LLM.complete", kind="llm")`.
+
+## Explainable output
+
+Every attribution can be rendered as a traceable, plain-language explanation —
+**what** went wrong, **where**, **why**, and **how to fix** it — with a per-step
+causal trace from the first action to the point of no return. The estimators are
+unchanged; this is a presentation layer.
+
+```python
+explanation = result.explain(traj)
+print(explanation.to_text())               # ASCII-safe narrative
+result.to_html("report.html", explanation=explanation)   # adds an Explanation panel
+```
+
+```
+WHAT:  The run failed (score 0.00). The decisive error is step 3. Its action was 'BAD'.
+WHERE: Step 3 - tool:tool_step_3.
+WHY:   Keeping step 3 fails 1.00 of the time; re-deciding it drops failure to 0.78
+       (rescue 0.22). It is the latest step where re-deciding still changes the
+       outcome; the 2 steps after it stay failing, so the run is locked in beyond here.
+FIX:   Constrain step 3 from 'BAD' toward '' (validated repair, P(fail)->0.00).
+
+Causal trace (first action -> point of no return):
+   + step 0 [llm:reason_step_0] contributing  (butterfly effect; blame resolves later)
+  >> step 3 [tool:tool_step_3] decisive        (the point of commitment)
+   x step 4 [llm:reason_step_4] locked-in      (outcome already committed)
+```
+
+The CLI prints this automatically (`--no-explain` to suppress) and embeds it in
+the HTML/JSON reports.
 
 ---
 

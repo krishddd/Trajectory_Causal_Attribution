@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agent-replay"
-version = "0.2.0"
+version = "0.3.0"
 description = "Record AI agent trajectories and find which step caused a failure via counterfactual step-ablation replay."
 readme = "README.md"
 license = { text = "MIT" }
@@ -36,9 +36,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/krishddd/agent-replay"
-Repository = "https://github.com/krishddd/agent-replay"
-Issues = "https://github.com/krishddd/agent-replay/issues"
+Homepage = "https://github.com/krishddd/Trajectory_Causal_Attribution"
+Repository = "https://github.com/krishddd/Trajectory_Causal_Attribution"
+Issues = "https://github.com/krishddd/Trajectory_Causal_Attribution/issues"
 
 [project.optional-dependencies]
 langchain = ["langchain-core>=0.1"]

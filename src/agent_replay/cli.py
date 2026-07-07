@@ -139,12 +139,16 @@ def cmd_attribute(args: argparse.Namespace) -> int:
             on_success=args.on_success,
         )
         store.save_attribution(result)
+        explanation = result.explain(traj)
     _print_summary(result)
+    if not args.no_explain:
+        print("-" * 60)
+        print(explanation.to_text())
     if args.out:
         json_path = f"{args.out}.json"
         html_path = f"{args.out}.html"
-        result.to_json(json_path)
-        result.to_html(html_path)
+        result.to_json(json_path, explanation=explanation)
+        result.to_html(html_path, explanation=explanation)
         print(f"Wrote {json_path} and {html_path}")
     return 0
 
@@ -153,8 +157,13 @@ def cmd_report(args: argparse.Namespace) -> int:
     with open(args.json, encoding="utf-8") as fh:
         data = json.load(fh)
     result = _result_from_dict(data)
+    explanation = None
+    if data.get("explanation"):
+        from .explain import Explanation
+
+        explanation = Explanation.from_dict(data["explanation"])
     out = args.out or (args.json.rsplit(".", 1)[0] + ".html")
-    result.to_html(out)
+    result.to_html(out, explanation=explanation)
     print(f"Wrote {out}")
     return 0
 
@@ -272,6 +281,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="behaviour when the run passed: error (default) or credit analysis",
     )
     pa.add_argument("--out", help="output report basename (writes .json and .html)")
+    pa.add_argument(
+        "--no-explain",
+        action="store_true",
+        dest="no_explain",
+        help="suppress the plain-language explanation output",
+    )
     pa.set_defaults(func=cmd_attribute)
 
     prep = sub.add_parser("report", help="regenerate an HTML report from a JSON report")
