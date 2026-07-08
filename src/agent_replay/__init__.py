@@ -23,6 +23,7 @@ from .ablation import AblationEngine
 from .attribution import attribute
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .explain import Explanation, explain
+from .pytest_plugin import assert_agent_passes, measure_failure_rate
 from .recorder import AgentContext, record
 from .repair import find_minimal_repair
 from .replayer import ReplayContext, ReplayPlan, replay
@@ -48,6 +49,8 @@ __all__ = [
     "explain",
     "Explanation",
     "instrument",
+    "assert_agent_passes",
+    "measure_failure_rate",
     "replay",
     "ReplayPlan",
     "ReplayContext",

@@ -4,6 +4,14 @@ import pytest
 
 from agent_replay.mock_agent import DEFAULT_FAIL_STEP, buggy_agent, make_recording, verifier
 
+# Make the plugin's fixtures available under PYTHONPATH (when the pytest11 entry
+# point is not registered because the package is not pip-installed). When it *is*
+# installed (CI), these simply mirror the entry-point fixtures.
+from agent_replay.pytest_plugin import (  # noqa: E402
+    agent_replay_session,  # noqa: F401
+    assert_agent,  # noqa: F401
+)
+
 
 @pytest.fixture
 def fail_step():

@@ -48,6 +48,9 @@ dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.4", "build>=1.0"]
 [project.scripts]
 agent-replay = "agent_replay.cli:main"
 
+[project.entry-points.pytest11]
+agent_replay = "agent_replay.pytest_plugin"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/agent_replay"]
 
