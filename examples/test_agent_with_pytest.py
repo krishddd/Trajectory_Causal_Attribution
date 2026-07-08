@@ -18,7 +18,7 @@ def verifier(result):
 def my_agent(ctx, question="hi"):
     plan = ctx.llm("plan", produce=lambda: {"q": question})
     # A flaky retrieval step that corrupts the context 30% of the time.
-    hits = ctx.tool("search", produce=lambda: ("bad" if ctx.rng.random() < 0.3 else "good"))
+    hits = ctx.tool("search", produce=lambda: "bad" if ctx.rng.random() < 0.3 else "good")
     draft = ctx.llm("answer", produce=lambda: hits, context=hits)
     return {"plan": plan, "draft": draft, "ok": draft == "good"}
 

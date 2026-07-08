@@ -140,6 +140,8 @@ def cmd_attribute(args: argparse.Namespace) -> int:
                 fail_threshold=args.fail_threshold,
                 base_seed=args.base_seed,
                 on_success=args.on_success,
+                adaptive=args.adaptive,
+                target_ci_width=args.target_ci_width,
             )
         except SuccessfulRunError as exc:
             print(f"Nothing to attribute: {exc}")
@@ -286,6 +288,18 @@ def build_parser() -> argparse.ArgumentParser:
         default="error",
         dest="on_success",
         help="behaviour when the run passed: error (default) or credit analysis",
+    )
+    pa.add_argument(
+        "--adaptive",
+        action="store_true",
+        help="sequential CI-targeted stopping (--rollouts becomes the per-step cap)",
+    )
+    pa.add_argument(
+        "--target-ci-width",
+        type=float,
+        default=0.2,
+        dest="target_ci_width",
+        help="adaptive: stop a step once its CI is this narrow (default 0.2)",
     )
     pa.add_argument("--out", help="output report basename (writes .json and .html)")
     pa.add_argument(

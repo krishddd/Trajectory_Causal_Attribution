@@ -48,6 +48,9 @@ def contrastive_attribution(
     rollouts: int,
     *,
     bootstrap_seed: int = 7,
+    adaptive: bool = False,
+    target_ci_width: float = 0.2,
+    min_rollouts: int = 8,
 ) -> List[StepAttribution]:
     """Phase 1: per-step contrastive scores with bootstrap difference intervals.
 
@@ -60,6 +63,11 @@ def contrastive_attribution(
     (``P(fail|ablated) = 1`` ⇒ attribution collapses cleanly to zero). Wilson
     proportion intervals remain available in :mod:`agent_replay.stats` for
     reporting ``P(fail|ablated)`` on its own.
+
+    With ``adaptive`` each step uses sequential stopping (``rollouts`` is the
+    per-step cap): rollouts accrue until the failure-rate interval is narrower
+    than ``target_ci_width``. Decisive steps — the common case, where a step is
+    either clearly pivotal or clearly irrelevant — resolve in far fewer rollouts.
     """
     traj = engine.trajectory
     kept_fails = engine.factual_fail(rollouts=1)
@@ -67,7 +75,13 @@ def contrastive_attribution(
 
     out: List[StepAttribution] = []
     for step in traj.steps:
-        ablated = engine.ablate_from(step.index, rollouts)
+        ablated = engine.ablate_from(
+            step.index,
+            rollouts,
+            adaptive=adaptive,
+            target_ci_width=target_ci_width,
+            min_rollouts=min_rollouts,
+        )
         p_abl = _rate(ablated)
         _, b_low, b_high = bootstrap_diff_interval(
             kept_fails, ablated, seed=bootstrap_seed + step.index
@@ -226,11 +240,17 @@ def attribute(
     repair_candidates: Optional[dict] = None,
     on_success: str = "error",
     pass_context: bool = True,
+    adaptive: bool = False,
+    target_ci_width: float = 0.2,
 ) -> AttributionResult:
     """Run the full attribution pipeline and return an :class:`AttributionResult`.
 
     ``method`` is ``"contrastive"`` (Phase 1 only), ``"shapley"`` (Phase 2 only),
     or ``"both"`` (contrastive localisation + Shapley credit split).
+
+    With ``adaptive`` the contrastive phase uses sequential stopping (``rollouts``
+    becomes the per-step cap and ``target_ci_width`` the precision target),
+    typically cutting rollouts several-fold on decisive steps.
 
     Attribution is only meaningful for a *failing* trajectory. ``on_success``
     controls what happens when the factual run passed:
@@ -276,7 +296,9 @@ def attribute(
     shapley: List[StepAttribution] = []
 
     if method in ("contrastive", "both"):
-        contrastive = contrastive_attribution(engine, rollouts)
+        contrastive = contrastive_attribution(
+            engine, rollouts, adaptive=adaptive, target_ci_width=target_ci_width
+        )
     if method in ("shapley", "both"):
         shapley = shapley_attribution(
             engine, rollouts, permutation_pairs=permutation_pairs, seed=base_seed + 13
