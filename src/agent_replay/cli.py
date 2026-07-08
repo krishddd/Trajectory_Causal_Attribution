@@ -88,6 +88,9 @@ def _print_summary(result: AttributionResult) -> None:
             f"[REPAIR] step {r.step_index}: {r.original_action!r} -> {r.repaired_action!r} "
             f"({status}, minimality {r.minimality:.3f}, P(fail)->{r.p_fail_after:.3f})"
         )
+        if r.valid:
+            print("[GUARD]")
+            print(r.to_guard())
     print("=" * 60)
 
 

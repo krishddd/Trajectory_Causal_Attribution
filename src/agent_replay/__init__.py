@@ -25,7 +25,7 @@ from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunErr
 from .explain import Explanation, explain
 from .pytest_plugin import assert_agent_passes, measure_failure_rate
 from .recorder import AgentContext, record
-from .repair import find_minimal_repair
+from .repair import export_contrastive_pairs, find_minimal_repair
 from .replayer import ReplayContext, ReplayPlan, replay
 from .session import Session
 from .store import CheckpointStore
@@ -61,6 +61,7 @@ __all__ = [
     "NonSerializableStepError",
     "SuccessfulRunError",
     "find_minimal_repair",
+    "export_contrastive_pairs",
     "Trajectory",
     "Step",
     "StepKind",

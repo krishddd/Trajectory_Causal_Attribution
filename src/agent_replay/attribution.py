@@ -238,6 +238,7 @@ def attribute(
     base_seed: int = 1_000,
     repair: bool = False,
     repair_candidates: Optional[dict] = None,
+    repair_propose_fn=None,
     on_success: str = "error",
     pass_context: bool = True,
     adaptive: bool = False,
@@ -350,7 +351,11 @@ def attribute(
         from .repair import find_minimal_repair
 
         result.repair = find_minimal_repair(
-            engine, culprit_index, rollouts=rollouts, candidates=repair_candidates
+            engine,
+            culprit_index,
+            rollouts=rollouts,
+            candidates=repair_candidates,
+            propose_fn=repair_propose_fn,
         )
 
     return result

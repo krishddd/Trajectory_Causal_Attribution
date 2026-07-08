@@ -197,9 +197,29 @@ class Repair:
     p_fail_after: float
     minimality: float
     valid: bool
+    step_name: str = ""
+    step_kind: str = ""
+    p_fail_before: float = 1.0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+    def to_guard(self) -> str:
+        """Emit a deploy-time guard snippet that applies this repair at runtime.
+
+        The snippet is a ready-to-paste hint: when the culprit step reproduces its
+        failing action, substitute the validated minimal repair. It is advisory
+        (the developer adapts it to their framework), turning the causal finding
+        into a concrete recovery action.
+        """
+        label = f"{self.step_kind}:{self.step_name}".strip(":") or f"step {self.step_index}"
+        return (
+            f"# agent-replay guard for {label} "
+            f"(validated: P(fail) {self.p_fail_before:.2f} -> {self.p_fail_after:.2f}, "
+            f"minimality {self.minimality:.2f})\n"
+            f"if step.name == {self.step_name!r} and step.output == {self.original_action!r}:\n"
+            f"    step.output = {self.repaired_action!r}  # minimal counterfactual repair"
+        )
 
 
 @dataclass
