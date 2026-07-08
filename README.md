@@ -262,6 +262,61 @@ the HTML/JSON reports.
 
 ---
 
+## Test your agent (pytest)
+
+Gate CI on agent reliability. `assert_agent_passes` runs the agent many times
+(agents are stochastic — one green run is not a pass), fails the test if the
+failure rate exceeds budget, and on failure puts a counterfactual attribution —
+*which step broke, why, and the minimal fix* — into the test output.
+
+```python
+from agent_replay.pytest_plugin import assert_agent_passes
+
+def test_my_agent():
+    assert_agent_passes(my_agent, {"q": "..."}, my_verifier,
+                        rollouts=40, p_fail_max=0.05,
+                        report_path="agent_failure.html")  # HTML artifact on failure
+```
+
+## Faster, cheaper attribution
+
+`adaptive=True` uses sequential stopping — rollouts accrue only until each step's
+interval is tight enough (decisive steps stop early), typically several-fold
+fewer rollouts with the same verdict:
+
+```python
+result = attribute(traj, agent, verifier, rollouts=200, adaptive=True, target_ci_width=0.2)
+```
+
+## Async agents
+
+`async def` agents just work — `record` / `replay` / `attribute` detect coroutine
+agents and run them through the same pipeline (Shapley, repair, branch-safety
+included):
+
+```python
+async def agent(ctx, q):
+    plan = await ctx.llm("plan", produce=lambda: call_model(q))
+    ...
+traj   = record(agent, {"q": "..."}, session_id="s", verifier=v)   # auto-detected
+result = attribute(traj, agent, v)                                  # sync API, async agent
+```
+
+## Deployable step-wise fixes
+
+The validated repair becomes a runtime guard and training data:
+
+```python
+result = attribute(traj, agent, verifier, repair=True,
+                   repair_propose_fn=my_llm_proposer)   # optional: LLM-proposed candidates
+print(result.repair.to_guard())                         # deploy-time recovery snippet
+
+from agent_replay import export_contrastive_pairs
+export_contrastive_pairs([result], "pairs.jsonl")       # (wrong -> fix) pairs for DPO
+```
+
+---
+
 ## Development
 
 ```bash
