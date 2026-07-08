@@ -24,9 +24,9 @@ from .attribution import attribute
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .explain import Explanation, explain
 from .pytest_plugin import assert_agent_passes, measure_failure_rate
-from .recorder import AgentContext, record
+from .recorder import AgentContext, AsyncAgentContext, arecord, record
 from .repair import export_contrastive_pairs, find_minimal_repair
-from .replayer import ReplayContext, ReplayPlan, replay
+from .replayer import AsyncReplayContext, ReplayContext, ReplayPlan, areplay, replay
 from .session import Session
 from .store import CheckpointStore
 from .types import (
@@ -40,7 +40,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 __all__ = [
     "Session",
@@ -52,9 +52,13 @@ __all__ = [
     "assert_agent_passes",
     "measure_failure_rate",
     "replay",
+    "arecord",
+    "areplay",
     "ReplayPlan",
     "ReplayContext",
+    "AsyncReplayContext",
     "AgentContext",
+    "AsyncAgentContext",
     "AblationEngine",
     "CheckpointStore",
     "AgentReplayError",

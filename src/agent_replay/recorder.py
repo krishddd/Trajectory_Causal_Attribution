@@ -138,6 +138,98 @@ class RecordContext(AgentContext):
         return output
 
 
+class AsyncAgentContext:
+    """Async counterpart of :class:`AgentContext` for ``async def`` agents.
+
+    Exposes awaitable ``llm`` / ``tool`` / ``memory`` whose ``produce`` policy is
+    an async callable (``await produce()``). The matching, hashing and plan
+    semantics are identical to the sync path.
+    """
+
+    def __init__(self, seed: int) -> None:
+        self.rng = random.Random(seed)
+        self.seed = seed
+        self._idx = 0
+
+    async def llm(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
+        return await self._aop(StepKind.LLM, name, produce, inputs, resamplable)
+
+    async def tool(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
+        return await self._aop(StepKind.TOOL, name, produce, inputs, resamplable)
+
+    async def memory(
+        self,
+        name: str,
+        produce: Optional[Callable[[], Any]] = None,
+        *,
+        resamplable: Optional[bool] = None,
+        **inputs: Any,
+    ) -> Any:
+        return await self._aop(StepKind.MEMORY, name, produce, inputs, resamplable)
+
+    async def _aop(
+        self,
+        kind: StepKind,
+        name: str,
+        produce: Optional[Callable[[], Any]],
+        inputs: Dict[str, Any],
+        resamplable: Optional[bool] = None,
+    ) -> Any:
+        raise NotImplementedError
+
+
+class AsyncRecordContext(AsyncAgentContext):
+    """Async recording context: awaits each policy and captures the trajectory."""
+
+    def __init__(self, seed: int, *, strict_serialization: bool = True) -> None:
+        super().__init__(seed)
+        self.steps: List[Step] = []
+        self.strict_serialization = strict_serialization
+
+    async def _aop(
+        self,
+        kind: StepKind,
+        name: str,
+        produce: Optional[Callable[[], Any]],
+        inputs: Dict[str, Any],
+        resamplable: Optional[bool] = None,
+    ) -> Any:
+        idx = self._idx
+        self._idx += 1
+        output = await produce() if produce is not None else None
+        if resamplable is None:
+            resamplable = produce is not None
+        if self.strict_serialization:
+            _check_serializable(kind, name, "inputs", inputs)
+            _check_serializable(kind, name, "output", output)
+        step = Step(
+            index=idx,
+            kind=kind,
+            name=name,
+            inputs=dict(inputs),
+            output=output,
+            resamplable=resamplable,
+        )
+        parent = self.steps[-1].step_hash if self.steps else ""
+        step.compute_hashes(parent)
+        self.steps.append(step)
+        return output
+
+
 def record(
     agent_fn: Callable[..., Any],
     task: Optional[Dict[str, Any]] = None,
@@ -157,6 +249,10 @@ def record(
     call signature. The ambient context is published for the duration of the run
     in either case, so auto-instrumented callables work in both styles.
 
+    ``async def`` agents are detected and run to completion via :func:`arecord`,
+    so async agents flow through the whole (synchronous) attribution pipeline
+    unchanged.
+
     If a ``verifier`` is supplied, the returned result is scored and stored on the
     trajectory so the factual outcome is known without re-running.
 
@@ -164,6 +260,20 @@ def record(
     JSON-serialisable raises :class:`~agent_replay.errors.NonSerializableStepError`
     at record time, rather than silently degrading to a string on store.
     """
+    if _is_async(agent_fn):
+        import asyncio
+
+        return asyncio.run(
+            arecord(
+                agent_fn,
+                task,
+                session_id=session_id,
+                seed=seed,
+                verifier=verifier,
+                strict_serialization=strict_serialization,
+                pass_context=pass_context,
+            )
+        )
     task = dict(task or {})
     ctx = RecordContext(seed, strict_serialization=strict_serialization)
     token = bind_context(ctx)
@@ -181,3 +291,41 @@ def record(
     if verifier is not None:
         traj.outcome_score = float(verifier(result))
     return traj
+
+
+async def arecord(
+    agent_fn: Callable[..., Any],
+    task: Optional[Dict[str, Any]] = None,
+    *,
+    session_id: str,
+    seed: int = 0,
+    verifier: Optional[Callable[[Any], float]] = None,
+    strict_serialization: bool = True,
+    pass_context: bool = True,
+) -> Trajectory:
+    """Async recording: ``await agent_fn(ctx, **task)`` (or ``agent_fn(**task)``)."""
+    task = dict(task or {})
+    ctx = AsyncRecordContext(seed, strict_serialization=strict_serialization)
+    token = bind_context(ctx)
+    try:
+        result = await (agent_fn(ctx, **task) if pass_context else agent_fn(**task))
+    finally:
+        unbind_context(token)
+    traj = Trajectory(session_id=session_id, task=task, steps=ctx.steps, seed=seed, result=result)
+    if verifier is not None:
+        traj.outcome_score = float(verifier(result))
+    return traj
+
+
+def _is_async(fn: Callable[..., Any]) -> bool:
+    """True if calling ``fn`` yields a coroutine (an ``async def`` agent).
+
+    Covers plain ``async def`` functions and ``functools.partial`` wrappers of
+    them; a callable *object* with an async ``__call__`` is detected via its type.
+    """
+    import inspect
+
+    if inspect.iscoroutinefunction(fn):
+        return True
+    dunder_call = inspect.getattr_static(type(fn), "__call__", None)
+    return inspect.iscoroutinefunction(dunder_call)

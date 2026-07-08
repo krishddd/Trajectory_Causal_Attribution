@@ -4,6 +4,42 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.4.0] — Test your agent
+
+The "test your agent" milestone: gate CI on agent reliability, cut attribution
+cost, close the repair loop, and support async agents. See `docs/ANALYSIS.md` §4.
+
+### Added
+- **Pytest plugin (`agent_replay.pytest_plugin`).** `assert_agent_passes(agent,
+  task, verifier, rollouts=N, p_fail_max=0.05)` is a flakiness-aware assertion
+  (agents are stochastic; one green run is not a pass) that, on failure, runs
+  counterfactual attribution and puts the plain-language explanation — which
+  step, why, minimal fix — into the `AssertionError`, optionally writing the HTML
+  report as a CI artifact. Also `measure_failure_rate()` (p_fail + Wilson CI),
+  the `AgentFlakyError` (carries structured results), and `agent_replay_session`
+  / `assert_agent` fixtures registered via a `pytest11` entry point.
+- **Adaptive rollouts.** `attribute(adaptive=True, target_ci_width=0.2)` (and
+  `AblationEngine.run_plan_adaptive`, `contrastive_attribution(adaptive=)`) use
+  sequential stopping — rollouts accrue until the failure-rate interval is tight
+  enough. Measured ~2.6× fewer rollouts on the 6-step mock (more on longer
+  trajectories); the verdict is unchanged. CLI: `--adaptive` / `--target-ci-width`.
+- **Repair v2 — closed-loop step-wise fixes.** A `propose_fn(step, trajectory)`
+  hook lets a user-supplied model propose repair candidates (validated causally,
+  core stays dependency-free); `attribute(repair_propose_fn=)`. `Repair.to_guard()`
+  emits a deploy-time recovery snippet (CLI prints it under `[GUARD]`), and
+  `export_contrastive_pairs(results, path)` writes validated
+  `(rejected → chosen)` JSONL for DPO/preference fine-tuning. `Repair` now carries
+  `step_name` / `step_kind` / `p_fail_before`.
+- **Async agents.** `async def` agents are recorded/replayed/attributed
+  transparently — `record`/`replay` detect coroutine agents and dispatch to the
+  new `arecord`/`areplay` (with `AsyncAgentContext` / `AsyncReplayContext`), so
+  the whole synchronous attribution pipeline (including Shapley, repair, and
+  branch-safe key matching) works on async agents unchanged.
+
+### Changed
+- The replay matching logic is factored into a shared `_decide` used by both the
+  sync and async replay contexts, so they can never drift apart.
+
 ## [0.3.1] — Instrumentation bug-fix audit
 
 ### Fixed
