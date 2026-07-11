@@ -216,6 +216,12 @@ class AsyncReplayContext(AsyncAgentContext):
             return value
         return await produce() if produce is not None else None
 
+    def _value_op(self, name: str, produce: Callable[[], Any]) -> Any:
+        # __now__/__uuid__ are non-resamplable, so _decide always serves the
+        # recorded value; produce() is only reached if the timeline diverged.
+        needs_produce, value = self._m._decide(StepKind.MEMORY, name, {})
+        return produce() if needs_produce else value
+
 
 def replay(
     agent_fn: Callable[..., Any],

@@ -50,6 +50,9 @@ __all__ = [
     "installed",
     "available_frameworks",
     "record_agent",
+    "enable_virtual_time",
+    "disable_virtual_time",
+    "virtual_time",
     "RECIPES",
 ]
 
@@ -264,6 +267,75 @@ RECIPES: Dict[str, List[Tuple[str, str, str]]] = {
 def available_frameworks() -> List[str]:
     """List the framework recipe keys known to :func:`install`."""
     return sorted(RECIPES)
+
+
+# --- deterministic virtual time & entropy -----------------------------------
+
+_TIME_PATCHED: Dict[str, Tuple[Any, str, Any]] = {}
+
+
+def enable_virtual_time() -> None:
+    """Route ``time.time``, ``datetime.now`` and ``uuid.uuid4`` through the context.
+
+    While a run is active these read the recorded value on replay (and record the
+    real value on capture), so *unmodified* agents that call the stdlib clock or
+    uuid become deterministic. When no run is active they call through to the real
+    implementation, so it is safe to leave enabled. Idempotent; reverse with
+    :func:`disable_virtual_time`.
+    """
+    import datetime as _dt
+    import time as _time
+    import uuid as _uuid
+
+    # Capture the true stdlib callables now, before patching, so the no-context
+    # passthrough (and any re-entrancy) never resolves back to the patched ones.
+    real_time = _time.time
+    real_uuid = _uuid.uuid4
+    real_dt_now = _dt.datetime.now
+
+    def clock() -> float:
+        ctx = current_context()
+        return ctx.now() if ctx is not None else real_time()
+
+    def uuid4():
+        ctx = current_context()
+        return _uuid.UUID(ctx.uuid()) if ctx is not None else real_uuid()
+
+    class _VDatetime(_dt.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            ctx = current_context()
+            if ctx is None:
+                return real_dt_now(tz)
+            return _dt.datetime.fromtimestamp(ctx.now(), tz)
+
+    _install_time_patch("time.time", _time, "time", clock)
+    _install_time_patch("uuid.uuid4", _uuid, "uuid4", uuid4)
+    _install_time_patch("datetime.datetime", _dt, "datetime", _VDatetime)
+
+
+def disable_virtual_time() -> None:
+    """Undo :func:`enable_virtual_time`."""
+    for target in list(_TIME_PATCHED):
+        owner, attr, original = _TIME_PATCHED.pop(target)
+        setattr(owner, attr, original)
+
+
+@contextlib.contextmanager
+def virtual_time():
+    """Context manager form of :func:`enable_virtual_time`."""
+    enable_virtual_time()
+    try:
+        yield
+    finally:
+        disable_virtual_time()
+
+
+def _install_time_patch(target: str, owner: Any, attr: str, replacement: Any) -> None:
+    if target in _TIME_PATCHED:
+        return
+    _TIME_PATCHED[target] = (owner, attr, getattr(owner, attr))
+    setattr(owner, attr, replacement)
 
 
 def install(*frameworks: str, strict: bool = False) -> List[str]:

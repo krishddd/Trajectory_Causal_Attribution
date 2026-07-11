@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import json
 import random
+import time
+import uuid
 from typing import Any, Callable, Dict, List, Optional
 
 from ._ambient import bind_context, unbind_context
@@ -72,6 +74,23 @@ class AgentContext:
         """Record/replay a memory operation named ``name``."""
         return self._op(StepKind.MEMORY, name, produce, inputs, resamplable)
 
+    # -- deterministic time & entropy -----------------------------------------
+
+    def now(self) -> float:
+        """Deterministic wall clock: record the real time; replay the recorded time.
+
+        Route ``time.time()``-style reads through this (or auto-instrument them,
+        see :func:`agent_replay.instrument.enable_virtual_time`) so a replayed run
+        sees the same timestamps it recorded — otherwise resampled paths drift
+        from wall-clock and any recorded output embedding a timestamp would change
+        its idempotency key across runs.
+        """
+        return self._op(StepKind.MEMORY, "__now__", _real_now, {}, False)
+
+    def uuid(self) -> str:
+        """Deterministic uuid4 (string): record a real uuid; replay the recorded one."""
+        return self._op(StepKind.MEMORY, "__uuid__", _real_uuid, {}, False)
+
     # -- subclass hook --------------------------------------------------------
 
     def _op(
@@ -83,6 +102,21 @@ class AgentContext:
         resamplable: Optional[bool] = None,
     ) -> Any:
         raise NotImplementedError
+
+
+# Bound at import (before any virtual-time patching) so ctx.now()/ctx.uuid()
+# always read the true stdlib clock/entropy, even while instrument has patched
+# ``time.time`` / ``uuid.uuid4`` to route through the context (avoids recursion).
+_TRUE_TIME = time.time
+_TRUE_UUID = uuid.uuid4
+
+
+def _real_now() -> float:
+    return _TRUE_TIME()
+
+
+def _real_uuid() -> str:
+    return str(_TRUE_UUID())
 
 
 def _check_serializable(kind: StepKind, name: str, label: str, value: Any) -> None:
@@ -191,6 +225,19 @@ class AsyncAgentContext:
     ) -> Any:
         raise NotImplementedError
 
+    # Deterministic time/entropy are instantaneous, so they stay synchronous even
+    # on the async context (no ``await`` needed).
+    def now(self) -> float:
+        """Deterministic wall clock (see :meth:`AgentContext.now`)."""
+        return self._value_op("__now__", _real_now)
+
+    def uuid(self) -> str:
+        """Deterministic uuid4 string (see :meth:`AgentContext.uuid`)."""
+        return self._value_op("__uuid__", _real_uuid)
+
+    def _value_op(self, name: str, produce: Callable[[], Any]) -> Any:
+        raise NotImplementedError
+
 
 class AsyncRecordContext(AsyncAgentContext):
     """Async recording context: awaits each policy and captures the trajectory."""
@@ -223,6 +270,20 @@ class AsyncRecordContext(AsyncAgentContext):
             inputs=dict(inputs),
             output=output,
             resamplable=resamplable,
+        )
+        parent = self.steps[-1].step_hash if self.steps else ""
+        step.compute_hashes(parent)
+        self.steps.append(step)
+        return output
+
+    def _value_op(self, name: str, produce: Callable[[], Any]) -> Any:
+        idx = self._idx
+        self._idx += 1
+        output = produce()
+        if self.strict_serialization:
+            _check_serializable(StepKind.MEMORY, name, "output", output)
+        step = Step(
+            index=idx, kind=StepKind.MEMORY, name=name, inputs={}, output=output, resamplable=False
         )
         parent = self.steps[-1].step_hash if self.steps else ""
         step.compute_hashes(parent)
