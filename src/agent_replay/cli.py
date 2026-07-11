@@ -281,6 +281,13 @@ def cmd_branches(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    from .serve import serve
+
+    serve(args.db, host=args.host, port=args.port)
+    return 0
+
+
 def cmd_faithfulness(args: argparse.Namespace) -> int:
     from .faithfulness import faithfulness
 
@@ -429,6 +436,12 @@ def build_parser() -> argparse.ArgumentParser:
     pfa.add_argument("--rollouts", type=int, default=40)
     pfa.add_argument("--faithful-threshold", type=float, default=0.1, dest="faithful_threshold")
     pfa.set_defaults(func=cmd_faithfulness)
+
+    ps = sub.add_parser("serve", help="browse recorded sessions in the Multiverse Console")
+    ps.add_argument("--db", required=True)
+    ps.add_argument("--host", default="127.0.0.1")
+    ps.add_argument("--port", type=int, default=8000)
+    ps.set_defaults(func=cmd_serve)
 
     return p
 

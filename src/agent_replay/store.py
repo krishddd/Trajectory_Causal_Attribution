@@ -60,9 +60,12 @@ CREATE TABLE IF NOT EXISTS attributions (
 class CheckpointStore:
     """A thin, transactional wrapper over a SQLite database file."""
 
-    def __init__(self, path: str = ":memory:") -> None:
+    def __init__(self, path: str = ":memory:", *, check_same_thread: bool = True) -> None:
         self.path = path
-        self._conn = sqlite3.connect(path)
+        # ``check_same_thread=False`` lets a read-only consumer (e.g. the serve
+        # console, whose HTTPServer handles requests on a different thread than
+        # the one that opened the store) share the connection safely.
+        self._conn = sqlite3.connect(path, check_same_thread=check_same_thread)
         self._conn.execute("PRAGMA foreign_keys = ON")
         self._conn.executescript(_SCHEMA)
         self._migrate()
