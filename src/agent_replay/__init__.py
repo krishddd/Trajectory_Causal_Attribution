@@ -23,6 +23,7 @@ from .ablation import AblationEngine
 from .attribution import attribute
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .explain import Explanation, explain
+from .multiverse import afork, diff, fork, resume
 from .pytest_plugin import assert_agent_passes, measure_failure_rate
 from .recorder import AgentContext, AsyncAgentContext, arecord, record
 from .repair import export_contrastive_pairs, find_minimal_repair
@@ -54,6 +55,10 @@ __all__ = [
     "replay",
     "arecord",
     "areplay",
+    "fork",
+    "afork",
+    "resume",
+    "diff",
     "ReplayPlan",
     "ReplayContext",
     "AsyncReplayContext",

@@ -238,6 +238,68 @@ def cmd_list(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_fork(args: argparse.Namespace) -> int:
+    from .multiverse import UNSET, fork
+
+    agent_fn = _load_entrypoint(args.agent)
+    verifier = _load_entrypoint(args.verifier) if args.verifier else None
+    do = json.loads(args.do) if args.do is not None else UNSET
+    with CheckpointStore(args.db) as store:
+        parent = store.load_trajectory(args.session)
+        child = fork(
+            agent_fn,
+            parent,
+            args.at_step,
+            do=do,
+            remove=args.remove,
+            seed=args.seed,
+            session_id=args.out_session,
+            verifier=verifier,
+        )
+        store.save_trajectory(child)
+    score = "n/a" if child.outcome_score is None else f"{child.outcome_score:.3f}"
+    print(
+        f"Forked '{args.session}' at step {args.at_step} -> '{child.session_id}' "
+        f"({child.meta['intervention']}, {len(child)} steps, outcome {score})"
+    )
+    return 0
+
+
+def cmd_branches(args: argparse.Namespace) -> int:
+    with CheckpointStore(args.db) as store:
+        kids = store.branches(args.session)
+        if not kids:
+            print("(no branches)")
+            return 0
+        for sid in kids:
+            traj = store.load_trajectory(sid)
+            score = "n/a" if traj.outcome_score is None else f"{traj.outcome_score:.3f}"
+            print(
+                f"{sid}\tfork@{traj.meta.get('fork_step')}\t"
+                f"{traj.meta.get('intervention')}\toutcome {score}"
+            )
+    return 0
+
+
+def cmd_diff(args: argparse.Namespace) -> int:
+    from .multiverse import diff
+
+    with CheckpointStore(args.db) as store:
+        a = store.load_trajectory(args.a)
+        b = store.load_trajectory(args.b)
+    d = diff(a, b)
+    print(
+        f"diff {args.a} vs {args.b}: first divergence at step {d['first_divergence']}, "
+        f"{d['n_diff']} differing step(s)"
+    )
+    for s in d["steps"]:
+        if not s["same"]:
+            av = s["a"]["output"] if s["a"] else "<none>"
+            bv = s["b"]["output"] if s["b"] else "<none>"
+            print(f"  step {s['index']}: {av!r} -> {bv!r}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="agent-replay",
@@ -317,6 +379,28 @@ def build_parser() -> argparse.ArgumentParser:
     prep.add_argument("--json", required=True, help="path to a JSON attribution report")
     prep.add_argument("--out", help="output HTML path")
     prep.set_defaults(func=cmd_report)
+
+    pf = sub.add_parser(
+        "fork", parents=[common_agent], help="fork a recorded run into a counterfactual branch"
+    )
+    pf.add_argument("--at-step", type=int, required=True, dest="at_step")
+    pf.add_argument("--do", help="JSON value to force the step's action to (do-intervention)")
+    pf.add_argument("--remove", action="store_true", help="drop the step instead of forcing it")
+    pf.add_argument("--verifier", help="verifier entrypoint module:function")
+    pf.add_argument("--seed", type=int, default=0)
+    pf.add_argument("--out-session", dest="out_session", help="session id for the new branch")
+    pf.set_defaults(func=cmd_fork)
+
+    pb = sub.add_parser("branches", help="list branches forked from a session")
+    pb.add_argument("--db", required=True)
+    pb.add_argument("--session", required=True)
+    pb.set_defaults(func=cmd_branches)
+
+    pd = sub.add_parser("diff", help="diff two trajectories step-by-step")
+    pd.add_argument("--db", required=True)
+    pd.add_argument("--a", required=True, help="session id A")
+    pd.add_argument("--b", required=True, help="session id B")
+    pd.set_defaults(func=cmd_diff)
 
     return p
 

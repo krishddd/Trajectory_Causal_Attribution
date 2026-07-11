@@ -191,6 +191,19 @@ class CheckpointStore:
         rows = self._conn.execute("SELECT session_id FROM sessions ORDER BY created_at").fetchall()
         return [r[0] for r in rows]
 
+    def branches(self, session_id: str) -> List[str]:
+        """List sessions forked from ``session_id`` (children in the multiverse).
+
+        Reads the ``parent_session`` link that :func:`agent_replay.fork` writes into
+        each child's ``meta`` — no schema change needed (queried via ``json_extract``).
+        """
+        rows = self._conn.execute(
+            "SELECT session_id FROM sessions "
+            "WHERE json_extract(meta_json, '$.parent_session') = ? ORDER BY created_at",
+            (session_id,),
+        ).fetchall()
+        return [r[0] for r in rows]
+
     def has_session(self, session_id: str) -> bool:
         row = self._conn.execute(
             "SELECT 1 FROM sessions WHERE session_id = ?", (session_id,)
