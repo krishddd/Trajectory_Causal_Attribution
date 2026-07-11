@@ -57,6 +57,17 @@ class Step:
         """
         return content_hash({"kind": self.kind.value, "name": self.name, "inputs": self.inputs})
 
+    # The Merkle node in the research (deck slide 7) is parent + action hash +
+    # output hash. ``op_key`` is the action hash; ``output_hash`` is its counterpart,
+    # letting callers ask "same decision, different observation?" and diff cheaply.
+    def action_hash(self) -> str:
+        """Alias for :meth:`op_key` — the content hash of the action (kind+name+inputs)."""
+        return self.op_key()
+
+    def output_hash(self) -> str:
+        """Content hash of the recorded output (the observation)."""
+        return content_hash(self.output)
+
     def compute_hashes(self, parent_hash: str) -> None:
         """Populate the Merkle-style ``parent_hash`` / ``step_hash`` fields.
 
@@ -66,7 +77,7 @@ class Step:
         document, reduced to the essentials).
         """
         self.parent_hash = parent_hash
-        self.step_hash = link_hash(parent_hash, self.op_key(), content_hash(self.output))
+        self.step_hash = link_hash(parent_hash, self.action_hash(), self.output_hash())
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)

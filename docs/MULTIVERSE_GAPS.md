@@ -116,3 +116,13 @@ diffing (Gap 1). Trivial store migration.
 4. **Gap 4** (serve UI w/ branch graph) — already v0.5 roadmap.
 5. **Gap 3** (faithfulness) — differentiating research feature.
 6. Gaps 6–7 — opportunistic.
+
+## Status (v0.5.0)
+- ✅ Gap 1 — `multiverse.fork`/`afork`/`diff`, `CheckpointStore.branches`, CLI.
+- ✅ Gap 2 — `ctx.now`/`ctx.uuid`, `instrument.enable_virtual_time`.
+- ✅ Gap 3 — `faithfulness()` + quadrant classification, CLI.
+- ✅ Gap 4 — `serve.py` Multiverse Console, `agent-replay serve`.
+- ✅ Gap 5 — `multiverse.resume`.
+- ✅ Gap 7 — `Step.action_hash`/`output_hash`.
+- ⬜ Gap 6 — per-step drift/entropy curve (optional; needs an intermediate-state
+  scorer). Still open.

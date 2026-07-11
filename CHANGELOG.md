@@ -4,6 +4,37 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.5.0] — The Multiverse
+
+Implements the gaps found against the *Architecting the Agent Multiverse* deck
+(see `docs/MULTIVERSE_GAPS.md`): first-class forking, deterministic time/entropy,
+faithfulness, and a console.
+
+### Added
+- **Multiverse forking (Gap 1).** `fork(agent, traj, at_step, do=/remove=)` records
+  a complete counterfactual child trajectory — held prefix served from the parent
+  cassette, the intervened step, then the live continuation — with `meta` linking
+  `parent_session`/`fork_step`/`intervention`. `afork` (async), `diff(a, b)` (first
+  divergence + per-step state diff), `CheckpointStore.branches(session)`, and CLI
+  `fork` / `branches` / `diff`. Shared prefixes dedupe through the CAS blob store.
+- **Durable resume (Gap 5).** `resume(agent, traj)` fast-forwards the recorded
+  prefix and continues the run live beyond the recorded horizon.
+- **Deterministic virtual time & entropy (Gap 2).** `ctx.now()` / `ctx.uuid()`
+  (sync on both contexts) record real values as non-resamplable steps and replay
+  them; `instrument.enable_virtual_time()` / `virtual_time()` patch `time.time`,
+  `datetime.now` and `uuid.uuid4` so unmodified agents become deterministic.
+- **Step-level faithfulness (Gap 3).** `faithfulness(traj, agent, verifier)` masks
+  each reasoning step and measures the outcome shift, classifying runs into
+  correct/wrong × faithful/unfaithful and flagging correct-unfaithful (post-hoc
+  rationalization) and wrong-faithful (best debugging signal). CLI `faithfulness`.
+- **Multiverse Console (Gap 4).** `agent-replay serve` — a zero-dependency
+  `http.server` UI to browse sessions, per-step frozen state, and the branch graph.
+- **Action/output hashes on the node (Gap 7).** `Step.action_hash()` /
+  `Step.output_hash()` expose the deck's Merkle node structure.
+
+### Changed
+- `CheckpointStore(check_same_thread=...)` for the read-only console.
+
 ## [0.4.0] — Test your agent
 
 The "test your agent" milestone: gate CI on agent reliability, cut attribution
