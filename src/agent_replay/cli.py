@@ -281,6 +281,24 @@ def cmd_branches(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_faithfulness(args: argparse.Namespace) -> int:
+    from .faithfulness import faithfulness
+
+    agent_fn = _load_entrypoint(args.agent)
+    verifier = _load_entrypoint(args.verifier)
+    with CheckpointStore(args.db) as store:
+        traj = store.load_trajectory(args.session)
+    result = faithfulness(
+        traj,
+        agent_fn,
+        verifier,
+        rollouts=args.rollouts,
+        faithful_threshold=args.faithful_threshold,
+    )
+    print(result.to_text())
+    return 0
+
+
 def cmd_diff(args: argparse.Namespace) -> int:
     from .multiverse import diff
 
@@ -401,6 +419,16 @@ def build_parser() -> argparse.ArgumentParser:
     pd.add_argument("--a", required=True, help="session id A")
     pd.add_argument("--b", required=True, help="session id B")
     pd.set_defaults(func=cmd_diff)
+
+    pfa = sub.add_parser(
+        "faithfulness",
+        parents=[common_agent],
+        help="score whether the reasoning causally drives the outcome",
+    )
+    pfa.add_argument("--verifier", required=True, help="verifier entrypoint module:function")
+    pfa.add_argument("--rollouts", type=int, default=40)
+    pfa.add_argument("--faithful-threshold", type=float, default=0.1, dest="faithful_threshold")
+    pfa.set_defaults(func=cmd_faithfulness)
 
     return p
 

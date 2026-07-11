@@ -23,6 +23,7 @@ from .ablation import AblationEngine
 from .attribution import attribute
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .explain import Explanation, explain
+from .faithfulness import FaithfulnessResult, faithfulness
 from .multiverse import afork, diff, fork, resume
 from .pytest_plugin import assert_agent_passes, measure_failure_rate
 from .recorder import AgentContext, AsyncAgentContext, arecord, record
@@ -49,6 +50,8 @@ __all__ = [
     "attribute",
     "explain",
     "Explanation",
+    "faithfulness",
+    "FaithfulnessResult",
     "instrument",
     "assert_agent_passes",
     "measure_failure_rate",
