@@ -2,7 +2,7 @@
 
 import pytest
 
-from agent_replay.mock_agent import DEFAULT_FAIL_STEP, buggy_agent, make_recording, verifier
+from _demo_agent import DEFAULT_FAIL_STEP, buggy_agent, make_recording, verifier
 
 # Make the plugin's fixtures available under PYTHONPATH (when the pytest11 entry
 # point is not registered because the package is not pip-installed). When it *is*

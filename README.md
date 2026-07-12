@@ -76,21 +76,26 @@ every counterfactual rollout; that is what makes attribution possible.
 
 ## The CLI
 
+The CLI points at **your own** agent and verifier via `module:function`
+entrypoints — the package ships no bundled agents. Given a `myproject/agents.py`
+that exposes an agent (routing its work through `ctx`, as in the Quickstart) and a
+verifier:
+
 ```bash
 # 1. record a factual run into a checkpoint store
 agent-replay record --db demo.sqlite --session run1 \
-    --agent agent_replay.mock_agent:buggy_agent \
-    --verifier agent_replay.mock_agent:verifier --seed 1
+    --agent myproject.agents:support_agent \
+    --verifier myproject.agents:answered_correctly --seed 1
 
 # 2. deterministically replay it (fast-forward through the recorded decisions)
 agent-replay replay --db demo.sqlite --session run1 \
-    --agent agent_replay.mock_agent:buggy_agent \
-    --verifier agent_replay.mock_agent:verifier
+    --agent myproject.agents:support_agent \
+    --verifier myproject.agents:answered_correctly
 
 # 3. attribute the failure + generate reports + propose a repair
 agent-replay attribute --db demo.sqlite --session run1 \
-    --agent agent_replay.mock_agent:buggy_agent \
-    --verifier agent_replay.mock_agent:verifier \
+    --agent myproject.agents:support_agent \
+    --verifier myproject.agents:answered_correctly \
     --rollouts 60 --method both --repair --out report
 
 # 4. regenerate the HTML report from a saved JSON report

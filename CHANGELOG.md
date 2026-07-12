@@ -23,7 +23,12 @@ library now covers the deck's full vision.
   looks recoverable). `DriftResult.to_text()` / `.to_dict()` / `.to_html()` (a
   self-contained SVG curve). CLI `agent-replay drift --state-scorer …`.
 - `stats.binary_entropy(p)` — Bernoulli entropy in bits, `[0, 1]`.
-- `mock_agent.health_scorer` — a reference intermediate-state scorer.
+
+### Changed
+- **The package ships zero bundled agents.** The demo/reference agent formerly at
+  `agent_replay.mock_agent` has been removed from the installed package and moved
+  into the test tree — `agent-replay` is now purely a tool you point at *your own*
+  agent + verifier. README/CLI docs updated to show integrating your own agent.
 
 ## [0.5.0] — The Multiverse
 

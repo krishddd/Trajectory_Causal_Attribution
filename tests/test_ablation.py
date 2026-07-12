@@ -1,7 +1,7 @@
 """Tests for the ablation engine (stochastic run-forward)."""
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.ablation import AblationEngine
-from agent_replay.mock_agent import buggy_agent, verifier
 
 
 def _engine(recording):

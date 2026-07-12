@@ -2,9 +2,9 @@
 
 import json
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.ablation import AblationEngine
 from agent_replay.attribution import attribute
-from agent_replay.mock_agent import buggy_agent, verifier
 from agent_replay.repair import export_contrastive_pairs, find_minimal_repair
 
 

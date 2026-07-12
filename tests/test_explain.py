@@ -1,5 +1,6 @@
 """Explainability layer: traceable narrative over an attribution result."""
 
+from _demo_agent import buggy_agent, make_recording, verifier
 from agent_replay.attribution import attribute
 from agent_replay.explain import (
     ROLE_DECISIVE,
@@ -7,7 +8,6 @@ from agent_replay.explain import (
     Explanation,
     explain,
 )
-from agent_replay.mock_agent import buggy_agent, make_recording, verifier
 
 
 def _result_and_traj():

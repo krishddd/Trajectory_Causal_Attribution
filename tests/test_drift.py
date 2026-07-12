@@ -2,8 +2,8 @@
 
 import math
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.drift import DriftResult, drift
-from agent_replay.mock_agent import buggy_agent, verifier
 from agent_replay.recorder import record
 from agent_replay.stats import binary_entropy
 

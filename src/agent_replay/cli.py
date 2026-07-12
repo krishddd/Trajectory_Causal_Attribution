@@ -5,14 +5,17 @@ the agent under counterfactual plans, the ``record``/``replay``/``attribute``
 commands need a handle to the user's agent (and verifier), supplied as
 ``module:function`` entrypoint specifications.
 
+``module:function`` points at *your own* agent and verifier — the package ships
+no bundled agents.
+
 Example
 -------
     agent-replay record   --db demo.sqlite --session demo \\
-        --agent agent_replay.mock_agent:buggy_agent \\
-        --verifier agent_replay.mock_agent:verifier --seed 1
+        --agent myproject.agents:support_agent \\
+        --verifier myproject.agents:answered_correctly --seed 1
     agent-replay attribute --db demo.sqlite --session demo \\
-        --agent agent_replay.mock_agent:buggy_agent \\
-        --verifier agent_replay.mock_agent:verifier \\
+        --agent myproject.agents:support_agent \\
+        --verifier myproject.agents:answered_correctly \\
         --rollouts 60 --method both --repair --out report
 """
 

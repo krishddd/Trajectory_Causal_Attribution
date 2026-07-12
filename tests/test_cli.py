@@ -4,8 +4,8 @@ import json
 
 from agent_replay.cli import main
 
-AGENT = "agent_replay.mock_agent:buggy_agent"
-VERIFIER = "agent_replay.mock_agent:verifier"
+AGENT = "_demo_agent:buggy_agent"
+VERIFIER = "_demo_agent:verifier"
 
 
 def test_record_replay_attribute_flow(tmp_path, capsys):
@@ -168,7 +168,7 @@ def test_drift_command(tmp_path, capsys):
             "--verifier",
             VERIFIER,
             "--state-scorer",
-            "agent_replay.mock_agent:health_scorer",
+            "_demo_agent:health_scorer",
             "--rollouts",
             "15",
             "--out",

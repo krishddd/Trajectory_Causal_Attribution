@@ -1,8 +1,8 @@
 """Adaptive (sequential-stopping) rollouts: same verdict, fewer rollouts."""
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.ablation import AblationEngine
 from agent_replay.attribution import attribute, contrastive_attribution
-from agent_replay.mock_agent import buggy_agent, verifier
 from agent_replay.replayer import ReplayPlan
 
 

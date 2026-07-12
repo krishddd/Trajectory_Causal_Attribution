@@ -1,12 +1,12 @@
 """Step-level faithfulness: the correct/wrong x faithful/unfaithful quadrants."""
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.faithfulness import (
     CORRECT_FAITHFUL,
     CORRECT_UNFAITHFUL,
     WRONG_FAITHFUL,
     faithfulness,
 )
-from agent_replay.mock_agent import buggy_agent, verifier
 from agent_replay.recorder import record
 
 

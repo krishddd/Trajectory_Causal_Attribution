@@ -1,7 +1,7 @@
 """Tests for recording and hashing."""
 
+from _demo_agent import DEFAULT_N_STEPS
 from agent_replay.hashing import content_hash, link_hash
-from agent_replay.mock_agent import DEFAULT_N_STEPS
 from agent_replay.recorder import record
 from agent_replay.types import StepKind
 

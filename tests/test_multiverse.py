@@ -2,7 +2,7 @@
 
 import asyncio
 
-from agent_replay.mock_agent import buggy_agent, verifier
+from _demo_agent import buggy_agent, verifier
 from agent_replay.multiverse import afork, diff, fork, resume
 from agent_replay.store import CheckpointStore
 
@@ -96,8 +96,8 @@ def test_cli_fork_branches_diff(tmp_path, capsys):
     from agent_replay.cli import main
 
     db = str(tmp_path / "cli_mv.sqlite")
-    AGENT = "agent_replay.mock_agent:buggy_agent"
-    VERIFIER = "agent_replay.mock_agent:verifier"
+    AGENT = "_demo_agent:buggy_agent"
+    VERIFIER = "_demo_agent:verifier"
     main(
         [
             "record",

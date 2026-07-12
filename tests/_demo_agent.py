@@ -1,10 +1,14 @@
-"""A reference mock agent with a known, injectable failure.
+"""Test-only fixture agent with a known, injectable failure.
 
-This is the ground-truth fixture for the whole library: a deterministic-yet-
-stochastic multi-step agent whose failure originates at exactly one step. Because
-we *know* the culprit, the test-suite can assert that counterfactual attribution
-localises it, and the CLI/demo have something meaningful to attribute without a
-real LLM or API key.
+This module is **not** part of the shipped ``agent_replay`` package — it lives in
+the test tree so the installed tool ships zero bundled agents. It is the
+ground-truth fixture the suite attributes against: a deterministic-yet-stochastic
+multi-step agent whose failure originates at exactly one step, so tests can assert
+that counterfactual attribution/drift/faithfulness localise it.
+
+Because it is importable as a plain top-level module during the test run (pytest
+puts ``tests/`` on ``sys.path``), it also backs the CLI tests via the
+``_demo_agent:buggy_agent`` entrypoint string.
 
 Failure model
 -------------
@@ -14,12 +18,6 @@ except the ``fail_step``, whose policy draws "BAD" with probability
 ``fail_step`` (a genuine failure). Once "BAD" is produced the run is doomed:
 downstream steps cannot undo it. The verifier fails the run iff any step emitted
 "BAD".
-
-Why this yields a clean point-of-commitment: resampling step ``i <= fail_step``
-re-rolls the fatal step and can rescue the run, so its attribution interval
-excludes zero; resampling ``i > fail_step`` leaves the already-"BAD" fatal step
-untouched, so the failure is locked in and attribution collapses to zero. The
-*latest* significant step is therefore exactly ``fail_step``.
 """
 
 from __future__ import annotations
@@ -74,22 +72,22 @@ def verifier(result: Dict[str, Any]) -> float:
 
 
 def health_scorer(step: Any) -> float:
-    """Reference intermediate-state scorer for the drift curve (Gap 6).
+    """Intermediate-state scorer used by the drift-curve tests.
 
     Reports high alignment health for a benign "OK" step and low health once the
     agent commits a "BAD" action — the kind of per-step health signal the outcome
-    verifier cannot see, letting :func:`agent_replay.drift` chart the decay.
+    verifier cannot see, letting ``agent_replay.drift`` chart the decay.
     """
     return 0.2 if getattr(step, "output", None) == "BAD" else 0.95
 
 
 def make_recording(session_id: str = "mock-demo", seed: int = FACTUAL_SEED):
-    """Record one factual, *failing* run of the mock agent.
+    """Record one factual, *failing* run of the fixture agent.
 
     Falls back to searching for a failing seed so the recording is guaranteed to
     be an actual failure even if the defaults are changed.
     """
-    from .recorder import record
+    from agent_replay.recorder import record
 
     traj = record(
         buggy_agent, {"task": "demo-task"}, session_id=session_id, seed=seed, verifier=verifier

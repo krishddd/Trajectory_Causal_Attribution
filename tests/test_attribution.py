@@ -6,6 +6,7 @@ agent, and does not fall for the butterfly-effect confound that inflates early
 steps' raw scores.
 """
 
+from _demo_agent import buggy_agent, verifier
 from agent_replay.ablation import AblationEngine
 from agent_replay.attribution import (
     attribute,
@@ -13,7 +14,6 @@ from agent_replay.attribution import (
     point_of_commitment,
     shapley_attribution,
 )
-from agent_replay.mock_agent import buggy_agent, verifier
 
 
 def _engine(recording):

@@ -3,7 +3,7 @@
 import threading
 import urllib.request
 
-from agent_replay.mock_agent import buggy_agent, verifier
+from _demo_agent import buggy_agent, verifier
 from agent_replay.multiverse import fork
 from agent_replay.serve import make_server, render_index, render_session
 from agent_replay.store import CheckpointStore
