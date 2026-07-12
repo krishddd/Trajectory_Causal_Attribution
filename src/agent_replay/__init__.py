@@ -21,6 +21,7 @@ from __future__ import annotations
 from . import instrument
 from .ablation import AblationEngine
 from .attribution import attribute
+from .drift import DriftPoint, DriftResult, drift
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
 from .explain import Explanation, explain
 from .faithfulness import FaithfulnessResult, faithfulness
@@ -42,7 +43,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = [
     "Session",
@@ -52,6 +53,9 @@ __all__ = [
     "Explanation",
     "faithfulness",
     "FaithfulnessResult",
+    "drift",
+    "DriftResult",
+    "DriftPoint",
     "instrument",
     "assert_agent_passes",
     "measure_failure_rate",

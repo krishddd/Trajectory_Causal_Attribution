@@ -302,6 +302,44 @@ traj   = record(agent, {"q": "..."}, session_id="s", verifier=v)   # auto-detect
 result = attribute(traj, agent, v)                                  # sync API, async agent
 ```
 
+## The Multiverse: fork, resume, diff, faithfulness, drift
+
+Beyond attributing a single failure, agent-replay realizes the *Agent Multiverse*
+vision at the application level (see [`docs/MULTIVERSE_GAPS.md`](docs/MULTIVERSE_GAPS.md)):
+
+```python
+from agent_replay import fork, resume, diff, faithfulness, drift
+
+# Fork an alternate timeline at step 3 (force or remove the step's action),
+# recorded as a first-class child branch (shared prefix deduped via the CAS store).
+alt = fork(agent, traj, at_step=3, do="OK", session_id="fixed")
+print(diff(traj, alt)["first_divergence"])          # where the timelines split
+
+# Durable resume: fast-forward the recorded prefix, continue live past the horizon.
+live = resume(agent, traj)
+
+# Step-level faithfulness: does the reasoning actually drive the answer?
+fr = faithfulness(traj, agent, verifier)
+print(fr.quadrant)      # correct/wrong x faithful/unfaithful; flags post-hoc rationalization
+
+# Drift / entropy-of-autonomy curve: chart a run's health as it unfolds.
+dr = drift(traj, agent, verifier, state_scorer=my_health_fn)   # state_scorer optional
+print(dr.commitment_index)      # step where the outcome's fate seals (entropy collapses)
+dr.to_html("drift.html")        # standalone SVG curve
+```
+
+`drift` needs only the outcome verifier for the entropy curve (how *open* the run's
+fate still is at each step); an optional `state_scorer(step) -> [0,1]` adds an
+alignment-health overlay and flags **silent decay** — internal health degrading
+before the outcome reflects it. Browse it all in the zero-dependency console:
+
+```bash
+agent-replay serve --db demo.sqlite         # sessions, frozen per-step state, branch graph
+agent-replay fork  --db demo.sqlite --session run1 --agent … --at-step 3 --do '"OK"'
+agent-replay drift --db demo.sqlite --session run1 --agent … --verifier … \
+    --state-scorer mypkg:health --out drift.html
+```
+
 ## Deployable step-wise fixes
 
 The validated repair becomes a runtime guard and training data:

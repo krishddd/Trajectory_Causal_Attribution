@@ -90,3 +90,17 @@ def _percentile(sorted_xs: Sequence[float], q: float) -> float:
 def mean(xs: Sequence[float]) -> float:
     """Public arithmetic mean helper (returns 0.0 for an empty sequence)."""
     return _mean(xs)
+
+
+def binary_entropy(p: float) -> float:
+    """Shannon entropy (in bits) of a Bernoulli(``p``) outcome, in ``[0, 1]``.
+
+    ``H(p) = -p*log2(p) - (1-p)*log2(1-p)``, with the usual ``0*log0 = 0``
+    convention. Peaks at ``1.0`` when ``p == 0.5`` (maximally uncertain outcome)
+    and is ``0.0`` at ``p in {0, 1}`` (the outcome is committed). This is the
+    "entropy of autonomy" the drift curve tracks: how much of a run's fate is
+    still open at a given step.
+    """
+    if p <= 0.0 or p >= 1.0:
+        return 0.0
+    return -(p * math.log2(p) + (1.0 - p) * math.log2(1.0 - p))

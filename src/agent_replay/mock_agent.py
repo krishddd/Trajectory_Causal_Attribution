@@ -73,6 +73,16 @@ def verifier(result: Dict[str, Any]) -> float:
     return 1.0 if result.get("ok", False) else 0.0
 
 
+def health_scorer(step: Any) -> float:
+    """Reference intermediate-state scorer for the drift curve (Gap 6).
+
+    Reports high alignment health for a benign "OK" step and low health once the
+    agent commits a "BAD" action — the kind of per-step health signal the outcome
+    verifier cannot see, letting :func:`agent_replay.drift` chart the decay.
+    """
+    return 0.2 if getattr(step, "output", None) == "BAD" else 0.95
+
+
 def make_recording(session_id: str = "mock-demo", seed: int = FACTUAL_SEED):
     """Record one factual, *failing* run of the mock agent.
 

@@ -10,7 +10,7 @@ context to implement each. Companions: `HANDOFF.md`, `ANALYSIS.md`.
 | # | Slide subject | Status in v0.4.0 |
 |---|---|---|
 | 1 | Multiverse DAG of forked executions | ⚠️ partial — see Gap 1 |
-| 2 | Entropy of autonomy (alignment decay over 70h) | ⚠️ motivation; see Gap 6 |
+| 2 | Entropy of autonomy (alignment decay over 70h) | ✅ `drift()` entropy/health curve — Gap 6 |
 | 3 | Diagnostic trap (14% LLM-judge; hand vs brain) | ✅ the library's premise |
 | 4 | Execution-as-Code ("model may change, history must not") | ✅ cassette + seeds |
 | 5 | Workflow/Activity dichotomy, event ledger, replay mode | ✅ record/replay; ⚠️ resume — Gap 5 |
@@ -117,12 +117,18 @@ diffing (Gap 1). Trivial store migration.
 5. **Gap 3** (faithfulness) — differentiating research feature.
 6. Gaps 6–7 — opportunistic.
 
-## Status (v0.5.0)
+## Status (v0.6.0) — deck fully covered
 - ✅ Gap 1 — `multiverse.fork`/`afork`/`diff`, `CheckpointStore.branches`, CLI.
 - ✅ Gap 2 — `ctx.now`/`ctx.uuid`, `instrument.enable_virtual_time`.
 - ✅ Gap 3 — `faithfulness()` + quadrant classification, CLI.
 - ✅ Gap 4 — `serve.py` Multiverse Console, `agent-replay serve`.
 - ✅ Gap 5 — `multiverse.resume`.
+- ✅ Gap 6 — `drift()` per-step entropy-of-autonomy curve + optional
+  intermediate-state `state_scorer` alignment-health overlay, silent-decay
+  detection, `DriftResult.to_html` SVG chart, CLI `drift`. `stats.binary_entropy`.
 - ✅ Gap 7 — `Step.action_hash`/`output_hash`.
-- ⬜ Gap 6 — per-step drift/entropy curve (optional; needs an intermediate-state
-  scorer). Still open.
+
+Every slide subject in the deck now maps to a shipped capability. Gap 6 resolved
+its "needs an intermediate-state scorer" caveat by (a) providing the
+`state_scorer` hook for callers who have one and (b) always charting the
+verifier-only entropy-of-autonomy curve when they don't.

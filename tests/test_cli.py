@@ -137,6 +137,51 @@ def test_list_command(tmp_path, capsys):
     assert "steps" in out
 
 
+def test_drift_command(tmp_path, capsys):
+    db = str(tmp_path / "cli_drift.sqlite")
+    main(
+        [
+            "record",
+            "--db",
+            db,
+            "--session",
+            "sd",
+            "--agent",
+            AGENT,
+            "--verifier",
+            VERIFIER,
+            "--seed",
+            "1",
+        ]
+    )
+    capsys.readouterr()
+    out_html = str(tmp_path / "drift")
+    rc = main(
+        [
+            "drift",
+            "--db",
+            db,
+            "--session",
+            "sd",
+            "--agent",
+            AGENT,
+            "--verifier",
+            VERIFIER,
+            "--state-scorer",
+            "agent_replay.mock_agent:health_scorer",
+            "--rollouts",
+            "15",
+            "--out",
+            out_html,
+        ]
+    )
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "Drift curve for" in out
+    assert "entropy of autonomy" in out
+    assert (tmp_path / "drift.html").exists()
+
+
 def test_invalid_entrypoint_raises(tmp_path):
     db = str(tmp_path / "x.sqlite")
     try:

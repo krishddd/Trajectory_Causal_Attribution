@@ -306,6 +306,30 @@ def cmd_faithfulness(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_drift(args: argparse.Namespace) -> int:
+    from .drift import drift
+
+    agent_fn = _load_entrypoint(args.agent)
+    verifier = _load_entrypoint(args.verifier)
+    state_scorer = _load_entrypoint(args.state_scorer) if args.state_scorer else None
+    with CheckpointStore(args.db) as store:
+        traj = store.load_trajectory(args.session)
+    result = drift(
+        traj,
+        agent_fn,
+        verifier,
+        state_scorer=state_scorer,
+        rollouts=args.rollouts,
+        drift_threshold=args.drift_threshold,
+    )
+    print(result.to_text())
+    if args.out:
+        html_path = args.out if args.out.endswith(".html") else f"{args.out}.html"
+        result.to_html(html_path)
+        print(f"Wrote {html_path}")
+    return 0
+
+
 def cmd_diff(args: argparse.Namespace) -> int:
     from .multiverse import diff
 
@@ -436,6 +460,22 @@ def build_parser() -> argparse.ArgumentParser:
     pfa.add_argument("--rollouts", type=int, default=40)
     pfa.add_argument("--faithful-threshold", type=float, default=0.1, dest="faithful_threshold")
     pfa.set_defaults(func=cmd_faithfulness)
+
+    pdr = sub.add_parser(
+        "drift",
+        parents=[common_agent],
+        help="chart the per-step entropy-of-autonomy / alignment-drift curve",
+    )
+    pdr.add_argument("--verifier", required=True, help="verifier entrypoint module:function")
+    pdr.add_argument(
+        "--state-scorer",
+        dest="state_scorer",
+        help="optional intermediate-state scorer entrypoint (step -> health in [0,1])",
+    )
+    pdr.add_argument("--rollouts", type=int, default=20)
+    pdr.add_argument("--drift-threshold", type=float, default=0.2, dest="drift_threshold")
+    pdr.add_argument("--out", help="write a standalone SVG drift-curve HTML report")
+    pdr.set_defaults(func=cmd_drift)
 
     ps = sub.add_parser("serve", help="browse recorded sessions in the Multiverse Console")
     ps.add_argument("--db", required=True)

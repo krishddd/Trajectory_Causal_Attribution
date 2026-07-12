@@ -4,6 +4,27 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.6.0] — Drift & the entropy of autonomy
+
+Closes the last open item from the *Architecting the Agent Multiverse* deck
+(`docs/MULTIVERSE_GAPS.md`): the per-step drift / entropy curve (Gap 6). The
+library now covers the deck's full vision.
+
+### Added
+- **Per-step drift / entropy curve (Gap 6).** `drift(traj, agent, verifier,
+  state_scorer=None)` charts a run's health as it unfolds. Always available from
+  the verifier alone: for each step it holds the factual prefix and resamples the
+  remainder to estimate `P(success)` and its **binary entropy** — the "entropy of
+  autonomy" that collapses at the empirical point of commitment (cross-checking
+  `attribute`). Given an optional intermediate-state `state_scorer(step) -> [0,1]`
+  it overlays an **alignment-health** series and per-step **drift**, flags
+  `decayed` runs, locates the drift onset, and warns on the deck's *silent
+  alignment decay* signature (internal health degrading while the outcome still
+  looks recoverable). `DriftResult.to_text()` / `.to_dict()` / `.to_html()` (a
+  self-contained SVG curve). CLI `agent-replay drift --state-scorer …`.
+- `stats.binary_entropy(p)` — Bernoulli entropy in bits, `[0, 1]`.
+- `mock_agent.health_scorer` — a reference intermediate-state scorer.
+
 ## [0.5.0] — The Multiverse
 
 Implements the gaps found against the *Architecting the Agent Multiverse* deck
