@@ -4,6 +4,56 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.7.0] — Correctness, cost & credibility
+
+A hardening release: one genuine correctness fix, the biggest wall-clock lever
+(parallel rollouts), a cost cut for the most expensive phase (adaptive Shapley),
+and several long-open stragglers from `docs/HANDOFF.md` / `docs/ANALYSIS.md`.
+
+### Fixed
+- **Credit-mode Shapley sign bug (correctness).** `attribute(on_success="credit")`
+  previously negated only the contrastive scores, leaving Shapley values
+  failure-signed. With `method="both"` a passing run then showed credit-signed
+  contrastive scores beside failure-signed Shapley values for the *same* step,
+  and with `method="shapley"` `_select_culprit` picked the step that *least*
+  secured success as the "save point" — the exact inverse of credit mode.
+  `_negate` now flips the Shapley value and its CI too, so every signal shares
+  one sign convention. Regression test in `tests/test_soundness.py`.
+
+### Added
+- **Parallel rollouts (`AblationEngine(max_workers=N)`, `attribute(max_workers=N)`).**
+  Rollouts run on a `ThreadPoolExecutor` — each rollout is a pure function of
+  `(plan, seed_tag, k)` with its own `ReplayContext`, seed, and thread-bound
+  ambient context, so parallel execution returns **byte-identical** results to
+  serial (guarded by a test) while collapsing wall-clock for I/O-bound produce
+  fns (real LLM calls). The single biggest practical speedup for real agents.
+- **Adaptive Shapley (`shapley_attribution(adaptive=True)`, `attribute(adaptive=)`).**
+  Sequential stopping now covers Phase 2, not just contrastive: permutation
+  pairs accrue until every step's bootstrap CI on its marginal mean is narrower
+  than `target_ci_width` (bounded by `min_pairs`/`max_pairs`), cutting the most
+  expensive phase severalfold. The fixed-N path is byte-identical (pairs drawn
+  from one RNG sequence).
+- **Store hardening.** `CheckpointStore` opens on-disk databases in **WAL** mode
+  (`synchronous=NORMAL`) so readers and parallel writers no longer block the
+  whole file, and stamps a **`SCHEMA_VERSION`** via `PRAGMA user_version`
+  (exposed as `store.schema_version`) so older databases can be detected and
+  migrated forward. Migrations are idempotent.
+- **Wilson CI on `P(fail | ablated)`.** Contrastive attribution now attaches a
+  Wilson score interval to each step's ablated failure rate
+  (`StepAttribution.p_fail_ablated_ci`); the HTML report shows it under the
+  point estimate and the JSON report carries it. (Closes a HANDOFF §2.6 leftover:
+  Wilson intervals were computed in `stats.py` but never surfaced.)
+
+### Changed
+- **OpenAI adapter warns on `temperature=0`.** `wrap_openai` now warns once when
+  a call uses `temperature=0`: a deterministic policy makes counterfactual
+  resampling zero-variance, collapsing attribution to ~0 silently. (HANDOFF §2.6.)
+- **Faithfulness baseline is smoothed.** `faithfulness(..., kept_rollouts=)`
+  (default `min(8, rollouts)`) averages `success_kept` over several held-full
+  replays instead of a single one, so a *stochastic verifier* near the threshold
+  no longer makes the quadrant assignment brittle. A no-op for deterministic
+  verifiers, so existing behaviour is unchanged.
+
 ## [0.6.0] — Drift & the entropy of autonomy
 
 Closes the last open item from the *Architecting the Agent Multiverse* deck

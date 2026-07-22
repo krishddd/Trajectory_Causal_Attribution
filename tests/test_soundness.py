@@ -57,6 +57,36 @@ def test_attribute_invalid_on_success():
         attribute(traj, passing_agent, _ok, rollouts=10, on_success="bogus")
 
 
+def test_credit_mode_shapley_sign_consistent():
+    """Credit mode must flip the Shapley spine, not only the contrastive scores.
+
+    Regression for the sign bug: with method='both'/'shapley' on a passing run the
+    Shapley values were left failure-signed, so they disagreed with the credit-
+    signed contrastive scores and _select_culprit picked the inverse "save point".
+    """
+    traj = _record_passing()
+
+    both = attribute(traj, passing_agent, _ok, rollouts=60, method="both", on_success="credit")
+    assert both.mode == "credit"
+    # The risky decision (step 1) secured success: positive credit in BOTH signals,
+    # and its Shapley value must not point the opposite way to its contrastive score.
+    s1 = both.steps[1]
+    assert s1.attribution > 0.1
+    assert s1.shapley is not None and s1.shapley > 0.0
+    # No step may show a contrastive credit and a Shapley "blame" of opposite sign
+    # beyond noise — the two signals now share a sign convention.
+    for s in both.steps:
+        if s.shapley is not None and abs(s.attribution) > 0.15 and abs(s.shapley) > 0.15:
+            assert (s.attribution > 0) == (s.shapley > 0)
+
+    shap = attribute(traj, passing_agent, _ok, rollouts=60, method="shapley", on_success="credit")
+    assert shap.mode == "credit"
+    # The save point is the step that most secured success — the largest positive
+    # credit — not the inverse the un-negated max used to pick.
+    assert shap.culprit_index == 1
+    assert shap.steps[1].attribution > 0.0
+
+
 # --- strict serialisation (§2.4) -------------------------------------------
 
 

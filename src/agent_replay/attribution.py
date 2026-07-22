@@ -30,7 +30,7 @@ from typing import List, Optional, Set
 
 from .ablation import AblationEngine
 from .errors import SuccessfulRunError
-from .stats import bootstrap_diff_interval, mean
+from .stats import bootstrap_diff_interval, mean, wilson_interval
 from .types import (
     AttributionResult,
     ConfidenceInterval,
@@ -92,6 +92,9 @@ def contrastive_attribution(
             high=b_high,
             method="bootstrap-diff",
         )
+        n_abl_fail = sum(1 for f in ablated if f)
+        _, w_low, w_high = wilson_interval(n_abl_fail, len(ablated))
+        p_abl_ci = ConfidenceInterval(point=p_abl, low=w_low, high=w_high, method="wilson")
         out.append(
             StepAttribution(
                 index=step.index,
@@ -102,6 +105,7 @@ def contrastive_attribution(
                 attribution=p_kept - p_abl,
                 ci=ci,
                 resamplable=step.resamplable,
+                p_fail_ablated_ci=p_abl_ci,
             )
         )
     return out
@@ -125,24 +129,16 @@ def point_of_commitment(steps: List[StepAttribution]) -> Optional[int]:
     return latest
 
 
-def _antithetic_permutations(n: int, num_pairs: int, seed: int) -> List[List[int]]:
-    """Generate ``num_pairs`` random permutations, each paired with its reverse."""
-    rng = random.Random(seed)
-    perms: List[List[int]] = []
-    for _ in range(num_pairs):
-        perm = list(range(n))
-        rng.shuffle(perm)
-        perms.append(perm)
-        perms.append(list(reversed(perm)))  # antithetic partner
-    return perms
-
-
 def shapley_attribution(
     engine: AblationEngine,
     rollouts: int,
     *,
     permutation_pairs: int = 8,
     seed: int = 13,
+    adaptive: bool = False,
+    target_ci_width: float = 0.2,
+    min_pairs: int = 2,
+    max_pairs: Optional[int] = None,
 ) -> List[StepAttribution]:
     """Phase 2: Monte-Carlo permutation Shapley values with antithetic pairing.
 
@@ -150,25 +146,49 @@ def shapley_attribution(
     step at a time and recording the marginal change in the failure rate that
     step causes. Averaging those marginals over permutations yields each step's
     Shapley value; by the efficiency axiom they sum to ``v(full) - v(empty)``.
+
+    Cost is ``pairs × 2 × (n + 1) × rollouts`` executions — the most expensive
+    phase. With ``adaptive`` we stop adding permutation pairs once every step's
+    bootstrap CI on its marginal mean is narrower than ``target_ci_width`` (after
+    at least ``min_pairs``, up to ``max_pairs`` — defaulting to
+    ``permutation_pairs``), the same sequential-stopping idea adaptive gives the
+    contrastive phase. Pairs are drawn from a single RNG sequence, so the
+    non-adaptive path is byte-identical to consuming a fixed pair count.
     """
     traj = engine.trajectory
     n = len(traj)
-    perms = _antithetic_permutations(n, permutation_pairs, seed)
+    rng = random.Random(seed)
+    if adaptive:
+        cap = max_pairs if max_pairs is not None else permutation_pairs
+    else:
+        cap = permutation_pairs
 
     # marginals[i] collects every observed marginal contribution of step i.
     marginals: List[List[float]] = [[] for _ in range(n)]
     tag = 0
-    for perm in perms:
-        coalition: Set[int] = set()
-        # v(empty): a fresh, uncached evaluation per permutation.
-        v_prev = engine.coalition_value(set(), rollouts, seed_tag=tag)
-        tag += 1
-        for step_idx in perm:
-            coalition.add(step_idx)
-            v_curr = engine.coalition_value(coalition, rollouts, seed_tag=tag)
+    pairs_done = 0
+    while pairs_done < cap:
+        base = list(range(n))
+        rng.shuffle(base)
+        for perm in (base, list(reversed(base))):  # antithetic partner
+            coalition: Set[int] = set()
+            # v(empty): a fresh, uncached evaluation per permutation.
+            v_prev = engine.coalition_value(set(), rollouts, seed_tag=tag)
             tag += 1
-            marginals[step_idx].append(v_curr - v_prev)
-            v_prev = v_curr
+            for step_idx in perm:
+                coalition.add(step_idx)
+                v_curr = engine.coalition_value(coalition, rollouts, seed_tag=tag)
+                tag += 1
+                marginals[step_idx].append(v_curr - v_prev)
+                v_prev = v_curr
+        pairs_done += 1
+        if adaptive and pairs_done >= min_pairs and n > 0:
+            widest = 0.0
+            for i in range(n):
+                lo, hi = _bootstrap_mean_ci(marginals[i], seed=seed + i)
+                widest = max(widest, hi - lo)
+            if widest <= target_ci_width:
+                break
 
     out: List[StepAttribution] = []
     for step in traj.steps:
@@ -220,10 +240,26 @@ def _bootstrap_mean_ci(
 
 
 def _negate(step: StepAttribution) -> None:
-    """Flip a step's contrastive score and CI in place (failure ⇄ credit)."""
+    """Flip a step's scores and CIs in place (failure ⇄ credit).
+
+    Credit mode reflects every attribution about zero so a positive score
+    measures the failure risk a step's re-decision averts. Both the contrastive
+    spine *and* the Shapley value (with their CIs) must flip together — otherwise
+    a ``method="both"`` credit report would show credit-signed contrastive scores
+    beside failure-signed Shapley values for the same step, and a
+    ``method="shapley"`` credit run would let ``_select_culprit`` pick the step
+    that *least* secured success as the "save point" (the exact inverse).
+    """
     step.attribution = -step.attribution
     lo, hi = step.ci.low, step.ci.high
     step.ci = ConfidenceInterval(point=-step.ci.point, low=-hi, high=-lo, method=step.ci.method)
+    if step.shapley is not None:
+        step.shapley = -step.shapley
+    if step.shapley_ci is not None:
+        slo, shi = step.shapley_ci.low, step.shapley_ci.high
+        step.shapley_ci = ConfidenceInterval(
+            point=-step.shapley_ci.point, low=-shi, high=-slo, method=step.shapley_ci.method
+        )
 
 
 def attribute(
@@ -243,6 +279,7 @@ def attribute(
     pass_context: bool = True,
     adaptive: bool = False,
     target_ci_width: float = 0.2,
+    max_workers: int = 1,
 ) -> AttributionResult:
     """Run the full attribution pipeline and return an :class:`AttributionResult`.
 
@@ -269,6 +306,7 @@ def attribute(
         fail_threshold=fail_threshold,
         base_seed=base_seed,
         pass_context=pass_context,
+        max_workers=max_workers,
     )
 
     # Establish the factual outcome.
@@ -302,7 +340,12 @@ def attribute(
         )
     if method in ("shapley", "both"):
         shapley = shapley_attribution(
-            engine, rollouts, permutation_pairs=permutation_pairs, seed=base_seed + 13
+            engine,
+            rollouts,
+            permutation_pairs=permutation_pairs,
+            seed=base_seed + 13,
+            adaptive=adaptive,
+            target_ci_width=target_ci_width,
         )
 
     # Merge: contrastive is the spine (gives P(fail|kept/ablated) + CIs); attach
@@ -320,9 +363,11 @@ def attribute(
     else:
         steps = contrastive
 
-    # In credit mode the contrastive score is p_kept - p_ablated <= 0; flip it so
-    # a positive "credit" measures the failure risk a step's re-decision averts.
-    if mode == "credit" and method in ("contrastive", "both"):
+    # In credit mode the raw scores are failure-oriented (p_kept - p_ablated <= 0
+    # for contrastive; the Shapley marginals point the same way); flip every score
+    # and CI so a positive "credit" measures the failure risk a step's re-decision
+    # averts. This must cover the Shapley spine too — see _negate.
+    if mode == "credit":
         for s in steps:
             _negate(s)
 

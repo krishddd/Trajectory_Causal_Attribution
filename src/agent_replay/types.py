@@ -190,11 +190,18 @@ class StepAttribution:
     shapley_ci: Optional[ConfidenceInterval] = None
     resamplable: bool = True
     screened: bool = False  # True when a pre-filter skipped causal evaluation
+    # Wilson score interval on P(fail | ablated) itself (the raw ablated rollout
+    # proportion), distinct from ``ci`` which brackets the *difference*. Lets the
+    # report show how precisely the ablated failure rate is pinned down.
+    p_fail_ablated_ci: Optional[ConfidenceInterval] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
         d["ci"] = self.ci.to_dict()
         d["shapley_ci"] = self.shapley_ci.to_dict() if self.shapley_ci else None
+        d["p_fail_ablated_ci"] = (
+            self.p_fail_ablated_ci.to_dict() if self.p_fail_ablated_ci else None
+        )
         return d
 
 

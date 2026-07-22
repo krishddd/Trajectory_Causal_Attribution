@@ -16,6 +16,11 @@ from typing import Any, List, Optional
 from .hashing import content_hash
 from .types import AttributionResult, Step, StepKind, Trajectory
 
+# Bumped whenever the on-disk schema changes in a way loaders must know about.
+# Stored in the SQLite ``user_version`` pragma so old databases can be detected
+# and migrated forward (see ``_migrate``).
+SCHEMA_VERSION = 1
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS sessions (
     session_id     TEXT PRIMARY KEY,
@@ -67,12 +72,29 @@ class CheckpointStore:
         # the one that opened the store) share the connection safely.
         self._conn = sqlite3.connect(path, check_same_thread=check_same_thread)
         self._conn.execute("PRAGMA foreign_keys = ON")
+        # WAL lets readers proceed concurrently with a writer and makes writes
+        # from parallel rollout workers durable without blocking the whole file;
+        # it is a no-op for an in-memory database, so guard on a real path.
+        if path != ":memory:":
+            self._conn.execute("PRAGMA journal_mode = WAL")
+            self._conn.execute("PRAGMA synchronous = NORMAL")
         self._conn.executescript(_SCHEMA)
         self._migrate()
+        self._conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         self._conn.commit()
 
+    @property
+    def schema_version(self) -> int:
+        """The schema version stamped on this database (0 for a pre-stamp store)."""
+        return int(self._conn.execute("PRAGMA user_version").fetchone()[0])
+
     def _migrate(self) -> None:
-        """Add columns introduced after a store was first created (idempotent)."""
+        """Bring an older database up to the current schema (idempotent).
+
+        Migrations are keyed off the stamped ``user_version`` and the actual
+        table shape, so re-opening a current store is a no-op and re-opening an
+        older one upgrades it in place without data loss.
+        """
         cols = {r[1] for r in self._conn.execute("PRAGMA table_info(steps)").fetchall()}
         if "resamplable" not in cols:
             self._conn.execute(

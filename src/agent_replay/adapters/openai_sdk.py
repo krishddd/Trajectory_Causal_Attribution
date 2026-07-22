@@ -26,7 +26,28 @@ touching the network — the VCR/cassette pattern from the architecture document
 
 from __future__ import annotations
 
+import warnings
 from typing import Any, Callable
+
+# Warn at most once per process: temperature==0 makes the policy deterministic, so
+# resampling it during attribution draws the same completion every time — every
+# step's ablated failure rate equals its factual one and attribution collapses to
+# zero with no error. Users must raise the temperature (or supply a resample_fn)
+# for counterfactual variance.
+_ZERO_TEMP_WARNED = False
+
+
+def _warn_zero_temperature(temperature: Any) -> None:
+    global _ZERO_TEMP_WARNED
+    if temperature == 0 and not _ZERO_TEMP_WARNED:
+        _ZERO_TEMP_WARNED = True
+        warnings.warn(
+            "wrap_openai: temperature=0 makes this LLM step deterministic, so "
+            "counterfactual resampling has zero variance and attribution will "
+            "collapse to ~0. Record/attribute with temperature>0 (or provide a "
+            "resample policy) to get a meaningful causal signal.",
+            stacklevel=3,
+        )
 
 
 def _response_to_dict(resp: Any) -> Any:
@@ -50,6 +71,8 @@ class _Completions:
         self._name = name
 
     def create(self, **kwargs: Any) -> Any:
+        _warn_zero_temperature(kwargs.get("temperature"))
+
         def produce() -> Any:
             return _response_to_dict(self._real_create(**kwargs))
 

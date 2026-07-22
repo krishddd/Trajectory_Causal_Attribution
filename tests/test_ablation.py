@@ -28,6 +28,21 @@ def test_ablate_after_fail_step_locked(recording, fail_step):
     assert all(abl)  # failure locked in
 
 
+def test_parallel_rollouts_match_serial(recording, fail_step):
+    plan_seed = fail_step
+    serial = AblationEngine(buggy_agent, recording, verifier, max_workers=1)
+    parallel = AblationEngine(buggy_agent, recording, verifier, max_workers=4)
+    # Each rollout is pure in (plan, seed_tag, k), so parallel execution must
+    # return byte-identical results — only faster. Guards the determinism invariant.
+    s = serial.ablate_from(plan_seed, rollouts=32)
+    p = parallel.ablate_from(plan_seed, rollouts=32)
+    assert s == p
+    # Adaptive path (batched) must agree too.
+    sa = serial.ablate_from(plan_seed, rollouts=64, adaptive=True)
+    pa = parallel.ablate_from(plan_seed, rollouts=64, adaptive=True)
+    assert sa == pa
+
+
 def test_coalition_value_bounds(recording):
     engine = _engine(recording)
     v_empty = engine.coalition_value(set(), rollouts=40, seed_tag=1)

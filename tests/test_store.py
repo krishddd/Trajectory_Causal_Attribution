@@ -2,7 +2,26 @@
 
 import pytest
 
-from agent_replay.store import CheckpointStore
+from agent_replay.store import SCHEMA_VERSION, CheckpointStore
+
+
+def test_schema_version_stamped(tmp_path):
+    path = str(tmp_path / "s.db")
+    store = CheckpointStore(path)
+    assert store.schema_version == SCHEMA_VERSION
+    store.close()
+    # Re-opening an existing store keeps the stamp (migration is idempotent).
+    store2 = CheckpointStore(path)
+    assert store2.schema_version == SCHEMA_VERSION
+    store2.close()
+
+
+def test_wal_mode_on_disk(tmp_path):
+    path = str(tmp_path / "w.db")
+    store = CheckpointStore(path)
+    mode = store._conn.execute("PRAGMA journal_mode").fetchone()[0]
+    assert mode.lower() == "wal"
+    store.close()
 
 
 def test_blob_roundtrip_and_dedup():

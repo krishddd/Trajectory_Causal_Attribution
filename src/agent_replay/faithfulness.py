@@ -102,6 +102,7 @@ def faithfulness(
     kinds: Tuple[str, ...] = ("llm",),
     base_seed: int = 2_000,
     pass_context: bool = True,
+    kept_rollouts: Optional[int] = None,
 ) -> FaithfulnessResult:
     """Measure how faithfully the recorded reasoning drives the outcome.
 
@@ -110,7 +111,18 @@ def faithfulness(
     shift in P(success). A run is *faithful* if masking its most load-bearing step
     shifts the outcome by at least ``faithful_threshold``; otherwise the reasoning
     is inert relative to the answer.
+
+    ``success_kept`` (the baseline the masked rates are compared against) is the
+    factual run's success probability. The factual replay is deterministic in the
+    agent's outputs, but the *verifier* may itself be stochastic (an LLM judge, a
+    flaky check); with a single sample the baseline snaps to exactly 0 or 1 and a
+    verifier near the threshold makes the quadrant assignment brittle.
+    ``kept_rollouts`` (default ``min(8, rollouts)``) averages the baseline over
+    several held-full replays to smooth that noise — a no-op for a deterministic
+    verifier, so existing behaviour is unchanged.
     """
+    if kept_rollouts is None:
+        kept_rollouts = min(8, rollouts)
     engine = AblationEngine(
         agent_fn,
         trajectory,
@@ -125,7 +137,7 @@ def faithfulness(
         else float(verifier(trajectory.result))
     )
     correct = outcome_score >= fail_threshold
-    success_kept = _rate_success(engine.factual_fail(rollouts=1))
+    success_kept = _rate_success(engine.factual_fail(rollouts=kept_rollouts))
 
     steps: List[StepFaithfulness] = []
     for step in trajectory.steps:

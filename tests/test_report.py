@@ -36,6 +36,18 @@ def test_html_report_is_standalone(recording, tmp_path):
     assert "http://" not in html and "https://" not in html
 
 
+def test_html_report_shows_wilson_ci_on_ablated(recording):
+    # Contrastive attribution now attaches a Wilson interval to P(fail|ablated);
+    # the report must surface it (HANDOFF §2.6 leftover).
+    result = attribute(recording, buggy_agent, verifier, rollouts=60, method="contrastive")
+    assert all(s.p_fail_ablated_ci is not None for s in result.steps)
+    html = render_html(result)
+    assert "wci" in html  # the Wilson-interval sub-label class is rendered
+    # And the JSON carries it too.
+    d = result.to_dict()
+    assert d["steps"][0]["p_fail_ablated_ci"]["method"] == "wilson"
+
+
 def test_render_html_marks_culprit(recording):
     result = _result(recording)
     html = render_html(result)

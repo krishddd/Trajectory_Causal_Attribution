@@ -49,13 +49,18 @@ def _step_row(
     flag_html = " ".join(flags)
     shap = _fmt(s.shapley) if s.shapley is not None else "&ndash;"
     ci = s.ci
+    if s.p_fail_ablated_ci is not None:
+        w = s.p_fail_ablated_ci
+        p_abl_cell = f'{_fmt(s.p_fail_ablated)}<br><span class="wci">95% [{_fmt(w.low)}, {_fmt(w.high)}]</span>'
+    else:
+        p_abl_cell = _fmt(s.p_fail_ablated)
     row_cls = "culprit-row" if is_culprit else ""
     return f"""
       <tr class="{row_cls}">
         <td class="num">{s.index}</td>
         <td><code>{html.escape(s.kind)}</code></td>
         <td>{html.escape(s.name)} {flag_html}</td>
-        <td class="num">{_fmt(s.p_fail_ablated)}</td>
+        <td class="num">{p_abl_cell}</td>
         <td>{_bar(s.attribution, max_abs)}</td>
         <td class="num">[{_fmt(ci.low)}, {_fmt(ci.high)}]</td>
         <td class="num">{shap}</td>
@@ -188,6 +193,7 @@ def render_html(result: "AttributionResult", explanation: Any = None) -> str:
   th, td {{ text-align:left; padding:8px 10px; border-bottom:1px solid #232b36; }}
   th {{ color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.5px; }}
   td.num {{ text-align:right; font-variant-numeric:tabular-nums; }}
+  .wci {{ color:var(--muted); font-size:10px; }}
   code {{ background:#0c1116; padding:1px 5px; border-radius:4px; font-size:12px; }}
   .culprit-row {{ background:#241416; }}
   .tag {{ font-size:10px; padding:1px 6px; border-radius:999px; margin-left:6px; }}

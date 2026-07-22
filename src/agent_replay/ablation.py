@@ -8,7 +8,8 @@ which the scorer estimates ``P(fail | ...)`` together with its uncertainty.
 
 from __future__ import annotations
 
-from typing import Any, Callable, List, Optional, Set
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Callable, Iterable, List, Optional, Set
 
 from .replayer import ReplayPlan, replay
 from .stats import wilson_interval
@@ -31,6 +32,7 @@ class AblationEngine:
         fail_threshold: float = 0.5,
         base_seed: int = 1_000,
         pass_context: bool = True,
+        max_workers: int = 1,
     ) -> None:
         self.agent_fn = agent_fn
         self.trajectory = trajectory
@@ -38,6 +40,13 @@ class AblationEngine:
         self.fail_threshold = fail_threshold
         self.base_seed = base_seed
         self.pass_context = pass_context
+        # ``max_workers > 1`` runs rollouts on a thread pool. Each rollout is a
+        # pure function of ``(plan, seed_tag, k)`` — its own ReplayContext, its own
+        # seed, and an ambient context bound per worker thread (contextvars are
+        # thread-isolated) — so parallel execution returns byte-identical results
+        # to serial, just faster for I/O-bound produce fns (real LLM calls). It is
+        # the single biggest wall-clock lever for real agents.
+        self.max_workers = max(1, int(max_workers))
 
     def is_fail(self, result: Any) -> bool:
         return float(self.verifier(result)) < self.fail_threshold
@@ -56,10 +65,23 @@ class AblationEngine:
         are statistically independent — the paper forbids caching a coalition's
         value precisely to preserve this per-evaluation variance.
         """
-        fails: List[bool] = []
-        for k in range(rollouts):
-            fails.append(self._one(plan, seed_tag, k))
-        return fails
+        return self._run_ks(plan, seed_tag, range(rollouts))
+
+    def _run_ks(self, plan: ReplayPlan, seed_tag: int, ks: Iterable[int]) -> List[bool]:
+        """Run rollouts for the given ``k`` indices, serial or on a thread pool.
+
+        Results are returned in ``ks`` order regardless of completion order, so
+        the output is deterministic (each rollout is pure in ``k``).
+        """
+        ks = list(ks)
+        if self.max_workers <= 1 or len(ks) <= 1:
+            return [self._one(plan, seed_tag, k) for k in ks]
+        results: List[bool] = [False] * len(ks)
+        with ThreadPoolExecutor(max_workers=min(self.max_workers, len(ks))) as ex:
+            futures = {ex.submit(self._one, plan, seed_tag, k): i for i, k in enumerate(ks)}
+            for fut, i in futures.items():
+                results[i] = fut.result()
+        return results
 
     def _one(self, plan: ReplayPlan, seed_tag: int, k: int) -> bool:
         """Run a single rollout ``k`` of ``plan`` and return its failure flag."""
@@ -91,11 +113,9 @@ class AblationEngine:
         fails: List[bool] = []
         k = 0
         while k < max_rollouts:
-            for _ in range(batch):
-                if k >= max_rollouts:
-                    break
-                fails.append(self._one(plan, seed_tag, k))
-                k += 1
+            hi = min(k + batch, max_rollouts)
+            fails.extend(self._run_ks(plan, seed_tag, range(k, hi)))
+            k = hi
             if k >= min_rollouts:
                 n_fail = sum(1 for f in fails if f)
                 _, low, high = wilson_interval(n_fail, len(fails))
