@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\beta\threads\image_file_delta.py
+# hypothesis_version: 6.148.7
+
+['ImageFileDelta', 'auto', 'high', 'low']

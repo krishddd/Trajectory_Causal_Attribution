@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\tools\_tool_dispatch.py
+# hypothesis_version: 6.148.7
+
+['NamedToolT', 'run_runnable_tool', 'tool_error_content', 'tool_registry']

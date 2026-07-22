@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\block_translators\bedrock.py
+# hypothesis_version: 6.148.7
+
+['args', 'bedrock', 'claude', 'extras', 'id', 'index', 'last', 'model_name', 'name', 'tool_call', 'tool_call_chunk', 'type']

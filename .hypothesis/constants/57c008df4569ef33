@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\audioresponseformat.py
+# hypothesis_version: 6.148.7
+
+['audio', 'audio/alaw', 'audio/l16', 'audio/mp3', 'audio/mulaw', 'audio/ogg_opus', 'audio/wav', 'bit_rate', 'delivery', 'inline', 'mime_type', 'sample_rate', 'type', 'uri', 'wrap']

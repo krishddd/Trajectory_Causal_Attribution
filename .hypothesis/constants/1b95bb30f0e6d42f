@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\beta\environments\work.py
+# hypothesis_version: 6.148.7
+
+[',', 'Anthropic-Worker-ID', 'AsyncAnthropic', 'AsyncWork', 'Work', 'anthropic-beta', 'block_ms', 'desired_ttl_seconds', 'force', 'limit', 'metadata', 'page']

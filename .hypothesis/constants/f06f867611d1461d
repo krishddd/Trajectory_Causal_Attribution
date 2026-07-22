@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\beta\sessions\beta_managed_agents_user_tool_confirmation_event.py
+# hypothesis_version: 6.148.7
+
+['allow', 'deny']

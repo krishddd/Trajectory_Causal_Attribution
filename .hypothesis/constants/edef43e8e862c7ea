@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\io\binary_encoder.py
+# hypothesis_version: 6.148.7
+
+[127, 128, 4294967295, '<d', '<f', '>I', 'B', 'must be string']

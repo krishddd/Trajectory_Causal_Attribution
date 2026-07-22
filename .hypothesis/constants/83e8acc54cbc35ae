@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\opentelemetry\sdk\util\instrumentation.py
+# hypothesis_version: 6.148.7
+
+['_attributes', '_name', '_schema_url', '_version', 'attributes', 'name', 'schema_url', 'version']

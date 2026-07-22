@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\beta\deployments.py
+# hypothesis_version: 6.148.7
+
+[',', 'AsyncDeployments', 'Deployments', 'agent', 'agent_id', 'anthropic-beta', 'created_at_gte', 'created_at_lte', 'description', 'environment_id', 'include_archived', 'initial_events', 'limit', 'metadata', 'name', 'page', 'resources', 'schedule', 'status', 'vault_ids']

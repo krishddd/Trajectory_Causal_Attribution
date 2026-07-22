@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\_write_py.py
+# hypothesis_version: 6.148.7
+
+[1000, '__fastavro_parsed', '__named_schemas', 'array', 'avro.codec', 'avro.schema', 'backports.zstd', 'boolean', 'bytes', 'bzip2', 'cramjam', 'default', 'deflate', 'double', 'enum', 'error', 'error_union', 'fields', 'fixed', 'float', 'int', 'items', 'long', 'lz4', 'magic', 'map', 'meta', 'name', 'null', 'record', 'size', 'snappy', 'strict', 'strict_allow_default', 'string', 'symbols', 'sync', 'type', 'union', 'values', 'xz', 'zstandard']

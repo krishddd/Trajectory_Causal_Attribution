@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\projects\hosted_tool_permissions.py
+# hypothesis_version: 6.148.7
+
+['admin_api_key_auth', 'code_interpreter', 'file_search', 'image_generation', 'mcp', 'web_search']

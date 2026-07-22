@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\basesdk.py
+# hypothesis_version: 6.148.7
+
+[1000, '<streaming response>', 'Accept', 'No response received', 'Request Exception', '_async_hooks', '_hooks', 'client is required', 'content-type', 'multipart/form-data', 'multipart/mixed', 'timeout']

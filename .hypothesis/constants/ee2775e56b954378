@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\benchmarks\whowhen.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 0.6, 1.0, 500, '-', '--adaptive', '--rollouts', 'BAD', 'OK', '__main__', 'causal', 'contrastive', 'last', 'len10-mid', 'len4-early', 'len4-late', 'len6-early', 'len6-late', 'len6-mid', 'len8-late', 'len8-mid', 'magnitude', 'name', 'ok', 'src', 'store_true', 't', 'task', 'trace', 'truth']

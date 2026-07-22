@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\tools\_beta_builtin_memory_tool.py
+# hypothesis_version: 6.148.7
+
+[384, 448, 1024, 999999, '.', './memory', '/', '/memories', '0B', 'All memory cleared', 'B', 'G', 'K', 'M', 'cache_control', 'create', 'delete', 'insert', 'memories', 'memory', 'memory_20250818', 'name', 'os.write returned 0', 'rename', 'str_replace', 'type', 'utf-8', 'view']

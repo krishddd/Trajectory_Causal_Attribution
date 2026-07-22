@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\video.py
+# hypothesis_version: 6.148.7
+
+['Video', 'completed', 'failed', 'in_progress', 'queued', 'video']

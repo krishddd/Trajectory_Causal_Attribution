@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\dataset.py
+# hypothesis_version: 6.148.7
+
+['DatasetRow', 'id', 'label', 'labeled_answer', 'load_dataset', 'logprobs', 'prompt', 'r', 'read_jsonl', 'reference', 'samples', 'utf-8', 'w', 'write_jsonl']

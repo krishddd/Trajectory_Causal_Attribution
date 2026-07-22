@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\interactions.py
+# hypothesis_version: 6.148.7
+
+['Agent', 'AgentCreateParams', 'AgentDeleteResponse', 'AgentListParams', 'AgentListResponse', 'InteractionGetParams', 'ModelParam', 'SigningSecret', 'Webhook', 'WebhookCreateParams', 'WebhookListParams', 'WebhookListResponse', 'WebhookPingParams', 'WebhookPingResponse', 'WebhookUpdateParams']

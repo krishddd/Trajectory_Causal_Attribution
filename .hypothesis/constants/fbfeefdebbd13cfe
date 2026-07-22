@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\instrument.py
+# hypothesis_version: 6.148.7
+
+['.', 'RECIPES', '__name__', 'anthropic', 'anthropic.messages', 'args', 'autogen', 'autogen.create', 'available_frameworks', 'cohere', 'cohere.Client.chat', 'cohere.chat', 'crewai', 'crewai.LLM.call', 'crewai.llm', 'current_context', 'datetime', 'datetime.datetime', 'disable_virtual_time', 'enable_virtual_time', 'gemini.generate', 'google-genai', 'install', 'installed', 'langchain', 'langchain.llm', 'langchain.tool', 'litellm', 'litellm.completion', 'llama-index', 'llamaindex.chat', 'llm', 'memory', 'mistral.chat', 'mistralai', 'name', 'openai', 'openai.chat', 'openai.responses', 'patch', 'produce', 'record_agent', 'record_step', 'resamplable', 'time', 'time.time', 'tool', 'uninstall', 'unpatch', 'uuid.uuid4', 'uuid4', 'virtual_time', 'wrap']

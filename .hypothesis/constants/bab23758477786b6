@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\_read_py.py
+# hypothesis_version: 6.148.7
+
+[1970, '.', 'T', 'aliases', 'array', 'avro.codec', 'avro.schema', 'backports.zstd', 'boolean', 'bytes', 'bzip2', 'cramjam', 'default', 'deflate', 'double', 'enum', 'error', 'error_union', 'fields', 'fixed', 'float', 'int', 'items', 'logicalType', 'long', 'lz4', 'map', 'meta', 'name', 'null', 'rb', 'reader', 'record', 'request', 'return_named_type', 'return_record_name', 'size', 'snappy', 'strict', 'string', 'symbols', 'sync', 'type', 'union', 'values', 'writer', 'xz', 'zstandard']

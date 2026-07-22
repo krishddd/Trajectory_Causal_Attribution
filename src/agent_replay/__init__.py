@@ -19,8 +19,9 @@ Public API
 from __future__ import annotations
 
 from . import instrument, interop
-from .ablation import AblationEngine
+from .ablation import AblationEngine, RolloutCache
 from .aggregate import AggregateResult, StepAggregate, aggregate, aggregate_runs
+from .analyze import analyze
 from .attribution import attribute
 from .drift import DriftPoint, DriftResult, drift
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
@@ -44,7 +45,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 __all__ = [
     "Session",
@@ -78,6 +79,8 @@ __all__ = [
     "AgentContext",
     "AsyncAgentContext",
     "AblationEngine",
+    "RolloutCache",
+    "analyze",
     "CheckpointStore",
     "AgentReplayError",
     "NonSerializableStepError",

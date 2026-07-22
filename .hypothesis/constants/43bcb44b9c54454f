@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\client.py
+# hypothesis_version: 6.148.7
+
+['AsyncClient', 'Client', 'auto', 'record', 'replay']

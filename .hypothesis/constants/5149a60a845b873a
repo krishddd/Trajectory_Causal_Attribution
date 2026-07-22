@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\tokenizers\implementations\char_level_bpe.py
+# hypothesis_version: 6.148.7
+
+[1000, 30000, '</w>', '<unk>', 'BPE', 'bert_normalizer', 'dropout', 'lowercase', 'model', 'suffix', 'unicode_normalizer', 'unk_token']

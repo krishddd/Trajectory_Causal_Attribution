@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\events\types\logging_events.py
+# hypothesis_version: 6.148.7
+
+['agent_logs_execution', 'agent_logs_started']

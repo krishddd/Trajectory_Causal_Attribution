@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\beta\beta_user_profile.py
+# hypothesis_version: 6.148.7
+
+['BetaUserProfile', 'external', 'internal', 'resold', 'user_profile']

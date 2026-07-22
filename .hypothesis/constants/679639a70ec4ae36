@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\rich\tree.py
+# hypothesis_version: 6.148.7
+
+['$1,332,439,889', '$1,332,539,889', '$393,151,347', '$952,110,690', '+-- ', 'Box Office', 'Console', 'ConsoleOptions', 'Dec 15, 2017', 'Dec 16, 2016', 'Dec 20, 2019', 'Just a panel', 'May 25, 2018', 'Measurement', 'Released', 'RenderResult', 'Title', 'Tree', '__main__', '`-- ', 'bold magenta', 'cyan', 'dim', 'green', 'magenta', 'monokai', 'python', 'red', 'right', 'tree', 'tree.line', 'uu green', '|   ', '│   ', '┃   ', '└── ', '┗━━ ', '├── ', '┣━━ ', '║   ', '╚══ ', '╠══ ', '🌲 [b green]Rich Tree', '📄 Markdown', '📄 Panels', '📄 Syntax', '📄 [b magenta]Table']

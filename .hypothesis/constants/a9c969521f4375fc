@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\messages\messages.py
+# hypothesis_version: 6.148.7
+
+['/v1/messages', 'AsyncMessages', 'August 5th, 2026', 'February 19th, 2026', 'January 5th, 2026', 'July 21st, 2025', 'June 15th, 2026', 'June 30th, 2026', 'Messages', 'November 6th, 2024', 'auto', 'cache_control', 'claude-1.3', 'claude-1.3-100k', 'claude-2.0', 'claude-2.1', 'claude-instant-1.1', 'claude-instant-1.2', 'claude-opus-4-0', 'claude-opus-4-1', 'claude-opus-4-6', 'claude-sonnet-4-0', 'container', 'enabled', 'format', 'inference_geo', 'json_schema', 'max_tokens', 'messages', 'messages.parse', 'metadata', 'model', 'output_config', 'service_tier', 'standard_only', 'stop_sequences', 'stream', 'system', 'temperature', 'thinking', 'tool_choice', 'tools', 'top_k', 'top_p', 'type']

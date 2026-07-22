@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\retrieval.py
+# hypothesis_version: 6.148.7
+
+['exa_ai_search', 'exa_ai_search_config', 'parallel_ai_search', 'rag_store', 'rag_store_config', 'retrieval', 'retrieval_types', 'type', 'vertex_ai_search', 'wrap']

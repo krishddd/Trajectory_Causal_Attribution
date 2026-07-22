@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\generationconfig.py
+# hypothesis_version: 6.148.7
+
+['ToolChoice', 'ToolChoiceParam', 'frequency_penalty', 'image_config', 'max_output_tokens', 'presence_penalty', 'seed', 'speech_config', 'stop_sequences', 'temperature', 'thinking_level', 'thinking_summaries', 'tool_choice', 'top_p', 'wrap']

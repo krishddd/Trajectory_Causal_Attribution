@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\bedrock\_mantle.py
+# hypothesis_version: 6.148.7
+
+[400, 401, 403, 404, 409, 413, 422, 429, 500, 529, '2023-06-01', 'Authorization', 'X-Stainless-Async', '_DefaultStreamT', '_HttpxClientT', 'anthropic-version', 'async:asyncio', 'bedrock-mantle', 'comma', 'false']

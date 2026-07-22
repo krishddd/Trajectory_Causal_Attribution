@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\load\serializable.py
+# hypothesis_version: 6.148.7
+
+['.', 'Serializable', '__class__', '__name__', 'constructor', 'id', 'ignore', 'kwargs', 'lc', 'lc_namespace', 'lc_serializable', 'not_implemented', 'origin', 'repr', 'secret', 'type']

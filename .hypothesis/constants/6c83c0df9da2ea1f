@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\googlesearch.py
+# hypothesis_version: 6.148.7
+
+['google_search', 'image_search', 'search_types', 'type', 'web_search', 'wrap']

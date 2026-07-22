@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\preflight.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.1, 0.5, 0.65, 0.8, 0.95, 1.0, 5.0, '       -> ', ' - ANTI-CORRELATED', '-', '; ', '=', 'Check', 'FAIL', "I don't know.", 'It costs 30 dollars.', 'It costs 90 dollars.', 'Lyon.', 'PASS', 'Paris.', 'PreflightReport', 'SKIP', 'Unknown.', 'WARN', '__name__', 'backend latency', 'backend loads', 'calibration', 'checks', 'detail', 'entailment backend', 'has_samples', 'label', 'label consistency', 'label staleness', 'labeled_answer', 'labels vs references', 'log-probabilities', 'n_failures', 'n_warnings', 'name', 'no conflicts', 'not supplied', 'preflight', 'production', 'ready', 'reference', 'refusal detector', 'remedy', 'sampler', 'sampler callable', 'sampler count', 'sampler diversity', 'sampler runs', 'status', 'suggested threshold', 'task separation', 'threshold', 'tier']

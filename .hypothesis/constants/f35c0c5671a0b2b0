@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\audiocontent.py
+# hypothesis_version: 6.148.7
+
+['audio', 'audio/aac', 'audio/aiff', 'audio/alaw', 'audio/flac', 'audio/l16', 'audio/m4a', 'audio/mp3', 'audio/mpeg', 'audio/mulaw', 'audio/ogg', 'audio/opus', 'audio/wav', 'channels', 'data', 'mime_type', 'sample_rate', 'type', 'uri', 'wrap']

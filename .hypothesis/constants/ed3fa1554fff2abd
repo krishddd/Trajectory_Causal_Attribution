@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\core\__init__.py
+# hypothesis_version: 6.148.7
+
+['.api_error', '.client_wrapper', '.datetime_utils', '.file', '.http_client', '.http_response', '.jsonable_encoder', '.logging', '.parse_error', '.pydantic_utilities', '.query_encoder', '.request_options', '.serialization', 'ApiError', 'AsyncClientWrapper', 'AsyncHttpClient', 'AsyncHttpResponse', 'BaseClientWrapper', 'ConsoleLogger', 'FieldMetadata', 'File', 'HttpClient', 'HttpResponse', 'ILogger', 'IS_PYDANTIC_V2', 'LogConfig', 'LogLevel', 'Logger', 'ParsingError', 'RequestOptions', 'Rfc2822DateTime', 'SyncClientWrapper', 'UncheckedBaseModel', 'UnionMetadata', 'UniversalBaseModel', 'UniversalRootModel', 'construct_type', 'create_logger', 'encode_path_param', 'encode_query', 'jsonable_encoder', 'parse_obj_as', 'serialize_datetime', 'update_forward_refs', 'with_content_type']

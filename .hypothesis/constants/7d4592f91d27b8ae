@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\safety.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 2000, 4000, 4096, 8234, 8239, 8294, 8298, '&', '&amp;', '&gt;', '&lt;', '*', '<', '<< <', '<<<', '>', '>> >', '>>>', 'DEFAULT_LIMITS', 'IntegrityReport', 'Limits', 'NFC', '[', '\\*', '\\[', '\\]', '\\_', '\\`', '\\|', ']', '_', '`', 'check_samples', 'degenerate', 'dropped_samples', 'empty_samples', 'escape_markdown', 'inf', 'is_finite_number', 'looks_like_injection', 'max_entailment_calls', 'max_prompt_chars', 'max_sample_chars', 'max_samples', 'no samples to score', 'nonfinite_logprobs', 'reliable', 'sanitize_text', 'threshold', 'truncate', 'truncated_samples', 'warnings', '|', '…']

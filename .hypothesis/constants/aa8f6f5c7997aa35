@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\responses\easy_input_message.py
+# hypothesis_version: 6.148.7
+
+['EasyInputMessage', 'assistant', 'commentary', 'developer', 'final_answer', 'message', 'system', 'user']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\tool.py
+# hypothesis_version: 6.148.7
+
+['ToolMessageChunk', 'arguments', 'before', 'content', 'error', 'function', 'id', 'index', 'invalid_tool_call', 'name', 'success', 'tool', 'tool_call', 'tool_call_chunk', 'tool_call_id']

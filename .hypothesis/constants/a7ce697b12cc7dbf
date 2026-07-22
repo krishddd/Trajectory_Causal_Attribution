@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\errors\__init__.py
+# hypothesis_version: 6.148.7
+
+['.bad_request_error', '.forbidden_error', '.invalid_token_error', '.not_found_error', '.unauthorized_error', 'BadRequestError', 'ForbiddenError', 'GatewayTimeoutError', 'InternalServerError', 'InvalidTokenError', 'NotFoundError', 'NotImplementedError', 'TooManyRequestsError', 'UnauthorizedError']

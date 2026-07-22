@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\_module_client.py
+# hypothesis_version: 6.148.7
+
+['Admin', 'Audio', 'Batches', 'Beta', 'Chat', 'Completions', 'Containers', 'Conversations', 'Embeddings', 'Evals', 'Files', 'FineTuning', 'Images', 'Models', 'Moderations', 'Realtime', 'Responses', 'Skills', 'Uploads', 'VectorStores', 'Videos', 'Webhooks']

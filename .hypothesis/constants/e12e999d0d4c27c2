@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\eventstreaming.py
+# hypothesis_version: 6.148.7
+
+[b'\n', b'\n\n', b'\n\r', b'\n\r\n', b'\r', b'\r\n\n', b'\r\n\r', b'\r\n\r\n', b'\r\r', b'\r\r\n', b'\xef\xbb\xbf', '\x00', ':', 'T', '\\r?\\n|\\r', 'data', 'event', 'id', 'retry']

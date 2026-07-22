@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\agents.py
+# hypothesis_version: 6.148.7
+
+[500, 8000, 30000, '*', '408', '409', '429', '4XX', '5XX', 'API error occurred', 'CreateAgent', 'DELETE', 'DeleteAgent', 'GET', 'GetAgent', 'ListAgents', 'POST', '_async_hooks', '_hooks', 'application/json', 'async', 'buffered', 'default', 'extra_headers', 'json', 'parsed', 'streaming', 'sync', 'user-agent']

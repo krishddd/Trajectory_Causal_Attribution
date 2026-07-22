@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\admin\organization\usage_vector_stores_params.py
+# hypothesis_version: 6.148.7
+
+['1d', '1h', '1m', 'project_id']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\interactionstatusupdate.py
+# hypothesis_version: 6.148.7
+
+['budget_exceeded', 'cancelled', 'completed', 'event_id', 'event_type', 'failed', 'in_progress', 'incomplete', 'metadata', 'requires_action', 'wrap']

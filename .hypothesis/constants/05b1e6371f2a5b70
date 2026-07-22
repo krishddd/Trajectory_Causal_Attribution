@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\source.py
+# hypothesis_version: 6.148.7
+
+['content', 'encoding', 'gcs', 'inline', 'repository', 'skill_registry', 'source', 'target', 'type', 'wrap']

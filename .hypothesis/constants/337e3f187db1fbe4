@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\types.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, ':', 'Step', 'Trajectory', 'action', 'ci', 'created_at', 'culprit_index', 'do', 'explanation', 'failed', 'failure', 'index', 'inputs', 'kind', 'llm', 'memory', 'meta', 'method', 'mock_observe', 'mode', 'name', 'outcome_score', 'output', 'p_fail_ablated_ci', 'parent_hash', 'point_of_commitment', 'remove', 'repair', 'resamplable', 'resample', 'result', 'rollouts', 'seed', 'session_id', 'shapley_ci', 'step_hash', 'steps', 'task', 'tool', 'total_steps', 'utf-8', 'w']

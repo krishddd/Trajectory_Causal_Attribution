@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\textresponseformat.py
+# hypothesis_version: 6.148.7
+
+['application/json', 'mime_type', 'schema', 'text', 'text/plain', 'type', 'wrap']

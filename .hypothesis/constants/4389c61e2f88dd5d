@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\admin\organization\projects\data_retention_update_params.py
+# hypothesis_version: 6.148.7
+
+['none', 'organization_default', 'zero_data_retention']

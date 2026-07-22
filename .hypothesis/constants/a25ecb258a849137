@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\vector_stores\files.py
+# hypothesis_version: 6.148.7
+
+[1000, 'AsyncFiles', 'Files', 'OpenAI-Beta', 'after', 'asc', 'assistants', 'assistants=v2', 'attributes', 'bearer_auth', 'before', 'cancelled', 'chunking_strategy', 'completed', 'desc', 'failed', 'file_id', 'filter', 'in_progress', 'limit', 'openai-poll-after-ms', 'order', 'true']

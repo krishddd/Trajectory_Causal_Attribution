@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\responses\response.py
+# hypothesis_version: 6.148.7
+
+['24h', 'Conversation', 'IncompleteDetails', 'Moderation', 'ModerationInput', 'ModerationInputError', 'ModerationOutput', 'Response', 'ToolChoice', 'auto', 'content_filter', 'default', 'disabled', 'error', 'flex', 'image', 'in_memory', 'max_output_tokens', 'message', 'moderation_result', 'output_text', 'priority', 'response', 'scale', 'text', 'type']

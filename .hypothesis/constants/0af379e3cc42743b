@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\utilities\file_handler.py
+# hypothesis_version: 6.148.7
+
+['%Y-%m-%d %H:%M:%S', ', ', '.json', '.pkl', '.txt', 'a', 'logs.txt', 'rb', 'timestamp', 'utf-8', 'w', 'wb']

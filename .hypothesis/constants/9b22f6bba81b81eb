@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\model.py
+# hypothesis_version: 6.148.7
+
+['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3-pro-preview', 'gemini-3.5-flash', 'lyria-3-clip-preview', 'lyria-3-pro-preview']

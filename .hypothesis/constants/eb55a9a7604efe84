@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\analyze.py
+# hypothesis_version: 6.148.7
+
+[0.5, 1000, 'attribution', 'cache', 'contrastive', 'drift', 'faithfulness']

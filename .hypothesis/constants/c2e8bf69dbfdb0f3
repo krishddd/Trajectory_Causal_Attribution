@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\entailment.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 0.8, 0.9, 1.0, 512, 4000, 20000, '(no question given)', ',', '-?\\d+(?:[.,]\\d+)?', '0', '1', '10', '2', '3', '4', '5', '6', '7', '8', '9', 'CachedEntailment', 'CannedEntailment', 'EntailmentModel', 'LLMJudgeEntailment', 'LexicalEntailment', 'SMALL_CROSS_ENCODER', 'TIERS', "[a-z0-9']+", 'auto_entailment', 'canned', 'cannot', 'contra', 'contradict', 'cpu', 'cuda', "didn't", "doesn't", 'eight', 'entail', 'entailment', 'five', 'four', 'hits', "isn't", 'lexical-heuristic', 'llm-judge', 'misses', 'neutral', 'never', 'nine', 'no', 'no entail', 'none', 'not', 'not entail', 'one', 'production', 'pt', 'seven', 'six', 'size', 'ten', 'three', 'triage', 'two', "wasn't", 'zero']

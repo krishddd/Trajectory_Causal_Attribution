@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\pydantic\functional_serializers.py
+# hypothesis_version: 6.148.7
+
+['AnyType', 'always', 'any', 'definitions', 'plain', 'schema', 'serialization', 'type', 'wrap']

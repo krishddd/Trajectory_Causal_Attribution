@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\projects\certificates.py
+# hypothesis_version: 6.148.7
+
+['AsyncCertificates', 'Certificates', 'admin_api_key_auth', 'after', 'asc', 'certificate_ids', 'desc', 'limit', 'order', 'post']

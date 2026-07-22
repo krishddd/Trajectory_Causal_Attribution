@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\skills\skills.py
+# hypothesis_version: 6.148.7
+
+['/skills', '/skills/{skill_id}', '<array>', 'AsyncSkills', 'Content-Type', 'Skills', 'after', 'asc', 'bearer_auth', 'default_version', 'desc', 'files', 'limit', 'multipart/form-data', 'order']

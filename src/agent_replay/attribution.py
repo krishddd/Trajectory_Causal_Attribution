@@ -280,6 +280,7 @@ def attribute(
     adaptive: bool = False,
     target_ci_width: float = 0.2,
     max_workers: int = 1,
+    cache=None,
 ) -> AttributionResult:
     """Run the full attribution pipeline and return an :class:`AttributionResult`.
 
@@ -307,6 +308,7 @@ def attribute(
         base_seed=base_seed,
         pass_context=pass_context,
         max_workers=max_workers,
+        cache=cache,
     )
 
     # Establish the factual outcome.

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\admin\organization\audit_log_list_params.py
+# hypothesis_version: 6.148.7
+
+['AuditLogListParams', 'EffectiveAt', 'api_key.created', 'api_key.deleted', 'api_key.updated', 'certificate.created', 'certificate.deleted', 'certificate.updated', 'external_key.removed', 'group.created', 'group.deleted', 'group.updated', 'invite.accepted', 'invite.deleted', 'invite.sent', 'ip_allowlist.created', 'ip_allowlist.deleted', 'ip_allowlist.updated', 'login.failed', 'login.succeeded', 'logout.failed', 'logout.succeeded', 'organization.updated', 'project.archived', 'project.created', 'project.deleted', 'project.updated', 'rate_limit.deleted', 'rate_limit.updated', 'resource.deleted', 'role.created', 'role.deleted', 'role.updated', 'scim.disabled', 'scim.enabled', 'tunnel.created', 'tunnel.deleted', 'tunnel.updated', 'user.added', 'user.deleted', 'user.updated']

@@ -103,6 +103,7 @@ def faithfulness(
     base_seed: int = 2_000,
     pass_context: bool = True,
     kept_rollouts: Optional[int] = None,
+    cache=None,
 ) -> FaithfulnessResult:
     """Measure how faithfully the recorded reasoning drives the outcome.
 
@@ -130,6 +131,7 @@ def faithfulness(
         fail_threshold=fail_threshold,
         base_seed=base_seed,
         pass_context=pass_context,
+        cache=cache,
     )
     outcome_score = (
         trajectory.outcome_score

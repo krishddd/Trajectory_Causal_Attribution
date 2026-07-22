@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\admin\organization\projects\project_model_permissions.py
+# hypothesis_version: 6.148.7
+
+['allow_list', 'deny_list', 'model_ids']

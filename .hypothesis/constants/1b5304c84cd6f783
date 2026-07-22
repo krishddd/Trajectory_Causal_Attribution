@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\_middleware.py
+# hypothesis_version: 6.148.7
+
+['APIResponse[Any]', 'AsyncCallNext', 'CallNext', 'Middleware', 'MiddlewareCallable', 'MiddlewareInput', '__call__', '__name__']

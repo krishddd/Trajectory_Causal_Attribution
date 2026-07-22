@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\containers\files\content.py
+# hypothesis_version: 6.148.7
+
+['Accept', 'AsyncContent', 'Content', 'application/binary', 'bearer_auth']

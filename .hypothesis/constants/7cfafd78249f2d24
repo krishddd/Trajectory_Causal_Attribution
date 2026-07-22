@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\files.py
+# hypothesis_version: 6.148.7
+
+[5.0, '/files', '/files/{file_id}', 'Accept', 'AsyncFiles', 'Content-Type', 'Files', 'after', 'application/binary', 'asc', 'bearer_auth', 'deleted', 'desc', 'error', 'expires_after', 'file', 'limit', 'multipart/form-data', 'order', 'processed', 'purpose']

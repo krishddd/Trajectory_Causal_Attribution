@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\json_repair\json_repair.py
+# hypothesis_version: 6.148.7
+
+['\x08', '"', "'", ',', '-', '-eE/,', '.', '...', '0123456789-.eE/,', ':', 'E', 'This is read-only!', '[', '\\', ']', 'array', 'b', 'context', 'e', 'empty_placeholder', 'f', 'false', 'info', 'n', 'none', 'null', 'object_key', 'object_value', 'r', 't', 'text', 'true', '{', '}', '“', '”']

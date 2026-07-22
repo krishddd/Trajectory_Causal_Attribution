@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\events\types\tool_usage_events.py
+# hypothesis_version: 6.148.7
+
+['agent', 'agent_id', 'agent_role', 'fingerprint', 'from_agent', 'from_task', 'metadata', 'task_id', 'task_name', 'tool_execution_error', 'tool_selection_error', 'tool_usage_error', 'tool_usage_finished', 'tool_usage_started']

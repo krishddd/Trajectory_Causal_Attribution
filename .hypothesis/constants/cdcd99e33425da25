@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\utilities\prompts.py
+# hypothesis_version: 6.148.7
+
+['no_tools', 'role_playing', 'task', 'tools', '{backstory}', '{goal}', '{role}', '{{ .Prompt }}', '{{ .Response }}', '{{ .System }}']

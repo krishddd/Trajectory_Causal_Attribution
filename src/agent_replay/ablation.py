@@ -9,7 +9,7 @@ which the scorer estimates ``P(fail | ...)`` together with its uncertainty.
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Callable, Iterable, List, Optional, Set
+from typing import Any, Callable, Iterable, List, Optional, Set, Tuple
 
 from .replayer import ReplayPlan, replay
 from .stats import wilson_interval
@@ -18,6 +18,41 @@ from .types import Trajectory
 # A verifier maps the agent's final result to a scalar outcome score in [0, 1],
 # where higher is better. 0.0 means "failed" per the paper's convention.
 Verifier = Callable[[Any], float]
+
+
+class RolloutCache:
+    """Shares prefix-hold / factual rollout results across analyses of one run.
+
+    ``attribute``, ``drift`` and ``faithfulness`` each independently run the same
+    ``ablate_from(i)`` / factual plan family on the same trajectory. Passing one
+    cache to several of them lets the second analysis reuse the first's rollouts
+    instead of re-executing the agent.
+
+    **Only prefix-hold and factual plans are cached.** Shapley coalition values
+    are *never* cached — the paper forbids reusing a coalition's value because
+    each evaluation must stay an independent draw to preserve the marginal
+    variance the Shapley CIs depend on — so :meth:`AblationEngine.coalition_value`
+    bypasses the cache entirely.
+
+    Correctness: a cached list is valid only for identical
+    ``(trajectory content, plan, rollouts, fail_threshold, base_seed)``. The key
+    includes ``trajectory.root_hash`` and those parameters, so mismatched configs
+    never collide. Use one cache with a single ``(agent, verifier)`` pair.
+    """
+
+    def __init__(self) -> None:
+        self._store: dict = {}
+        self.hits = 0
+        self.misses = 0
+
+    def get_or_compute(self, key: Tuple, compute: Callable[[], List[bool]]) -> List[bool]:
+        if key in self._store:
+            self.hits += 1
+            return self._store[key]
+        self.misses += 1
+        value = compute()
+        self._store[key] = value
+        return value
 
 
 class AblationEngine:
@@ -33,6 +68,7 @@ class AblationEngine:
         base_seed: int = 1_000,
         pass_context: bool = True,
         max_workers: int = 1,
+        cache: Optional[RolloutCache] = None,
     ) -> None:
         self.agent_fn = agent_fn
         self.trajectory = trajectory
@@ -40,6 +76,9 @@ class AblationEngine:
         self.fail_threshold = fail_threshold
         self.base_seed = base_seed
         self.pass_context = pass_context
+        # Optional cross-analysis cache for prefix-hold / factual plans (never
+        # coalition plans). See :class:`RolloutCache`.
+        self.cache = cache
         # ``max_workers > 1`` runs rollouts on a thread pool. Each rollout is a
         # pure function of ``(plan, seed_tag, k)`` — its own ReplayContext, its own
         # seed, and an ambient context bound per worker thread (contextvars are
@@ -50,6 +89,18 @@ class AblationEngine:
 
     def is_fail(self, result: Any) -> bool:
         return float(self.verifier(result)) < self.fail_threshold
+
+    def _cache_key(self, kind: str, index: int, tag: int, rollouts: int) -> Tuple:
+        """Identity of a cacheable prefix-hold/factual rollout batch."""
+        return (
+            self.trajectory.root_hash,
+            kind,
+            index,
+            tag,
+            rollouts,
+            self.fail_threshold,
+            self.base_seed,
+        )
 
     def run_plan(
         self,
@@ -130,6 +181,9 @@ class AblationEngine:
         sufficient, but the signature accepts more for symmetry.
         """
         plan = ReplayPlan.factual(len(self.trajectory))
+        if self.cache is not None:
+            key = self._cache_key("factual", -1, 0, rollouts)
+            return self.cache.get_or_compute(key, lambda: self.run_plan(plan, rollouts, seed_tag=0))
         return self.run_plan(plan, rollouts, seed_tag=0)
 
     def ablate_from(
@@ -150,12 +204,19 @@ class AblationEngine:
         plan = ReplayPlan.ablate_from(index, len(self.trajectory))
         tag = seed_tag if seed_tag is not None else index + 1
         if adaptive:
+            # Adaptive batches run a variable, data-dependent number of rollouts,
+            # so they are not shared through the fixed-N cache.
             return self.run_plan_adaptive(
                 plan,
                 seed_tag=tag,
                 target_ci_width=target_ci_width,
                 min_rollouts=min(min_rollouts, rollouts),
                 max_rollouts=rollouts,
+            )
+        if self.cache is not None:
+            key = self._cache_key("ablate", index, tag, rollouts)
+            return self.cache.get_or_compute(
+                key, lambda: self.run_plan(plan, rollouts, seed_tag=tag)
             )
         return self.run_plan(plan, rollouts, seed_tag=tag)
 

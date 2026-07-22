@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\responses\response_reasoning_item.py
+# hypothesis_version: 6.148.7
+
+['Content', 'Summary', 'completed', 'in_progress', 'incomplete', 'reasoning', 'reasoning_text', 'summary_text']

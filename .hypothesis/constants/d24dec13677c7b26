@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\_streaming.py
+# hypothesis_version: 6.148.7
+
+[b'\n\n', b'\r\n\r\n', b'\r\r', '\x00', ':', '_T', 'agent.mcp_tool_use', 'agent.message', 'agent.thinking', 'agent.tool_result', 'agent.tool_use', 'completion', 'content_block_delta', 'content_block_start', 'content_block_stop', 'data', 'error', 'event', 'id', 'message', 'message_delta', 'message_start', 'message_stop', 'ping', 'retry', 'session.deleted', 'session.error', 'session.status_idle', 'session.updated', 'tuple[type, ...]', 'type', 'user.define_outcome', 'user.interrupt', 'user.message', 'user.tool_result', 'utf-8']

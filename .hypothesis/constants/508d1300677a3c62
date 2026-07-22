@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\audio\audio.py
+# hypothesis_version: 6.148.7
+
+['AsyncAudio', 'Audio']

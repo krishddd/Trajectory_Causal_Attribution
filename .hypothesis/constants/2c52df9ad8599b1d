@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\_exceptions.py
+# hypothesis_version: 6.148.7
+
+[400, 401, 403, 404, 409, 422, 429, 'AuthenticationError', 'BadRequestError', 'ConflictError', 'Connection error.', 'InternalServerError', 'NotFoundError', 'OAuthError', 'RateLimitError', 'Request timed out.', 'code', 'error', 'error_description', 'param', 'type', 'x-request-id']

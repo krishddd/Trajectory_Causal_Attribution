@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\lib\compat_errors.py
+# hypothesis_version: 6.148.7
+
+[400, 401, 403, 404, 409, 422, 429, 500, 600, 'APIConnectionError', 'APIError', 'APIStatusError', 'APITimeoutError', 'An error occurred', 'AuthenticationError', 'BadRequestError', 'CompatErrorHook', 'ConflictError', 'Connection error.', 'InternalServerError', 'NotFoundError', 'RateLimitError', 'T', '_', '__aenter__', '__enter__', '_inner', '_request', 'async_wrap_sdk_call', 'is_stream', 'parse', 'wrap_sdk_call', 'wrap_sdk_error', 'wrap_stream_errors']

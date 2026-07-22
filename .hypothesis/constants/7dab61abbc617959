@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\sampling.py
+# hypothesis_version: 6.148.7
+
+[1.0, 256, 'FixedSampler', 'Sampler', 'content', 'from_texts', 'logprob', 'logprobs', 'max_tokens', 'messages', 'model', 'n', 'openai_sampler', 'resolve_sampler', 'role', 'system', 'temperature', 'user']

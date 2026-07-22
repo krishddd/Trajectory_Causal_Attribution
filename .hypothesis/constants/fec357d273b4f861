@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\security.py
+# hypothesis_version: 6.148.7
+
+['Authorization', 'GOOGLE_GENAI_API_KEY', 'access_token', 'apiKey', 'api_key', 'basic', 'bearer', 'bearer ', 'client_credentials', 'custom', 'default_headers', 'header', 'http', 'oauth2', 'openIdConnect', 'password', 'query', 'username']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\ragstoreconfig.py
+# hypothesis_version: 6.148.7
+
+['rag_resources', 'rag_retrieval_config', 'similarity_top_k', 'wrap']

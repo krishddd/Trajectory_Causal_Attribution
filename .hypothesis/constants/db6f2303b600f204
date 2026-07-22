@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\beta\deployment_runs.py
+# hypothesis_version: 6.148.7
+
+[',', 'AsyncDeploymentRuns', 'DeploymentRuns', 'anthropic-beta', 'created_at_gt', 'created_at_gte', 'created_at_lt', 'created_at_lte', 'deployment_id', 'has_error', 'limit', 'page', 'trigger_type']

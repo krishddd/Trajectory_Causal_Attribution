@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\usage.py
+# hypothesis_version: 6.148.7
+
+['grounding_tool_count', 'total_cached_tokens', 'total_input_tokens', 'total_output_tokens', 'total_thought_tokens', 'total_tokens', 'wrap']

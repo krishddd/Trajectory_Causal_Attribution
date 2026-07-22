@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\py\_error.py
+# hypothesis_version: 6.148.7
+
+[267, '%s%r', '%s.%s %r: %s ', 'UnknownErrno%d', '[%s]: %s', '_', '__doc__', '__module__', 'errno', 'py.error']

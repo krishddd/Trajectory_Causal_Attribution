@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\tokenizers\__init__.py
+# hypothesis_version: 6.148.7
+
+['byte', 'char', 'contiguous', 'isolated', 'merged_with_next', 'merged_with_previous', 'normalized', 'original', 'removed']

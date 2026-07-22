@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\streaming\_beta_messages.py
+# hypothesis_version: 6.148.7
+
+['__json_buf', 'anthropic-beta', 'citation', 'citations_delta', 'compaction', 'compaction_delta', 'content_block_delta', 'content_block_start', 'content_block_stop', 'fallback', 'input_json', 'input_json_delta', 'mcp_tool_use', 'message_delta', 'message_start', 'message_stop', 'request-id', 'signature', 'signature_delta', 'text', 'text_delta', 'thinking', 'thinking_delta', 'tool_use', 'trailing-strings', 'utf-8']

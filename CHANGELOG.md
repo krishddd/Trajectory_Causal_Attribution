@@ -4,6 +4,26 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.11.0] — Shared rollouts & property-based guards
+
+### Added
+- **Cross-analysis rollout cache (`RolloutCache`, `analyze`).** `attribute`,
+  `drift` and `faithfulness` each re-run the same prefix-hold rollout family on a
+  run; passing a shared `RolloutCache` (via the new `cache=` argument on all
+  three, or the turnkey `analyze(traj, agent, verifier, ...)` wrapper) lets later
+  analyses reuse earlier rollouts, so the combined cost is barely more than the
+  most expensive one alone. Only prefix-hold / factual plans are cached — Shapley
+  **coalition** values are never cached (each must stay an independent draw to
+  preserve marginal variance), and `coalition_value` bypasses the cache entirely.
+  Cache keys include `trajectory.root_hash`, the plan, rollouts, `fail_threshold`
+  and `base_seed`, so mismatched configs never collide; cached results are
+  byte-identical to uncached ones.
+- **Property-based tests (hypothesis).** `tests/test_properties.py` fuzzes the
+  engine's core invariants over random branching agents and plans: factual replay
+  fidelity, **no cassette cross-contamination** for any prefix or coalition plan
+  (the soundness guarantee for branching agents), and the plan-algebra decision
+  precedence. `hypothesis` added to the dev extra.
+
 ## [0.10.0] — The full intervention algebra
 
 Completes the paper's do-calculus intervention set (`docs/HANDOFF.md` §3.4) via an

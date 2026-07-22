@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\beta\environments\beta_self_hosted_work_heartbeat_response.py
+# hypothesis_version: 6.148.7
+
+['active', 'queued', 'starting', 'stopped', 'stopping', 'work_heartbeat']

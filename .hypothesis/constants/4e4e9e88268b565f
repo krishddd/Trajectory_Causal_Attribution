@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\beta\session_list_params.py
+# hypothesis_version: 6.148.7
+
+['SessionListParams', 'anthropic-beta', 'asc', 'created_at[gt]', 'created_at[gte]', 'created_at[lt]', 'created_at[lte]', 'desc', 'idle', 'iso8601', 'rescheduling', 'running', 'terminated']

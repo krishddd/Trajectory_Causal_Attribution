@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\types\dataset_type.py
+# hypothesis_version: 6.148.7
+
+['batch-chat-input', 'batch-chat-v2-input', 'batch-embed-v2-input', 'chat-finetune-input', 'cluster-outliers', 'cluster-result', 'embed-input', 'embed-result']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\validation.py
+# hypothesis_version: 6.148.7
+
+[-2.0, -1.0, 0.0, 1e-10, 1e-06, 0.01, 0.11, 0.12, 0.5, 1.0, 2.0, 101, '-', '=', 'DriftReport', 'LabelAudit', 'LabelSuspect', 'alpha', 'audit_labels', 'clean', 'conflicts', 'consensus', 'current_consensus', 'derive_label', 'derived', 'detect_drift', 'dev_mean', 'drifted', 'find_stale_labels', 'index', 'indices', 'inf', 'ks_2sample', 'label', 'labeled_answer', 'live_mean', 'misfit', 'n_dev', 'n_live', 'n_rows', 'p_value', 'prompt', 'reference', 'score', 'statistic', 'suspect_rate', 'suspects', 'why']

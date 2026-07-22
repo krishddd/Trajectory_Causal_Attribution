@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\block_translators\google_genai.py
+# hypothesis_version: 6.148.7
+
+['annotations', 'application/pdf', 'args', 'audio', 'audio/wav', 'base64', 'block_type', 'bytes', 'code', 'code_interpreter', 'confidence_scores', 'dict[str, Any]', 'document', 'end_index', 'error', 'executable_code', 'extras', 'file', 'file_data', 'file_uri', 'format', 'function_call', 'google_genai', 'grounding_chunks', 'grounding_metadata', 'grounding_supports', 'id', 'image', 'image_url', 'language', 'maps', 'mime_type', 'name', 'non_standard', 'outcome', 'output', 'pdf', 'placeId', 'place_id', 'python', 'reasoning', 'segment', 'server_tool_call', 'server_tool_result', 'signature', 'source', 'start_index', 'status', 'success', 'text', 'text-plain', 'text/plain', 'thinking', 'title', 'tool_call', 'tool_call_id', 'txt', 'type', 'types.ContentBlock', 'uri', 'url', 'utf-8', 'value', 'web', 'web_search_queries']

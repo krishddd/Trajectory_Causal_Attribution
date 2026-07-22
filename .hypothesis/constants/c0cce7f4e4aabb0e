@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\projects\users\__init__.py
+# hypothesis_version: 6.148.7
+
+['AsyncRoles', 'AsyncUsers', 'Roles', 'RolesWithRawResponse', 'Users', 'UsersWithRawResponse']

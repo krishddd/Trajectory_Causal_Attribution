@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\beta\chatkit\chatkit_response_output_text.py
+# hypothesis_version: 6.148.7
+
+['Annotation', 'AnnotationFile', 'AnnotationFileSource', 'AnnotationURL', 'AnnotationURLSource', 'file', 'output_text', 'type', 'url']

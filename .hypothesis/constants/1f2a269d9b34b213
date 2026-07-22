@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\urllib3\util\ssl_match_hostname.py
+# hypothesis_version: 6.148.7
+
+['*', ', ', '.', '3.5.0.1', 'DNS', 'IP Address', '[^.]*', '[^.]+', '\\*', '\\.', '\\A', '\\Z', 'commonName', 'subject', 'subjectAltName', 'xn--']

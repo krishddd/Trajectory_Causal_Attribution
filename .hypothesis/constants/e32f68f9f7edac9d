@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\model_param.py
+# hypothesis_version: 6.148.7
+
+['ModelParam', 'claude-fable-5', 'claude-haiku-4-5', 'claude-mythos-5', 'claude-opus-4-1', 'claude-opus-4-5', 'claude-opus-4-6', 'claude-opus-4-7', 'claude-opus-4-8', 'claude-sonnet-4-5', 'claude-sonnet-4-6']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\io\symbols.py
+# hypothesis_version: 6.148.7
+
+['ArrayEnd', 'ArrayStart', 'Boolean', 'Bytes', 'Double', 'Enum', 'Fixed', 'Float', 'Int', 'ItemEnd', 'Long', 'MapEnd', 'MapKeyMarker', 'MapStart', 'Null', 'String', 'Union']

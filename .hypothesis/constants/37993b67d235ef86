@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\faithfulness.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.1, 0.5, 2000, 'correct-faithful', 'correct-unfaithful', 'llm', 'steps', 'wrong-faithful', 'wrong-unfaithful']

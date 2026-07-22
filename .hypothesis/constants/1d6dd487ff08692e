@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\lib\bedrock.py
+# hypothesis_version: 6.148.7
+
+['/', '/responses(?:/.*)?$', 'AWS_BEDROCK_BASE_URL', 'AWS_DEFAULT_REGION', 'AWS_REGION', 'admin_api_key_auth', 'bearer_auth', 'str | Awaitable[str]']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\urllib3\util\wait.py
+# hypothesis_version: 6.148.7
+
+[1000, 'select', 'wait_for_read', 'wait_for_write']

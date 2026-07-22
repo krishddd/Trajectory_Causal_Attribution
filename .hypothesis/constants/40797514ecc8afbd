@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\score.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 'DEFAULT_N_SAMPLES', 'clustering_seconds', 'entailment_calls', 'integrity', 'refusals', 'refusals_clustered', 'requested_samples', 'sampling_seconds', 'score', 'score_batch', 'score_samples', 'strict_entailment']

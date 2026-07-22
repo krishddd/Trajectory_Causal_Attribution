@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\_api\deprecation.py
+# hypothesis_version: 6.148.7
+
+['-', '.', '1.', '<lambda>', 'Deprecated.', 'FieldInfoV1', 'LangChain', 'T', '_', '_P', '_R', 'attribute', 'class', 'default', 'function', 'ignore', 'langchain', 'method', 'pydantic.v1.fields', 'type | Callable']

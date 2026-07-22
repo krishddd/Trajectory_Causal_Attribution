@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\pytest_plugin.py
+# hypothesis_version: 6.148.7
+
+[0.05, 0.5, 'agent_replay.sqlite', 'both', 'ci', 'failures', 'n_fail', 'p_fail', 'rollouts', 'trajectories']

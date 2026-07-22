@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\errors\genaierror.py
+# hypothesis_version: 6.148.7
+
+['body', 'headers', 'message', 'raw_response', 'status_code']

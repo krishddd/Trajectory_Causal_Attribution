@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\responses\input_token_count_params.py
+# hypothesis_version: 6.148.7
+
+['Conversation', 'Text', 'ToolChoice', 'auto', 'disabled', 'friendly', 'high', 'low', 'medium', 'pragmatic']

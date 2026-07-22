@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\interactions.py
+# hypothesis_version: 6.148.7
+
+[500, 8000, 30000, '*', '200', '408', '409', '429', '4XX', '5XX', 'CreateInteraction', 'DELETE', 'GET', 'POST', '[DONE]', '_async_hooks', '_hooks', 'agent', 'agent_config', 'api_version', 'application/json', 'async', 'body', 'buffered', 'cached_content', 'deleteInteraction', 'event_stream', 'extra_headers', 'generation_config', 'getInteractionById', 'json', 'model', 'parsed', 'stream', 'streaming', 'sync', 'text/event-stream', 'user-agent']

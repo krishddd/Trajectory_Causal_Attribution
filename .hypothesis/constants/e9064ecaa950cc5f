@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\skills\versions\versions.py
+# hypothesis_version: 6.148.7
+
+['<array>', 'AsyncVersions', 'Content-Type', 'Versions', 'after', 'asc', 'bearer_auth', 'default', 'desc', 'files', 'limit', 'multipart/form-data', 'order']

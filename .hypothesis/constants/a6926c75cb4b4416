@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\evals\runs\output_items.py
+# hypothesis_version: 6.148.7
+
+['AsyncOutputItems', 'OutputItems', 'after', 'asc', 'bearer_auth', 'desc', 'fail', 'limit', 'order', 'pass', 'status']

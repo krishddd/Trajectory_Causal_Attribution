@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\overrides\overrides.py
+# hypothesis_version: 6.148.7
+
+['7.7.0', 'LOAD_ATTR', 'LOAD_GLOBAL', 'LOAD_NAME', '_WrappedMethod', '__', '__builtins__', '__final__', '__globals__', '__override__']

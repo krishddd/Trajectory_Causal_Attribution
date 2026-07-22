@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\invites.py
+# hypothesis_version: 6.148.7
+
+['AsyncInvites', 'Invites', 'admin_api_key_auth', 'after', 'email', 'limit', 'owner', 'projects', 'reader', 'role']

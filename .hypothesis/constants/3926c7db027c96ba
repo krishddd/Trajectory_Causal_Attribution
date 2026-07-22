@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\explain.py
+# hypothesis_version: 6.148.7
+
+[' +', ' ?', ' x', '>>', 'AttributionResult', 'Explanation', 'StepAttribution', 'Trajectory', 'benign', 'confidence', 'contributing', 'credit', 'decisive', 'failed', 'failure', 'fix', 'headline', 'locked-in', 'mode', 'observed-only', 'passed', 'session_id', 'trace', 'what', 'where', 'why', '|---|---|---|']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\response_helpers.py
+# hypothesis_version: 6.148.7
+
+[';', 'AsyncResponseT', 'P', 'ResponseT', 'T', 'U', '__metadata__', '__orig_bases__', 'buffered', 'content-type', 'data', 'event_stream', 'parsed', 'raw', 'raw_stream', 'streaming', 'text/event-stream', 'x-request-id']

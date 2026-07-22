@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\completion_choice.py
+# hypothesis_version: 6.148.7
+
+['CompletionChoice', 'Logprobs', 'content_filter', 'length', 'stop']

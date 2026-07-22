@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\utils\pydantic.py
+# hypothesis_version: 6.148.7
+
+[256, 'Config', 'TBaseModel', '_', '__annotations__', '__module__', '__root__', 'default', 'default_', 'default_factory', 'description', 'ignore', 'model', 'model_config', 'model_json_schema', 'populate_by_name', 'root', 'schema', 'title', 'type[BaseModelV1]', 'type[BaseModel]', 'type_', 'validation']

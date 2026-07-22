@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\tools\_beta_functions.py
+# hypothesis_version: 6.148.7
+
+['?', 'AsyncFunctionT', 'FunctionT', 'Tool error', '__aexit__', '__doc__', '__name__', '__wrapped__', '_context_manager', 'aclose', 'allowed_callers', 'cache_control', 'close', 'defer_loading', 'description', 'direct', 'entered', 'input_examples', 'input_schema', 'mcp_server_name', 'name', 'object', 'properties', 'strict', 'text', 'tool', 'type', 'validated']

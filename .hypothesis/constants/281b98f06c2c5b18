@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\types\embed_response.py
+# hypothesis_version: 6.148.7
+
+['allow', 'embeddings_by_type', 'embeddings_floats', 'response_type']

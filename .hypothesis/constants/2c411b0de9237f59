@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\interaction.py
+# hypothesis_version: 6.148.7
+
+['UNKNOWN', 'agent', 'agent_config', 'before', 'budget_exceeded', 'cached_content', 'cancelled', 'completed', 'content', 'created', 'deep-research', 'dynamic', 'environment', 'environment_id', 'failed', 'generation_config', 'id', 'in_progress', 'incomplete', 'input', 'lyria-3-clip-preview', 'lyria-3-pro-preview', 'model', 'model_output', 'output_audio', 'output_image', 'output_text', 'output_video', 'outputs', 'requires_action', 'response_format', 'response_mime_type', 'response_modalities', 'service_tier', 'steps', 'system_instruction', 'tools', 'type', 'updated', 'usage', 'webhook_config', 'wrap']

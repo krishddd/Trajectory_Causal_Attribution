@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\embeddings.py
+# hypothesis_version: 6.148.7
+
+['/embeddings', 'AsyncEmbeddings', 'Embeddings', 'base64', 'bearer_auth', 'dimensions', 'encoding_format', 'f', 'float', 'float32', 'input', 'model', 'user']

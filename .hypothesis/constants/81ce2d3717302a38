@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\stepdeltadata.py
+# hypothesis_version: 6.148.7
+
+['StepDeltaData', 'UNKNOWN', 'arguments_delta', 'audio', 'code_execution_call', 'document', 'file_search_call', 'file_search_result', 'function_result', 'google_maps_call', 'google_maps_result', 'google_search_call', 'google_search_result', 'image', 'mcp_server_tool_call', 'text', 'thought_signature', 'thought_summary', 'type', 'url_context_call', 'url_context_result', 'video']

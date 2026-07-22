@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_mcp_utils.py
+# hypothesis_version: 6.148.7
+
+['$defs', '$ref', '/', '0.0.0', 'Authorization', 'BaseExceptionGroup', 'ExceptionGroup', 'Unknown', 'X-Goog-User-Project', '_http_options', 'additionalProperties', 'anyOf', 'any_of', 'base_url', 'defs', 'description', 'exceptions', 'global', 'items', 'location', 'mcp', 'name', 'oneOf', 'one_of', 'parameters', 'project', 'properties', 'response', 'status', 'status_code', 'text', 'x-goog-api-client']

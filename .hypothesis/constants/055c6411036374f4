@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\faker\contrib\pytest\plugin.py
+# hypothesis_version: 6.148.7
+
+['_session_faker', 'faker_locale', 'faker_seed', 'faker_session_locale', 'session']

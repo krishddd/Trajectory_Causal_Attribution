@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\documentdelta.py
+# hypothesis_version: 6.148.7
+
+['application/pdf', 'data', 'document', 'mime_type', 'text/csv', 'type', 'uri', 'wrap']

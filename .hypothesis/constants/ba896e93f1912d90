@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\_stainless_helpers.py
+# hypothesis_version: 6.148.7
+
+[', ', 'BetaToolRunner', 'HELPER_METHOD_STREAM', '_stainless_helper', 'beta.messages.parse', 'collect_helpers', 'compaction', 'content', 'environments-worker', 'get_helper_tag', 'helper_header', 'mcp_content', 'mcp_message', 'mcp_resource_to_file', 'mcp_tool', 'messages.parse', 'session-tool-runner', 'stream', 'tag_helper', 'x-stainless-helper']

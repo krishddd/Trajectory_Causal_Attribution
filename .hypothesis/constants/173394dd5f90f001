@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\beta\chatkit\sessions.py
+# hypothesis_version: 6.148.7
+
+['/chatkit/sessions', 'AsyncSessions', 'OpenAI-Beta', 'Sessions', 'bearer_auth', 'chatkit_beta=v1', 'expires_after', 'rate_limits', 'user', 'workflow']

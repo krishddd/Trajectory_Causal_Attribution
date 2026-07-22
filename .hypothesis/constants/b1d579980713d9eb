@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\schema.py
+# hypothesis_version: 6.148.7
+
+['SchemaParseException', 'UnknownType', 'expand_schema', 'fingerprint', 'fullname', 'load_schema', 'load_schema_ordered', 'parse_schema']

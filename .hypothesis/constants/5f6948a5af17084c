@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\credentials\_providers.py
+# hypothesis_version: 6.148.7
+
+[200, 384, 448, 3600, '.tmp', '/', '1.0', '<in-memory config>', '<in-memory>', 'Content-Type', 'CredentialsFile', 'Dict[str, Any]', 'EnvToken', 'IdentityTokenFile', 'InMemoryConfig', 'StaticToken', 'User-Agent', 'access_token', 'anthropic-beta', 'application/json', 'authentication', 'base_url', 'client_id', 'config: base_url', 'credentials', 'credentials_path', 'expires_at', 'expires_in', 'federation_rule_id', 'file', 'grant_type', 'identity_token', 'oauth_token', 'oidc_federation', 'organization_id', 'os.PathLike[str]', 'path', 'posix', 'refresh_token', 'scope', 'service_account_id', 'source', 'type', 'user_oauth', 'utf-8', 'version', 'workspace_id']

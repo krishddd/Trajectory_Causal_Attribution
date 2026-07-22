@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\adapters\openai_sdk.py
+# hypothesis_version: 6.148.7
+
+['chat', 'completions', 'dict', 'messages', 'model', 'model_dump', 'openai', 'repr', 'temperature', 'to_dict']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\vector_stores\vector_store_file.py
+# hypothesis_version: 6.148.7
+
+['LastError', 'VectorStoreFile', 'cancelled', 'completed', 'failed', 'in_progress', 'invalid_file', 'server_error', 'unsupported_file', 'vector_store.file']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\block_translators\bedrock_converse.py
+# hypothesis_version: 6.148.7
+
+['annotations', 'application/pdf', 'args', 'base64', 'bedrock_converse', 'bytes', 'citation', 'citations', 'cited_text', 'dict[str, Any]', 'document', 'extras', 'file', 'format', 'id', 'image', 'index', 'input', 'input_json_delta', 'last', 'mime_type', 'name', 'non_standard', 'pdf', 'reasoning', 'reasoning_content', 'signature', 'source', 'source_content', 'text', 'text-plain', 'text/plain', 'title', 'tool_call', 'tool_call_chunk', 'tool_use', 'txt', 'type', 'types.ContentBlock', 'utf-8', 'value']

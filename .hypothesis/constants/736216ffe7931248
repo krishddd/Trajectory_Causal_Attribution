@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\tokenizers\normalizers\__init__.py
+# hypothesis_version: 6.148.7
+
+['nfc', 'nfd', 'nfkc', 'nfkd']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\block_translators\groq.py
+# hypothesis_version: 6.148.7
+
+['args', 'arguments', 'code', 'code_interpreter', 'executed_tools', 'extras', 'function', 'groq', 'id', 'index', 'name', 'non_standard', 'output', 'python', 'search', 'server_tool_call', 'server_tool_result', 'status', 'success', 'text', 'tool_call', 'tool_call_id', 'type', 'web_search']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\events\types\crew_events.py
+# hypothesis_version: 6.148.7
+
+['crew', 'crew_kickoff_failed', 'crew_kickoff_started', 'crew_test_completed', 'crew_test_failed', 'crew_test_result', 'crew_test_started', 'crew_train_completed', 'crew_train_failed', 'crew_train_started', 'fingerprint', 'metadata']

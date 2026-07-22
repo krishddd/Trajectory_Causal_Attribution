@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\responses\input_items.py
+# hypothesis_version: 6.148.7
+
+['AsyncInputItems', 'InputItems', 'after', 'asc', 'bearer_auth', 'desc', 'include', 'limit', 'order']

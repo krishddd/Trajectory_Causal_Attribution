@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\mcpserver.py
+# hypothesis_version: 6.148.7
+
+['allowed_tools', 'headers', 'mcp_server', 'name', 'type', 'url', 'wrap']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\beta\sessions\events.py
+# hypothesis_version: 6.148.7
+
+[',', 'AsyncAnthropic', 'AsyncEvents', 'Events', 'anthropic-beta', 'asc', 'created_at_gt', 'created_at_gte', 'created_at_lt', 'created_at_lte', 'desc', 'events', 'limit', 'order', 'page', 'types']

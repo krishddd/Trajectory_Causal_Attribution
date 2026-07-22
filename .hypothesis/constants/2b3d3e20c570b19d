@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\imageresponseformat.py
+# hypothesis_version: 6.148.7
+
+['16:9', '1:1', '1:4', '1:8', '1K', '21:9', '2:3', '2K', '3:2', '3:4', '4:1', '4:3', '4:5', '4K', '512', '5:4', '8:1', '9:16', 'aspect_ratio', 'delivery', 'image', 'image/jpeg', 'image_size', 'inline', 'mime_type', 'type', 'uri', 'wrap']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\language_models\_utils.py
+# hypothesis_version: 6.148.7
+
+['BaseMessage', 'T', 'audio', 'base64', 'content', 'data', 'detail', 'file', 'file_data', 'file_id', 'format', 'functions', 'id', 'image', 'image_url', 'input_audio', 'messages', 'mime_type', 'output_version', 'response_format', 'response_metadata', 'source_type', 'text', 'tools', 'type', 'url']

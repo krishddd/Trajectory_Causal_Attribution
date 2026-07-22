@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\httpx\_transports\default.py
+# hypothesis_version: 6.148.7
+
+['A', 'AsyncHTTPTransport', 'HTTPTransport', 'T', 'aclose', 'close', 'http', 'https', 'socks5', 'socks5h']

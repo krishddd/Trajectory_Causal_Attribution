@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\utilities\printer.py
+# hypothesis_version: 6.148.7
+
+['\x1b[0m', '\x1b[1m\x1b[35m', '\x1b[1m\x1b[92m', '\x1b[1m\x1b[93m', '\x1b[1m\x1b[94m', '\x1b[1m\x1b[95m', '\x1b[1m\x1b[96m', '\x1b[32m', '\x1b[35m', '\x1b[91m', '\x1b[93m', '\x1b[94m', '\x1b[95m', '\x1b[96m', 'blue', 'bold_blue', 'bold_cyan', 'bold_green', 'bold_magenta', 'bold_purple', 'bold_yellow', 'cyan', 'green', 'magenta', 'purple', 'red', 'yellow']

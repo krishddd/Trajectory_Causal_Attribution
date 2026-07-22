@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\models\internal\globals.py
+# hypothesis_version: 6.148.7
+
+['Api-Revision', 'api_revision', 'api_version', 'simple', 'user_project', 'wrap', 'x-goog-user-project']

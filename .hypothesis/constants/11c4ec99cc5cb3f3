@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\admin\organization\usage_file_search_calls_params.py
+# hypothesis_version: 6.148.7
+
+['1d', '1h', '1m', 'api_key_id', 'project_id', 'user_id', 'vector_store_id']

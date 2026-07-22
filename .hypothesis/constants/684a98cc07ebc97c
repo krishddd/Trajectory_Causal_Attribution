@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\google_genai.py
+# hypothesis_version: 6.148.7
+
+[500, 1000, 8000, 30000, ', ', '/', 'ModelT', '_async_httpx_client', '_credentials', '_httpx_client', 'attempts', 'audio', 'body', 'code_execution_call', 'content', 'file_search_call', 'file_search_result', 'function_call', 'function_result', 'google_maps_call', 'google_maps_result', 'google_search_call', 'google_search_result', 'image', 'input', 'lyria-3-clip-preview', 'lyria-3-pro-preview', 'mcp_server_tool_call', 'model', 'model_copy', 'model_output', 'output_audio', 'output_image', 'output_text', 'output_video', 'outputs', 'quota_project_id', 'retry_options', 'steps', 'stream', 'text', 'thought', 'type', 'url_context_call', 'url_context_result', 'user_input', 'video']

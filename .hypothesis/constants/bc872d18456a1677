@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\urlcontextresultstep.py
+# hypothesis_version: 6.148.7
+
+['is_error', 'signature', 'type', 'url_context_result', 'wrap']

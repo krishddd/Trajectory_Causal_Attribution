@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\aws\_credentials.py
+# hypothesis_version: 6.148.7
+
+['AWS_DEFAULT_REGION', 'AWS_REGION', 'aws_access_key', 'aws_secret_key']

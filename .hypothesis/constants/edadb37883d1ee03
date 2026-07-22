@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\io\parser.py
+# hypothesis_version: 6.148.7
+
+['array', 'boolean', 'bytes', 'default', 'double', 'enum', 'fields', 'fixed', 'float', 'int', 'items', 'long', 'map', 'name', 'null', 'record', 'string', 'symbols', 'type', 'union', 'values']

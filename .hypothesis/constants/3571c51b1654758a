@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\events\types\llm_events.py
+# hypothesis_version: 6.148.7
+
+['agent_id', 'agent_role', 'from_agent', 'from_task', 'llm_call', 'llm_call_completed', 'llm_call_failed', 'llm_call_started', 'llm_stream_chunk', 'task_id', 'task_name', 'tool_call']

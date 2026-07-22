@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\vector_stores\__init__.py
+# hypothesis_version: 6.148.7
+
+['AsyncFileBatches', 'AsyncFiles', 'AsyncVectorStores', 'FileBatches', 'Files', 'FilesWithRawResponse', 'VectorStores']

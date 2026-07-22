@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\tools\_beta_runner.py
+# hypothesis_version: 6.148.7
+
+['AnyFunctionToolT', 'RunnerItemT', 'assistant', 'compaction', 'container', 'content', 'enabled', 'extra_headers', 'is_error', 'max_tokens', 'messages', 'model', 'refusal', 'role', 'summary_prompt', 'text', 'tool_result', 'tool_use', 'tool_use_id', 'type', 'user']

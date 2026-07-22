@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\responses\input_tokens.py
+# hypothesis_version: 6.148.7
+
+['AsyncInputTokens', 'InputTokens', 'auto', 'bearer_auth', 'conversation', 'disabled', 'friendly', 'input', 'instructions', 'model', 'parallel_tool_calls', 'personality', 'pragmatic', 'previous_response_id', 'reasoning', 'text', 'tool_choice', 'tools', 'truncation']

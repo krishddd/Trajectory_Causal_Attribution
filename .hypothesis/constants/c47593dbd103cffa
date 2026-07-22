@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\credentials\_constants.py
+# hypothesis_version: 6.148.7
+
+[30.0, 120, '\x00', '.', '.config', '/', '/v1/oauth/token', 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_BASE_URL', 'ANTHROPIC_CONFIG_DIR', 'ANTHROPIC_PROFILE', 'ANTHROPIC_SCOPE', 'APPDATA', 'Anthropic', 'AppData', 'Roaming', '\\', 'active_config', 'anthropic', 'configs', 'credentials', 'default', 'http://127.0.0.1', 'http://[::1]', 'http://localhost', 'https://', 'oauth-2025-04-20', 'profile name', 'refresh_token', 'utf-8', 'win32']

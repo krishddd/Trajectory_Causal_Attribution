@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\batches.py
+# hypothesis_version: 6.148.7
+
+['/batches', '/batches/{batch_id}', '/v1/chat/completions', '/v1/completions', '/v1/embeddings', '/v1/images/edits', '/v1/moderations', '/v1/responses', '/v1/videos', '24h', 'AsyncBatches', 'Batches', 'after', 'bearer_auth', 'completion_window', 'endpoint', 'input_file_id', 'limit', 'metadata', 'output_expires_after']

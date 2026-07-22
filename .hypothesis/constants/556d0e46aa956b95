@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\httpx\_decoders.py
+# hypothesis_version: 6.148.7
+
+['br', 'decompress', 'deflate', 'finish', 'gzip', 'identity', 'replace', 'utf-8', 'zstd']

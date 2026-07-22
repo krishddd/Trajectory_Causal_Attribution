@@ -384,6 +384,25 @@ fewer rollouts with the same verdict:
 result = attribute(traj, agent, verifier, rollouts=200, adaptive=True, target_ci_width=0.2)
 ```
 
+## Analyze once, pay once
+
+`attribute`, `drift` and `faithfulness` re-run the same prefix-hold rollouts on a
+run. Share a `RolloutCache` so the second and third analysis reuse the first's —
+or use the `analyze` wrapper, which does it for you:
+
+```python
+from agent_replay import analyze
+
+out = analyze(traj, agent, verifier, rollouts=50, state_scorer=my_health_fn)
+out["attribution"].culprit_index
+out["drift"].commitment_index
+out["cache"].hits           # rollouts reused instead of recomputed
+```
+
+Shapley coalition rollouts are never cached (they must stay independent draws for
+valid variance); only the prefix-hold / factual plans are shared. Results are
+byte-identical to running each analysis on its own.
+
 ## Async agents
 
 `async def` agents just work — `record` / `replay` / `attribute` detect coroutine

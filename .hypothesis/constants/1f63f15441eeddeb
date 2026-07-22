@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\error.py
+# hypothesis_version: 6.148.7
+
+['code', 'message', 'wrap']

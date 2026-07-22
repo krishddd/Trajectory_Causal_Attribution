@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\users\users.py
+# hypothesis_version: 6.148.7
+
+['/organization/users', 'AsyncUsers', 'Users', 'admin_api_key_auth', 'after', 'developer_persona', 'emails', 'limit', 'role', 'role_id', 'technical_level']

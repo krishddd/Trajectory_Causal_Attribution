@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\aiohttp\compression_utils.py
+# hypothesis_version: 6.148.7
+
+[1024, '__name__', 'decompress', 'flush', 'gzip', 'level', 'memoryview[bytes]', 'memoryview[int]', 'strategy', 'undefined', 'wbits']

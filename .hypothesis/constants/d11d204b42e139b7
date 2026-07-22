@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\aiohttp\tcp_helpers.py
+# hypothesis_version: 6.148.7
+
+['SO_KEEPALIVE', 'socket', 'tcp_keepalive', 'tcp_nodelay']

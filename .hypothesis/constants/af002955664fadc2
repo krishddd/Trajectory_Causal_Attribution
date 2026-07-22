@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\refusal.py
+# hypothesis_version: 6.148.7
+
+[0.0, ' .!?"\'`', '(not given)', '-', '?', 'LLMRefusalDetector', 'NullRefusalDetector', 'RefusalDetector', 'RefusalReport', "[a-z0-9']+", "can't say", 'cannot say', 'custom detector', 'custom-refusal', 'declin', 'detect_refusals', 'detector', 'idk', 'llm judge: declined', 'llm-refusal', 'mixed', 'n/a', 'n_refusals', 'n_samples', 'na', 'no answer', 'no data', 'no idea', 'none', 'not applicable', 'not known', 'pattern-refusal', 'rate', 'reasons', 'refus', 'refusal-detector', 'unanimous', 'unclear', 'unknown', 'unsure', '|']

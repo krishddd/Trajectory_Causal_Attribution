@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\types\summarize_request_length.py
+# hypothesis_version: 6.148.7
+
+['long', 'medium', 'short']

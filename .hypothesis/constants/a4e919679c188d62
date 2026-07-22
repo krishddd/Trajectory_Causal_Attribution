@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_extra_utils.py
+# hypothesis_version: 6.148.7
+
+['.jsonl', 'Content-Type', 'afc', 'application/json', 'b', 'bigquery_uri', 'bq://', 'error', 'gcs_uri', 'google_genai.models', 'gs://', 'maximum_remote_calls', 'mcp_servers', 'mode', 'result', 'resumable', 'start', 'tools', 'user-agent', 'x-goog-api-client']

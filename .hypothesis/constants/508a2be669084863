@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\models\__init__.py
+# hypothesis_version: 6.148.7
+
+['.createagent', '.createinteraction', '.createwebhook', '.deleteagent', '.deleteinteraction', '.deletewebhook', '.getagent', '.getinteractionbyid', '.getwebhook', '.listagents', '.listwebhooks', '.pingwebhook', '.rotatesigningsecret', '.updatewebhook', 'CreateAgentGlobals', 'CreateAgentRequest', 'CreateWebhookGlobals', 'CreateWebhookRequest', 'DeleteAgentGlobals', 'DeleteAgentRequest', 'DeleteWebhookGlobals', 'DeleteWebhookRequest', 'GetAgentGlobals', 'GetAgentRequest', 'GetAgentRequestParam', 'GetWebhookGlobals', 'GetWebhookRequest', 'ListAgentsGlobals', 'ListAgentsRequest', 'ListWebhooksGlobals', 'ListWebhooksRequest', 'PingWebhookGlobals', 'PingWebhookRequest', 'UpdateWebhookGlobals', 'UpdateWebhookRequest', 'internal']

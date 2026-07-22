@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\aiohttp\tracing.py
+# hypothesis_version: 6.148.7
+
+['CIMultiDict[str]', 'ClientSession', 'TraceConfig', '_ParamT_contra']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\_pytest\timing.py
+# hypothesis_version: 6.148.7
+
+[2020, 'perf_counter', 'sleep', 'time']

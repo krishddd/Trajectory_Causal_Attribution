@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\interop.py
+# hypothesis_version: 6.148.7
+
+['api', 'attributes', 'body', 'chat', 'choices', 'completion', 'embeddings', 'events', 'execute_tool', 'function', 'gen_ai.', 'gen_ai.choice', 'gen_ai.completion', 'gen_ai.prompt', 'gen_ai.request.model', 'gen_ai.request.top_p', 'gen_ai.system', 'gen_ai.tool.name', 'gen_ai.tool.result', 'inputs', 'invoke_tool', 'kind', 'llm', 'memory', 'message', 'messages', 'meta', 'model', 'name', 'outcome_score', 'output', 'outputs', 'resamplable', 'result', 'retrieval', 'retrieve', 'session_id', 'startTimeUnixNano', 'start_time', 'steps', 'store', 'task', 'text_completion', 'tool', 'utf-8', 'vector']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\tools\base.py
+# hypothesis_version: 6.148.7
+
+['.', 'The tool schema.', 'Tool execution error', 'ToolCall', '__annotations__', '__orig_bases__', '__parameters__', 'args', 'args_schema', 'callbacks', 'cls', 'content', 'content_and_artifact', 'description', 'dict', 'document', 'error', 'file', 'forbid', 'green', 'id', 'ignore', 'image', 'image_url', 'is_required', 'json', 'kwargs', 'metadata', 'name', 'properties', 'required', 'run_id', 'run_manager', 'run_name', 'search_result', 'self', 'str | dict', 'success', 'tags', 'text', 'tool_call', 'tool_call_id', 'type', 'v1', 'v2', 'v__duplicate_kwargs']

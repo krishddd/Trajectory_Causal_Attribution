@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\serializers.py
+# hypothesis_version: 6.148.7
+
+[',', ':', 'Annotated', 'Expected float', 'Expected int', 'Expected string', 'Marshaller', 'Union', 'Unmarshaller', '__value__', 'json', 'null']

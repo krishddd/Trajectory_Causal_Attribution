@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\projects\data_retention.py
+# hypothesis_version: 6.148.7
+
+['AsyncDataRetention', 'DataRetention', 'admin_api_key_auth', 'none', 'organization_default', 'retention_type', 'zero_data_retention']

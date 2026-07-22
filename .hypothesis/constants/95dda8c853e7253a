@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\beta\threads\messages.py
+# hypothesis_version: 6.148.7
+
+['AsyncMessages', 'Messages', 'OpenAI-Beta', 'after', 'asc', 'assistant', 'assistants=v2', 'attachments', 'bearer_auth', 'before', 'content', 'desc', 'limit', 'metadata', 'order', 'role', 'run_id', 'user']

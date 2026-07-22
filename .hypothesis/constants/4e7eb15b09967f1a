@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\resources\webhooks\__init__.py
+# hypothesis_version: 6.148.7
+
+['PingWebhookRequest', 'SigningSecret', 'Webhook', 'WebhookCreateParams', 'WebhookDeleteParams', 'WebhookGetParams', 'WebhookInput', 'WebhookListParams', 'WebhookListResponse', 'WebhookPingParams', 'WebhookPingResponse', 'WebhookUpdate', 'WebhookUpdateParams']

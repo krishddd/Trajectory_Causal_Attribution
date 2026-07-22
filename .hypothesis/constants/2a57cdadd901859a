@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\utilities\logger.py
+# hypothesis_version: 6.148.7
+
+['%Y-%m-%d %H:%M:%S', 'bold_yellow', 'cyan', 'yellow']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\requestbodies.py
+# hypothesis_version: 6.148.7
+
+[',', ':', '^multipart\\/.*', 'application/json', 'form', 'json', 'multipart', 'multipart/form-data', 'raw', 'string', 'text/plain', '{}']

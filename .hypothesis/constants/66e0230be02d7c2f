@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\runnables\base.py
+# hypothesis_version: 6.148.7
+
+['\n| ', '\n}', "'", "''", ',\n  ', ', ', '1.3.3', '2.0.0', '<lambda>', 'Callable', 'Config', 'Configurable', 'Input', 'Iterator[Output]', 'Other', 'Output', 'RunnableConfig', 'RunnableGenerator', 'RunnableLambda(...)', '_', '__args__', '__module__', '__origin__', '__root__', '__self__', '_atransform', '_transform', 'aclose', 'afunc', 'args', 'callbacks', 'config', 'configurable', 'default', 'defers_inputs', 'func', 'input', 'langchain', 'list[Output]', 'list[RunnableConfig]', 'max_concurrency', 'metadata', 'name', 'object', 'operator.itemgetter(', 'origin', 'original', 'recursion_limit', 'root', 'run_id', 'run_manager', 'run_name', 'runnable', 'schema', 'tags', 'type', 'type[Input]', 'type[Output]', 'v1', 'v2', 'v3', 'version', '{\n  ', '| ']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\createmodelinteraction.py
+# hypothesis_version: 6.148.7
+
+['background', 'cached_content', 'environment', 'generation_config', 'response_format', 'response_mime_type', 'response_modalities', 'service_tier', 'store', 'stream', 'system_instruction', 'tools', 'webhook_config', 'wrap']

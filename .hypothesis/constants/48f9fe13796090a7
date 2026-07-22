@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\lib\_parsing\_responses.py
+# hypothesis_version: 6.148.7
+
+['TextFormatT', 'additional_tools', 'apply_patch_call', 'compaction', 'computer_call', 'computer_call_output', 'content', 'custom_tool_call', 'exec', 'file_search_call', 'function', 'function_call', 'function_call_output', 'json_schema', 'local_shell_call', 'mcp_approval_request', 'mcp_call', 'mcp_list_tools', 'message', 'name', 'output', 'output_text', 'parsed', 'parsed_arguments', 'reasoning', 'schema', 'shell_call', 'shell_call_output', 'strict', 'tool_search_call', 'tool_search_output', 'type', 'web_search_call']

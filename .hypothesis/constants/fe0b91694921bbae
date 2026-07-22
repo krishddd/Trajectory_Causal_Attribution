@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\chat\chat_completion_chunk.py
+# hypothesis_version: 6.148.7
+
+['ChatCompletionChunk', 'Choice', 'ChoiceDelta', 'ChoiceDeltaToolCall', 'ChoiceLogprobs', 'Moderation', 'ModerationInput', 'ModerationInputError', 'ModerationOutput', 'assistant', 'auto', 'content_filter', 'default', 'developer', 'error', 'flex', 'function', 'function_call', 'image', 'length', 'moderation_result', 'moderation_results', 'priority', 'scale', 'stop', 'system', 'text', 'tool', 'tool_calls', 'type', 'user']

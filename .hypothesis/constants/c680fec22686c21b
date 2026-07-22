@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\completions.py
+# hypothesis_version: 6.148.7
+
+[600, ',', '/v1/complete', 'AsyncCompletions', 'Completions', 'anthropic-beta', 'max_tokens_to_sample', 'metadata', 'model', 'prompt', 'stop_sequences', 'stream', 'temperature', 'top_k', 'top_p']

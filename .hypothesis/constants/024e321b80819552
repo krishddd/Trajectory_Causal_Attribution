@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\types\beta\beta_stop_reason.py
+# hypothesis_version: 6.148.7
+
+['BetaStopReason', 'compaction', 'end_turn', 'max_tokens', 'pause_turn', 'refusal', 'stop_sequence', 'tool_use']

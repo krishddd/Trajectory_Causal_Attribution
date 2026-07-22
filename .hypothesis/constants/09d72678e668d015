@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\crewai\utilities\pydantic_schema_utils.py
+# hypothesis_version: 6.148.7
+
+['#/$defs/', '#/$defs/{model}', '$defs', '$ref', '/', 'additionalProperties', 'anyOf', 'const', 'discriminator', 'json_schema', 'mapping', 'name', 'object', 'oneOf', 'output', 'properties', 'propertyName', 'required', 'schema', 'strict', 'title', 'type']

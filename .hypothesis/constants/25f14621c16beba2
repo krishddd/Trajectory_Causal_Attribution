@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\annotation.py
+# hypothesis_version: 6.148.7
+
+['Annotation', 'AnnotationParam', 'UNKNOWN', 'file_citation', 'place_citation', 'type', 'url_citation']

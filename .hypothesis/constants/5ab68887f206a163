@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\pytest_plugin.py
+# hypothesis_version: 6.148.7
+
+[0.5, 'assert_confident', 'assert_uncertain', 'entropy_of', 'semantic_entropy']

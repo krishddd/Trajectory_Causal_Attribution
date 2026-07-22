@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\auth\_workload.py
+# hypothesis_version: 6.148.7
+
+[0.0, 10.0, 400, 401, 403, 1200, '2018-02-01', 'Google', 'Metadata', 'Metadata-Flavor', 'access_token', 'api-version', 'audience', 'client_id', 'expires_in', 'get_token', 'grant_type', 'id', 'identity_provider_id', 'jwt', 'msi_res_id', 'object_id', 'provider', 'r', 'resource', 'service_account_id', 'subject_token', 'subject_token_type', 'token_type', 'true']

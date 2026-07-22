@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\credentials\_workload.py
+# hypothesis_version: 6.148.7
+
+[256, 400, 401, 1024, '/', 'Content-Type', 'Request-Id', 'User-Agent', 'access_token', 'anthropic-beta', 'application/json', 'assertion', 'base_url', 'bearer', 'error', 'error_description', 'error_uri', 'expires_in', 'federation_rule_id', 'grant_type', 'organization_id', 'request-id', 'service_account_id', 'token_type', 'utf-8', 'workspace_id']

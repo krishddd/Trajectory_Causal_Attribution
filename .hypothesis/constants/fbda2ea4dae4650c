@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\webhooks\webhookupdate.py
+# hypothesis_version: 6.148.7
+
+['batch.expired', 'batch.failed', 'batch.succeeded', 'disabled', 'enabled', 'interaction.failed', 'name', 'state', 'subscribed_events', 'uri', 'video.generated', 'wrap']

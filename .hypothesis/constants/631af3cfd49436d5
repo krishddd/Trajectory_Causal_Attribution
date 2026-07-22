@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\pydantic\deprecated\decorator.py
+# hypothesis_version: 6.148.7
+
+[', ', 'AnyCallable', 'AnyCallableT', 'ConfigType', 'args', 'extra', 'forbid', 'kwargs', 's', 'v__args', 'v__duplicate_kwargs', 'v__kwargs', 'v__positional_only', 'validate_arguments']

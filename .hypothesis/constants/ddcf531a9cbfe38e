@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Trajectory_Causal_Attribution\src\agent_replay\aggregate.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 'aggregate', 'bootstrap-runs', 'ci', 'failure', 'label', 'n_runs', 'n_skipped', 'steps', 'systematic_culprit']

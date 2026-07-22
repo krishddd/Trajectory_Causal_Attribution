@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\chat\chat_completion.py
+# hypothesis_version: 6.148.7
+
+['ChatCompletion', 'Choice', 'ChoiceLogprobs', 'Moderation', 'ModerationInput', 'ModerationInputError', 'ModerationOutput', 'auto', 'chat.completion', 'content_filter', 'default', 'error', 'flex', 'function_call', 'image', 'length', 'moderation_result', 'moderation_results', 'priority', 'scale', 'stop', 'text', 'tool_calls', 'type']

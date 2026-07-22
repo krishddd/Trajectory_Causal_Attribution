@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\groups\roles.py
+# hypothesis_version: 6.148.7
+
+['AsyncRoles', 'Roles', 'admin_api_key_auth', 'after', 'asc', 'desc', 'limit', 'order', 'role_id']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\ai.py
+# hypothesis_version: 6.148.7
+
+['  Args:', 'AIMessageChunk', 'Invalid Tool Calls:', 'Tool Calls:', 'UsageMetadata', 'additional_kwargs', 'after', 'ai', 'args', 'before', 'dict', 'dict[str, Any]', 'error', 'extras', 'id', 'index', 'invalid_tool_call', 'invalid_tool_calls', 'last', 'model_provider', 'name', 'output_version', 'reasoning', 'server_tool_call', 'str', 'tool_call', 'tool_call_chunk', 'tool_call_chunks', 'tool_calls', 'translate_content', 'type', 'v1']

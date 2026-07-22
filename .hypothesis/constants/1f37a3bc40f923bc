@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\batch_usage.py
+# hypothesis_version: 6.148.7
+
+['BatchUsage', 'InputTokensDetails', 'OutputTokensDetails']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\entropy.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 2.0, '-inf', 'chao1_alphabet_size', 'coverage', 'logsumexp', 'naive_string_entropy', 'predictive_entropy', 'semantic_entropy', 'shannon_entropy', 'singleton_clusters']

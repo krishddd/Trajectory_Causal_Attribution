@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\filecitation.py
+# hypothesis_version: 6.148.7
+
+['custom_metadata', 'document_uri', 'end_index', 'file_citation', 'file_name', 'media_id', 'page_number', 'source', 'start_index', 'type', 'wrap']

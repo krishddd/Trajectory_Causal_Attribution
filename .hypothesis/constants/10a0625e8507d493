@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\responses\response_function_web_search_param.py
+# hypothesis_version: 6.148.7
+
+['Action', 'ActionFind', 'ActionOpenPage', 'ActionSearch', 'ActionSearchSource', 'completed', 'failed', 'find_in_page', 'in_progress', 'open_page', 'search', 'searching', 'url', 'web_search_call']

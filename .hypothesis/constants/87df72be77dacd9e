@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\_schema_common.py
+# hypothesis_version: 6.148.7
+
+[255, 256, 13933329357911598997, 'CRC-64-AVRO', 'MD5', 'SHA-256', 'aliases', 'boolean', 'bytes', 'default', 'doc', 'double', 'fields', 'float', 'int', 'items', 'little', 'long', 'md5', 'name', 'namespace', 'null', 'sha256', 'size', 'string', 'symbols', 'type', 'values']

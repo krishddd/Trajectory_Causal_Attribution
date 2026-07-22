@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\runnables\config.py
+# hypothesis_version: 6.148.7
+
+['Callable[..., T]', 'P', 'RunnableConfig', 'T', '__', 'api_key', 'callbacks', 'checkpoint_ns', 'client', 'config', 'configurable', 'enabled', 'handlers', 'max_concurrency', 'metadata', 'model', 'parent', 'parent_run_id', 'project_name', 'recursion_limit', 'run_id', 'run_manager', 'run_name', 'tags']

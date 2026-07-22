@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\audio\transcriptions.py
+# hypothesis_version: 6.148.7
+
+['AsyncTranscriptions', 'Content-Type', 'Transcriptions', 'bearer_auth', 'chunking_strategy', 'diarized_json', 'file', 'include', 'json', 'known_speaker_names', 'language', 'model', 'multipart/form-data', 'prompt', 'response_format', 'segment', 'srt', 'stream', 'temperature', 'text', 'verbose_json', 'vtt', 'word']

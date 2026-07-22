@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\__init__.py
+# hypothesis_version: 6.148.7
+
+['APIConnectionError', 'APIError', 'APIStatusError', 'APITimeoutError', 'AZURE_OPENAI_API_KEY', 'AsyncBedrockOpenAI', 'AsyncClient', 'AsyncOpenAI', 'AsyncStream', 'AuthenticationError', 'BadRequestError', 'BaseModel', 'BedrockOpenAI', 'Client', 'ConflictError', 'DEFAULT_MAX_RETRIES', 'DEFAULT_TIMEOUT', 'DefaultAioHttpClient', 'DefaultHttpxClient', 'InternalServerError', 'NOT_GIVEN', 'NoneType', 'NotFoundError', 'NotGiven', 'OAuthError', 'OPENAI_API_KEY', 'OPENAI_API_TYPE', 'OPENAI_API_VERSION', 'Omit', 'OpenAI', 'OpenAIError', 'ProxiesTypes', 'RateLimitError', 'ReconnectingEvent', 'RequestOptions', 'Stream', 'Timeout', 'Transport', '__', '__title__', '__version__', 'amazon-bedrock', 'azure', 'file_from_path', 'not_given', 'omit', 'openai', 'types']

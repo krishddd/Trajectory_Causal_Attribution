@@ -136,6 +136,7 @@ def drift(
     drift_threshold: float = 0.2,
     base_seed: int = 3_000,
     pass_context: bool = True,
+    cache=None,
 ) -> DriftResult:
     """Chart a run's health and outcome-openness step by step.
 
@@ -157,6 +158,7 @@ def drift(
         fail_threshold=fail_threshold,
         base_seed=base_seed,
         pass_context=pass_context,
+        cache=cache,
     )
 
     points: List[DriftPoint] = []

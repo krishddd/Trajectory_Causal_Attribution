@@ -1,0 +1,4 @@
+# file: C:\Users\hp\Music\Semantic Entropy  Uncertainty Surfacing\src\semantic_entropy_gate\gate.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.01, 0.55, 0.6, 1.0, 1000, 'DEFAULT_THRESHOLD', 'Gate', 'REFUSAL_POLICIES', '__doc__', '__name__', 'abstained', 'abstentions', 'allow', 'backend_tier', 'block', 'block_threshold', 'counts', 'defer', 'deferral_rate', 'dev_scores', 'entailment_backend', 'entropy_result', 'error', 'error_type', 'failed', 'gate', 'gated', 'inf', 'labeled_answer', 'limits', 'mean_entropy', 'min_samples', 'n_samples', 'normalized', 'production', 'prompt', 'refusal_detector', 'refusal_rate', 'samples', 'score', 'threshold', 'tier', 'total', 'unreliable', 'warn_threshold']

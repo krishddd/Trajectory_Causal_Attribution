@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\tracers\core.py
+# hypothesis_version: 6.148.7
+
+['%Y%m%dT%H%M%S%fZ', '.', 'ChatGeneration', 'N/A', 'Retriever', '__omit_auto_outputs', 'attempt', 'chain', 'chat_model', 'chunk', 'dict[str, Any]', 'documents', 'end', 'error', 'exception', 'exception_type', 'failed', 'generations', 'input', 'kwargs', 'llm', 'message', 'messages', 'metadata', 'name', 'new_token', 'original', 'original+chat', 'outcome', 'output', 'outputs', 'prompts', 'query', 'result', 'retriever', 'retry', 'slept', 'start', 'streaming_events', 'success', 'time', 'token', 'tool', 'tool_call_count', 'tool_calls']

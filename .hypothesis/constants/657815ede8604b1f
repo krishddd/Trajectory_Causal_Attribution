@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\const.py
+# hypothesis_version: 6.148.7
+
+[1000, 1970, 1000000, 'array', 'boolean', 'bytes', 'double', 'enum', 'error', 'error_union', 'fixed', 'float', 'int', 'long', 'map', 'null', 'record', 'request', 'string', 'union']

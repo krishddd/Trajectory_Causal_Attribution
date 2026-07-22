@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\credentials\_auth.py
+# hypothesis_version: 6.148.7
+
+[',', ', ', 'AccessTokenAuth', 'Authorization', 'X-Api-Key', 'anthropic-beta']

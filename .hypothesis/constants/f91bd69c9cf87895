@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\cohere\core\http_client.py
+# hypothesis_version: 6.148.7
+
+[0.2, 0.5, 1.0, 2.0, 60.0, 200, 400, 408, 409, 429, 500, 1000, 'Making HTTP request', '[REDACTED]', '^\\s*[0-9]+\\s*$', 'additional_headers', 'api-key', 'apikey', 'auth-token', 'authorization', 'cookie', 'max_retries', 'proxy-authenticate', 'proxy-authorization', 'retry-after', 'retry-after-ms', 'set-cookie', 'timeout_in_seconds', 'www-authenticate', 'x-access-token', 'x-api-key', 'x-api-token', 'x-auth-token', 'x-csrf-token', 'x-ratelimit-reset', 'x-session-token', 'x-xsrf-token']

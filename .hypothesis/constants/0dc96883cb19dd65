@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\utils\retries.py
+# hypothesis_version: 6.148.7
+
+[0.25, 1.5, 100, 500, 1000, 60000, 3600000, 'X', 'backoff', 'retry-after', 'retry-after-ms']

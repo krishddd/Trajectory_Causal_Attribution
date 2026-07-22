@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\auth\iam.py
+# hypothesis_version: 6.148.7
+
+[':generateAccessToken', ':generateIdToken', ':signBlob', ':signJwt', 'Content-Type', 'POST', 'application/json', 'payload', 'signedBlob', 'utf-8']

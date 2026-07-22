@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\tracers\event_stream.py
+# hypothesis_version: 6.148.7
+
+['/', '/logs/', 'ChatGenerationChunk', 'GenerationChunk', 'T', 'UUID', 'Unnamed', '_end', 'callbacks', 'chain', 'chat_model', 'chunk', 'data', 'end', 'end_time', 'error', 'event', 'final_output', 'generation_info', 'generations', 'id', 'input', 'inputs', 'llm', 'llm_output', 'logs', 'messages', 'metadata', 'name', 'on_chat_model_end', 'on_chat_model_start', 'on_chat_model_stream', 'on_custom_event', 'on_llm_end', 'on_llm_start', 'on_llm_stream', 'on_retriever_end', 'on_retriever_start', 'on_tool_end', 'on_tool_error', 'on_tool_start', 'output', 'parent_ids', 'parent_run_id', 'path', 'prompts', 'query', 'retriever', 'run_id', 'run_name', 'run_type', 'start', 'str', 'stream', 'streamed_output', 'streaming_events', 'tags', 'text', 'tool', 'tool_call_id', 'type']

@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\types\graders\label_model_grader.py
+# hypothesis_version: 6.148.7
+
+['Input', 'InputContent', 'LabelModelGrader', 'assistant', 'developer', 'input_image', 'label_model', 'message', 'output_text', 'system', 'user']

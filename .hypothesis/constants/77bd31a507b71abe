@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\resources\beta\vaults\credentials.py
+# hypothesis_version: 6.148.7
+
+[',', 'AsyncCredentials', 'Credentials', 'anthropic-beta', 'auth', 'display_name', 'include_archived', 'limit', 'metadata', 'page']

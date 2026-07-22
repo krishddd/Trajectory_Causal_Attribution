@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\openai\resources\admin\organization\groups\groups.py
+# hypothesis_version: 6.148.7
+
+['/organization/groups', 'AsyncGroups', 'Groups', 'admin_api_key_auth', 'after', 'asc', 'desc', 'limit', 'name', 'order']

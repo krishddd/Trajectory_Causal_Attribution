@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\tornado\escape.py
+# hypothesis_version: 6.148.7
+
+[1.5, ' title="%s"', '&', '+', '.', '...', '/', '</', '<\\/', '?', '[\\x00-\\x20]+', 'http', 'http://', 'https', 'latin1', 'strict', 'utf-8']

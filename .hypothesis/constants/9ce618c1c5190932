@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\createagentinteraction.py
+# hypothesis_version: 6.148.7
+
+['agent_config', 'background', 'environment', 'response_format', 'response_mime_type', 'response_modalities', 'service_tier', 'store', 'stream', 'system_instruction', 'tools', 'type', 'webhook_config', 'wrap']

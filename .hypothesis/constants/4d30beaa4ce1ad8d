@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\click\types.py
+# hypothesis_version: 6.148.7
+
+[b'-', ' clamped', '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S', ',\n\t', ', ', '-', '0', '1', '<', '<=', '>', '>=', 'BOOL', 'Choice({choices})', 'DateTime', 'FLOAT', 'INT', 'ParamType', 'ParamTypeValue', 'ParameterType', 'STRING', 'UNPROCESSED', 'UUID', 'allow_dash', 'argument', 'boolean', 'case_sensitive', 'choice', 'choices', 'clamp', 'datetime', 'dir', 'dir_okay', 'directory', 'encoding', 'exists', 'f', 'false', 'file', 'file_okay', 'filename', 'float', 'float range', 'formats', 'func', 'integer', 'integer range', 'max', 'max_open', 'min', 'min_open', 'mode', 'n', 'name', 'no', 'off', 'on', 'option', 'os.PathLike[str]', 'param_type', 'path', 'r', 'read', 'readable', 'replace', 'strict', 't', 't.IO[t.Any]', 'text', 'true', 'types', 'utf-8', 'uuid', 'w', 'writable', 'write', 'y', 'yes', '|']

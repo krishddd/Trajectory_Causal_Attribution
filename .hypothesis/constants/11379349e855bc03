@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\fastavro\_read_common.py
+# hypothesis_version: 6.148.7
+
+[b'Obj', 'bytes', 'fields', 'fixed', 'magic', 'map', 'meta', 'name', 'record', 'size', 'sync', 'type', 'values']

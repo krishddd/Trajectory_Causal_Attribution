@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\langchain_core\messages\block_translators\anthropic.py
+# hypothesis_version: 6.148.7
+
+['_tool_result', 'annotations', 'anthropic', 'args', 'base64', 'block_type', 'caller', 'char_location', 'citation', 'citations', 'cited_text', 'code_execution', 'code_interpreter', 'content', 'data', 'dict[str, Any]', 'document', 'document_title', 'error', 'error_code', 'extras', 'file', 'file_id', 'id', 'image', 'index', 'input', 'input_json_delta', 'is_error', 'last', 'mcp_tool_use', 'media_type', 'mime_type', 'name', 'non_standard', 'output', 'page_location', 'partial_json', 'reasoning', 'remote_mcp', 'server_tool_call', 'server_tool_result', 'server_tool_use', 'source', 'status', 'success', 'text', 'text-plain', 'text/plain', 'thinking', 'title', 'tool_call', 'tool_call_chunk', 'tool_call_id', 'tool_name', 'tool_use', 'tool_use_id', 'type', 'types.ContentBlock', 'url', 'value']

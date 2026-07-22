@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\rich\filesize.py
+# hypothesis_version: 6.148.7
+
+[1000, '1 byte', 'EB', 'GB', 'MB', 'PB', 'TB', 'YB', 'ZB', 'decimal', 'kB']

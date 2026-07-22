@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\anthropic\lib\aws\_client.py
+# hypothesis_version: 6.148.7
+
+['aws_access_key', 'aws_profile', 'aws_region', 'aws_secret_key', 'aws_session_token', 'skip_auth', 'workspace_id']

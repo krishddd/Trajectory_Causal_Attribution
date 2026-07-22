@@ -1,0 +1,4 @@
+# file: C:\Users\hp\AppData\Roaming\Python\Python311\site-packages\google\genai\_gaos\types\interactions\tool.py
+# hypothesis_version: 6.148.7
+
+['Tool', 'ToolParam', 'UNKNOWN', 'code_execution', 'computer_use', 'file_search', 'function', 'google_maps', 'google_search', 'mcp_server', 'retrieval', 'type', 'url_context']
