@@ -1,0 +1,4 @@
+gradio>=4.44
+# Install agent-replay straight from the source repo (swap to `agent-replay`
+# once it is published on PyPI).
+git+https://github.com/krishddd/Trajectory_Causal_Attribution.git@main
