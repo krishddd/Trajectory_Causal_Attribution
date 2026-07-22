@@ -284,6 +284,36 @@ def cmd_branches(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_aggregate(args: argparse.Namespace) -> int:
+    from .aggregate import aggregate_runs
+
+    agent_fn = _load_entrypoint(args.agent)
+    verifier = _load_entrypoint(args.verifier)
+    with CheckpointStore(args.db) as store:
+        sessions = args.sessions or store.list_sessions()
+        trajectories = [store.load_trajectory(sid) for sid in sessions]
+    if not trajectories:
+        print("(no sessions to aggregate)")
+        return 1
+    result = aggregate_runs(
+        trajectories,
+        agent_fn,
+        verifier,
+        label=args.label or args.db,
+        rollouts=args.rollouts,
+        method=args.method,
+        fail_threshold=args.fail_threshold,
+        adaptive=args.adaptive,
+    )
+    print(result.to_text())
+    if args.out:
+        json_path = args.out if args.out.endswith(".json") else f"{args.out}.json"
+        with open(json_path, "w", encoding="utf-8") as fh:
+            json.dump(result.to_dict(), fh, indent=2, default=str)
+        print(f"Wrote {json_path}")
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace) -> int:
     from .serve import serve
 
@@ -364,6 +394,13 @@ def build_parser() -> argparse.ArgumentParser:
     common_agent.add_argument("--db", required=True, help="SQLite checkpoint store path")
     common_agent.add_argument("--session", required=True, help="session id")
     common_agent.add_argument("--agent", required=True, help="agent entrypoint as module:function")
+
+    # Like common_agent but without --session: for commands that span many sessions.
+    common_agent_nosession = argparse.ArgumentParser(add_help=False)
+    common_agent_nosession.add_argument("--db", required=True, help="SQLite checkpoint store path")
+    common_agent_nosession.add_argument(
+        "--agent", required=True, help="agent entrypoint as module:function"
+    )
 
     pr = sub.add_parser("record", parents=[common_agent], help="record a factual agent run")
     pr.add_argument("--verifier", help="verifier entrypoint module:function")
@@ -479,6 +516,25 @@ def build_parser() -> argparse.ArgumentParser:
     pdr.add_argument("--drift-threshold", type=float, default=0.2, dest="drift_threshold")
     pdr.add_argument("--out", help="write a standalone SVG drift-curve HTML report")
     pdr.set_defaults(func=cmd_drift)
+
+    pag = sub.add_parser(
+        "aggregate",
+        parents=[common_agent_nosession],
+        help="pool attribution across many failing sessions -> systematic weak step",
+    )
+    pag.add_argument("--verifier", required=True, help="verifier entrypoint module:function")
+    pag.add_argument(
+        "--sessions",
+        nargs="*",
+        help="session ids to aggregate (default: every session in the store)",
+    )
+    pag.add_argument("--rollouts", type=int, default=50)
+    pag.add_argument("--method", choices=["contrastive", "shapley", "both"], default="contrastive")
+    pag.add_argument("--fail-threshold", type=float, default=0.5, dest="fail_threshold")
+    pag.add_argument("--adaptive", action="store_true", help="sequential CI-targeted stopping")
+    pag.add_argument("--label", help="label for the aggregate report")
+    pag.add_argument("--out", help="write the aggregate as JSON")
+    pag.set_defaults(func=cmd_aggregate)
 
     ps = sub.add_parser("serve", help="browse recorded sessions in the Multiverse Console")
     ps.add_argument("--db", required=True)

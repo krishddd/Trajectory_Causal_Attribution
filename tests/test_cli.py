@@ -182,6 +182,53 @@ def test_drift_command(tmp_path, capsys):
     assert (tmp_path / "drift.html").exists()
 
 
+def test_aggregate_command(tmp_path, capsys):
+    db = str(tmp_path / "agg.sqlite")
+    # Record several failing runs of the fixture agent (fail_step 3 is systematic).
+    for i, seed in enumerate([1, 5, 9, 13]):
+        rc = main(
+            [
+                "record",
+                "--db",
+                db,
+                "--session",
+                f"run{i}",
+                "--agent",
+                AGENT,
+                "--verifier",
+                VERIFIER,
+                "--seed",
+                str(seed),
+            ]
+        )
+        assert rc == 0
+    capsys.readouterr()  # clear
+
+    out_json = str(tmp_path / "agg")
+    rc = main(
+        [
+            "aggregate",
+            "--db",
+            db,
+            "--agent",
+            AGENT,
+            "--verifier",
+            VERIFIER,
+            "--rollouts",
+            "40",
+            "--label",
+            "fixture",
+            "--out",
+            out_json,
+        ]
+    )
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "Aggregate attribution for 'fixture'" in out
+    assert "tool:tool_step_3" in out
+    assert (tmp_path / "agg.json").exists()
+
+
 def test_invalid_entrypoint_raises(tmp_path):
     db = str(tmp_path / "x.sqlite")
     try:

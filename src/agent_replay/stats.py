@@ -92,6 +92,31 @@ def mean(xs: Sequence[float]) -> float:
     return _mean(xs)
 
 
+def bootstrap_mean_interval(
+    values: Sequence[float], seed: int = 0, iterations: int = 1000, alpha: float = 0.05
+) -> Tuple[float, float, float]:
+    """Percentile bootstrap interval for the mean of ``values``.
+
+    Returns ``(point, low, high)`` where ``point`` is the sample mean. Resamples
+    ``values`` with replacement ``iterations`` times and takes empirical
+    percentiles of the resampled means. A single value yields a degenerate
+    interval ``(v, v, v)`` — useful when pooling a step observed in only one run.
+    """
+    xs = list(values)
+    if not xs:
+        return (0.0, 0.0, 0.0)
+    point = _mean(xs)
+    if len(xs) == 1:
+        return (point, point, point)
+    rng = random.Random(seed)
+    n = len(xs)
+    means: List[float] = []
+    for _ in range(iterations):
+        means.append(sum(xs[rng.randrange(n)] for _ in range(n)) / n)
+    means.sort()
+    return (point, _percentile(means, alpha / 2.0), _percentile(means, 1.0 - alpha / 2.0))
+
+
 def binary_entropy(p: float) -> float:
     """Shannon entropy (in bits) of a Bernoulli(``p``) outcome, in ``[0, 1]``.
 

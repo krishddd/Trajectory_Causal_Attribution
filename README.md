@@ -202,6 +202,7 @@ not depend on them.
 | `find_minimal_repair(engine, step)` | Search for a minimal counterfactual repair. |
 | `interop.from_otel_spans / from_jsonl / from_steps` | Import a `Trajectory` from an external trace. |
 | `interop.replayable_agent(traj, resample_fns)` | Make an imported trace attributable. |
+| `aggregate_runs(trajectories, agent, verifier)` | Pool attribution across runs → systematic weak step. |
 | `CheckpointStore` | The SQLite checkpoint / content-addressable store. |
 
 `method` is `"contrastive"` (Phase 1), `"shapley"` (Phase 2), or `"both"`.
@@ -294,6 +295,36 @@ Point-of-Commitment rule — lands near the judge baseline, quantifying exactly
 what the PoC rule buys. The harness ships a deterministic synthetic generator so
 it runs offline; point `evaluate()` at `interop`-imported trajectories to run the
 real dataset. See [`benchmarks/README.md`](benchmarks/README.md).
+
+## Find your agent's *systematic* weak step
+
+Attributing one failure tells you which step broke *that* run. `aggregate` pools
+attribution across many failing runs of the same task and ranks steps by **name**
+(the stable identity of an operation) — so you can tell bad luck (culprit in 1 of
+20 runs) from a design flaw (culprit in 15 of 20):
+
+```python
+from agent_replay import aggregate_runs
+
+agg = aggregate_runs(failing_trajectories, my_agent, my_verifier, rollouts=50)
+print(agg.systematic_culprit)     # e.g. "tool:web_search" — the step most consistently to blame
+print(agg.to_text())
+```
+
+```
+Aggregate attribution for 'support-agent': 18 failing runs
+  Systematic weak step: tool:web_search
+  step                     culprit   mean attr [95% CI]     poc
+    tool:web_search        15/18  83%   0.71 [ 0.55, 0.86]  15/18
+    llm:plan                2/18  11%   0.14 [ 0.02, 0.29]   2/18
+    llm:write               1/18   6%   0.05 [-0.03, 0.14]   1/18
+```
+
+Or over a whole checkpoint store from the CLI:
+
+```bash
+agent-replay aggregate --db runs.sqlite --agent myproj:agent --verifier myproj:ok --rollouts 60
+```
 
 ## Explainable output
 

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from . import instrument, interop
 from .ablation import AblationEngine
+from .aggregate import AggregateResult, StepAggregate, aggregate, aggregate_runs
 from .attribution import attribute
 from .drift import DriftPoint, DriftResult, drift
 from .errors import AgentReplayError, NonSerializableStepError, SuccessfulRunError
@@ -43,7 +44,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 __all__ = [
     "Session",
@@ -58,6 +59,10 @@ __all__ = [
     "DriftPoint",
     "instrument",
     "interop",
+    "aggregate",
+    "aggregate_runs",
+    "AggregateResult",
+    "StepAggregate",
     "assert_agent_passes",
     "measure_failure_rate",
     "replay",

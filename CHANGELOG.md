@@ -4,6 +4,26 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.9.0] — Systematic blame across many runs
+
+### Added
+- **Multi-trajectory aggregation (`agent_replay.aggregate`).** `aggregate_runs(
+  trajectories, agent, verifier, ...)` attributes each *failing* run and pools the
+  results by step **name** (indices shift between runs; names are the stable
+  identity of an operation, and a name may recur within a run). For each named
+  step it reports how often it was the culprit, its mean attribution with a
+  bootstrap interval **over runs**, and the point-of-commitment rate; the ranking
+  surfaces the agent's `systematic_culprit` — the difference between debugging one
+  failure and finding a design flaw. Passing runs are skipped and counted.
+  `aggregate(results)` pools already-computed `AttributionResult`s. Reuses
+  `attribute` wholesale (no new estimation), so it inherits the engine's
+  soundness. `AggregateResult.to_text()` / `.to_dict()`.
+- **CLI `agent-replay aggregate`.** Pools attribution over selected sessions (or
+  every session in a store) and prints the systematic-weak-step ranking;
+  `--out` writes the aggregate as JSON.
+- **`stats.bootstrap_mean_interval`** — public percentile-bootstrap interval for
+  the mean of a sample (used for the pooled over-runs CIs).
+
 ## [0.8.0] — Prove it & import anything
 
 Realizes the "prove it & import anything" milestone (`docs/ANALYSIS.md` §5): run
