@@ -81,7 +81,17 @@ def _render_explanation(explanation: Any) -> str:
     trace_rows = []
     for t in explanation.trace:
         color = roles.get(t.role, "#3a4553")
-        action = "" if t.action is None else f" &mdash; <code>{html.escape(str(t.action))}</code>"
+        observation = getattr(t, "observation", None)
+        if t.action is None:
+            action = ""
+        elif observation is not None:
+            # A step that split its action from its observation (deck slide 9).
+            action = (
+                f" &mdash; <code>{html.escape(str(t.action))}</code>"
+                f" &rarr; <code>{html.escape(str(observation))}</code>"
+            )
+        else:
+            action = f" &mdash; <code>{html.escape(str(t.action))}</code>"
         trace_rows.append(
             f'<li><span class="rolebadge" style="background:{color}">{html.escape(t.role)}</span> '
             f"<b>step {t.index}</b> <code>{html.escape(t.kind)}:{html.escape(t.name)}</code>"

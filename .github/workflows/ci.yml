@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main, master]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -64,3 +65,24 @@ jobs:
         with:
           name: dist
           path: dist/*
+
+  publish:
+    name: Publish to PyPI
+    # Only on a version tag (e.g. v1.0.0), after lint/test/build are green.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/agent-replay
+    # OIDC trusted publishing — no API token needed once the publisher is
+    # configured on PyPI for this repo/workflow/environment.
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

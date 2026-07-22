@@ -4,6 +4,37 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [1.0.0] — 1.0
+
+The stable release. Every subject in the source research and the roadmap is
+shipped, the causal engine is property-fuzzed, and the project has a docs site and
+an automated release path.
+
+### Added
+- **Action/observation surfaced in the diagnostics.** The explanation trace
+  (`to_text` / `to_markdown` / `to_dict`) and the HTML report's Explanation panel
+  now show a step's recorded **action → observation** whenever the two differ
+  (`StepTrace.observation`), so a split step reads as "action `X` → observation
+  `Y`" instead of a single conflated value.
+- **Docs site (MkDocs Material).** `mkdocs.yml` builds the README, the design
+  docs, and the changelog into a searchable site with rendered mermaid diagrams;
+  a `docs` extra and a GitHub Pages workflow (`.github/workflows/docs.yml`)
+  publish it on every push to `main`.
+- **Automated PyPI release (trusted publishing).** A tag-gated `publish` job in
+  CI builds and uploads to PyPI via OIDC — no stored token — when a `v*` tag is
+  pushed and lint/test/build are green.
+
+### Notes
+This 1.0 consolidates 0.1→0.11: counterfactual step-ablation attribution with the
+Point-of-Commitment rule and antithetic Shapley; the full do-calculus intervention
+algebra (resample / do / remove / mock-observe / swap-model) on an
+action/observation SCM; branch-safe idempotency-key replay (property-fuzzed);
+credit mode; drift, faithfulness, and multi-run aggregation; the Multiverse
+(fork / resume / diff / console); trace import (OTel / JSONL); parallel and
+adaptive, cache-shared rollouts; validated minimal repair with guard/DPO export;
+a pytest plugin; universal instrumentation; and a Who&When benchmark. Zero runtime
+dependencies.
+
 ## [0.11.0] — Shared rollouts & property-based guards
 
 ### Added

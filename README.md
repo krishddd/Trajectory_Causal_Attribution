@@ -29,6 +29,8 @@ on the *Who&When* benchmark).
 - 🔎 **Honest** — attributing a *passing* run raises by default (or runs the symmetric **credit** analysis: which step secured success); observation-only / non-resamplable steps are flagged, never silently scored zero.
 - 🪶 **Zero runtime dependencies** — pure Python standard library.
 
+📖 **[Documentation site](https://krishddd.github.io/Trajectory_Causal_Attribution/)** · [Changelog](CHANGELOG.md)
+
 ---
 
 ## Install

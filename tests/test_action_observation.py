@@ -101,3 +101,49 @@ def test_fork_swap_model():
     assert child.result["model"] == "gpt-5"
     assert child.meta["intervention"] == "swap_model"
     assert child.meta["model_override"] == "gpt-5"
+
+
+# --- action/observation surfaced in explain + report -----------------------
+
+
+def _failing_tool_agent(ctx, q="x"):
+    # A resamplable tool step whose action (query) and observation (result) differ,
+    # and whose observation drives failure.
+    r = ctx.tool(
+        "search",
+        produce=lambda: "bad-query" if ctx.rng.random() < 0.7 else "good-query",
+        observe=lambda a: "ERR" if a == "bad-query" else "OK",
+        q=q,
+    )
+    return {"r": r, "ok": r == "OK"}
+
+
+def _ok(result):
+    return 1.0 if result["ok"] else 0.0
+
+
+def test_explain_and_report_surface_action_observation():
+    from agent_replay.attribution import attribute
+    from agent_replay.report import render_html
+
+    # Find a failing recording.
+    traj = None
+    for seed in range(50):
+        t = record(_failing_tool_agent, {"q": "x"}, session_id=f"f{seed}", seed=seed, verifier=_ok)
+        if t.outcome_score == 0.0:
+            traj = t
+            break
+    assert traj is not None
+    step = traj.steps[0]
+    assert step.action is not None and step.action != step.output  # split recorded
+
+    result = attribute(traj, _failing_tool_agent, _ok, rollouts=60)
+    explanation = result.explain(traj)
+    trace0 = explanation.trace[0]
+    assert trace0.action == step.action_value
+    assert trace0.observation == step.output  # surfaced because they differ
+
+    text = explanation.to_text()
+    assert "action" in text and "observation" in text
+    html = render_html(result, explanation=explanation)
+    assert "&rarr;" in html  # the action -> observation arrow in the trace panel

@@ -50,6 +50,9 @@ class StepTrace:
     ci_high: float
     shapley: Optional[float]
     note: str
+    # Set only when the step split its action from its observation (deck slide 9);
+    # None means action == observation (the common case).
+    observation: Any = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -109,7 +112,12 @@ class Explanation:
                 ROLE_OBSERVED: " ?",
                 ROLE_BENIGN: "  ",
             }.get(t.role, "  ")
-            lines.append(f"  {marker} step {t.index} [{t.kind}:{t.name}] {t.role} - {t.note}")
+            split = ""
+            if t.observation is not None:
+                split = f" [action {t.action!r} -> observation {t.observation!r}]"
+            lines.append(
+                f"  {marker} step {t.index} [{t.kind}:{t.name}] {t.role} - {t.note}{split}"
+            )
         return "\n".join(lines)
 
     def to_markdown(self) -> str:
@@ -126,7 +134,10 @@ class Explanation:
             "|---|---|---|",
         ]
         for t in self.trace:
-            lines.append(f"| {t.index} `{t.kind}:{t.name}` | {t.role} | {t.note} |")
+            note = t.note
+            if t.observation is not None:
+                note += f" (action `{t.action!r}` → observation `{t.observation!r}`)"
+            lines.append(f"| {t.index} `{t.kind}:{t.name}` | {t.role} | {note} |")
         return "\n".join(lines)
 
 
@@ -134,10 +145,24 @@ def _fmt(x: float) -> str:
     return f"{x:.2f}"
 
 
-def _action_of(trajectory: Optional["Trajectory"], index: int) -> Any:
+def _step_of(trajectory: Optional["Trajectory"], index: Optional[int]):
     if trajectory is None or index is None or index >= len(trajectory.steps):
         return None
-    return trajectory.steps[index].output
+    return trajectory.steps[index]
+
+
+def _action_of(trajectory: Optional["Trajectory"], index: Optional[int]) -> Any:
+    """The recorded *action* of a step (its explicit action if split, else output)."""
+    step = _step_of(trajectory, index)
+    return None if step is None else step.action_value
+
+
+def _observation_of(trajectory: Optional["Trajectory"], index: Optional[int]) -> Any:
+    """The recorded observation, but only when it differs from the action."""
+    step = _step_of(trajectory, index)
+    if step is None or step.action is None:
+        return None  # not split: action == observation
+    return step.output
 
 
 def _role(s: "StepAttribution", culprit_index: Optional[int], poc: Optional[int]) -> str:
@@ -205,6 +230,7 @@ def explain(result: "AttributionResult", trajectory: Optional["Trajectory"] = No
             ci_high=s.ci.high,
             shapley=s.shapley,
             note=_note(s, role, mode),
+            observation=_observation_of(trajectory, s.index),
         )
         for s in steps
     ]
@@ -233,7 +259,13 @@ def explain(result: "AttributionResult", trajectory: Optional["Trajectory"] = No
         )
 
     action = _action_of(trajectory, culprit.index)
-    action_txt = f" Its recorded action was {action!r}." if action is not None else ""
+    observation = _observation_of(trajectory, culprit.index)
+    if action is None:
+        action_txt = ""
+    elif observation is not None:
+        action_txt = f" Its recorded action was {action!r} (observation {observation!r})."
+    else:
+        action_txt = f" Its recorded action was {action!r}."
     score = culprit.shapley if culprit.shapley is not None else culprit.attribution
 
     if mode == "credit":

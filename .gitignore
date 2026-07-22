@@ -11,6 +11,7 @@ env/
 
 # Test / coverage
 .pytest_cache/
+.hypothesis/
 .coverage
 .coverage.*
 htmlcov/
@@ -34,3 +35,6 @@ demo.sqlite
 
 # Research source material (not published)
 *.docx
+
+# MkDocs build output
+site/
