@@ -68,8 +68,12 @@ jobs:
 
   publish:
     name: Publish to PyPI
-    # Only on a version tag (e.g. v1.0.0), after lint/test/build are green.
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Runs on a version tag (e.g. v1.0.0), after lint/test/build are green, and
+    # only once trusted publishing is set up: create a repository variable
+    # PYPI_PUBLISH=true (Settings -> Secrets and variables -> Actions -> Variables)
+    # after registering the PyPI trusted publisher. Until then this job is skipped
+    # (not failed), so tagging a release keeps CI green.
+    if: startsWith(github.ref, 'refs/tags/v') && vars.PYPI_PUBLISH == 'true'
     needs: [build]
     runs-on: ubuntu-latest
     environment:
