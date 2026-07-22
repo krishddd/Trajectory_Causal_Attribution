@@ -3,7 +3,7 @@ requires = ["hatchling>=1.18"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agent-replay"
+name = "trajectory-causal-attribution"
 version = "1.0.0"
 description = "Record AI agent trajectories and find which step caused a failure via counterfactual step-ablation replay."
 readme = "README.md"

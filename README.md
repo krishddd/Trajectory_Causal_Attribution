@@ -36,10 +36,26 @@ on the *Who&When* benchmark).
 ## Install
 
 ```bash
-pip install agent-replay
+pip install trajectory-causal-attribution
 # optional integrations:
-pip install "agent-replay[langchain]"
-pip install "agent-replay[openai]"
+pip install "trajectory-causal-attribution[langchain]"
+pip install "trajectory-causal-attribution[openai]"
+```
+
+The distribution is named `trajectory-causal-attribution`; the **import package
+and CLI stay `agent_replay` / `agent-replay`** (like `scikit-learn` → `sklearn`):
+
+```python
+import agent_replay          # after `pip install trajectory-causal-attribution`
+```
+
+Prefer installing straight from GitHub (no PyPI needed)? Both work today:
+
+```bash
+# from the tagged source
+pip install "git+https://github.com/krishddd/Trajectory_Causal_Attribution.git@v1.0.0"
+# or from the release wheel
+pip install https://github.com/krishddd/Trajectory_Causal_Attribution/releases/download/v1.0.0/trajectory_causal_attribution-1.0.0-py3-none-any.whl
 ```
 
 Requires Python 3.9+.

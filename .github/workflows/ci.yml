@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/agent-replay
+      url: https://pypi.org/p/trajectory-causal-attribution
     # OIDC trusted publishing — no API token needed once the publisher is
     # configured on PyPI for this repo/workflow/environment.
     permissions:
