@@ -18,7 +18,7 @@ Public API
 
 from __future__ import annotations
 
-from . import instrument
+from . import instrument, interop
 from .ablation import AblationEngine
 from .attribution import attribute
 from .drift import DriftPoint, DriftResult, drift
@@ -43,7 +43,7 @@ from .types import (
     Trajectory,
 )
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 __all__ = [
     "Session",
@@ -57,6 +57,7 @@ __all__ = [
     "DriftResult",
     "DriftPoint",
     "instrument",
+    "interop",
     "assert_agent_passes",
     "measure_failure_rate",
     "replay",

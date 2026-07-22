@@ -4,6 +4,45 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.8.0] — Prove it & import anything
+
+Realizes the "prove it & import anything" milestone (`docs/ANALYSIS.md` §5): run
+attribution on traces recorded *elsewhere*, and publish a step-accuracy number
+against the Who&When LLM-judge baseline.
+
+### Added
+- **Trajectory import (`agent_replay.interop`).** Build a first-class
+  `Trajectory` from traces this library did not record:
+  - `interop.from_otel_spans(spans, ...)` — map OpenTelemetry **GenAI** spans
+    (LangSmith / Langfuse / AgentOps / OpenLLMetry exports) onto llm/tool steps,
+    tolerant of missing/non-standard attributes (unknown spans import as opaque
+    tool steps rather than being dropped).
+  - `interop.from_jsonl(path, ...)` — one-step-per-line *or* a single
+    `{"steps": [...]}` object.
+  - `interop.from_steps(step_dicts, ...)` — from an in-memory list; Merkle-chains
+    and hashes imported steps identically to the recorder.
+  - `interop.replayable_agent(traj, resample_fns={...})` — the bridge that makes
+    an imported (observation-only) trace **attributable**: it reconstructs the
+    recorded operations as an executable agent, turning on resamplability for the
+    steps you supply a `fn(ctx, inputs) -> output` policy for. Steps without a
+    policy stay observation-only (served from the cassette), exactly as the
+    non-resamplable contract requires. Pass the agent + trajectory straight to
+    `attribute`.
+- **Who&When benchmark harness (`benchmarks/whowhen.py`).** Measures step-
+  localization accuracy against the *Who&When* task (arXiv:2505.00212), where the
+  strongest LLM-judge attributor reaches ~14.2%. Ships a deterministic synthetic
+  generator with known ground truth (chain agents with a single responsible
+  step, varied length/position) so it runs offline; on the default suite causal
+  attribution localizes **100%** of culprits vs **12.5%** for max-magnitude
+  blame *without* the Point-of-Commitment rule and the ~14.2% judge baseline —
+  quantifying what the PoC rule buys. `evaluate()` accepts imported (real-
+  dataset) trajectories via `interop`. Smoke-tested in CI.
+
+### Changed
+- README: mermaid pipeline / replay-decision / multiverse diagrams replace the
+  ASCII architecture art; new "Import from anywhere" and benchmark sections.
+- sdist now includes `benchmarks/`.
+
 ## [0.7.0] — Correctness, cost & credibility
 
 A hardening release: one genuine correctness fix, the biggest wall-clock lever

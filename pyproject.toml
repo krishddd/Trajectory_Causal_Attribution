@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agent-replay"
-version = "0.7.0"
+version = "0.8.0"
 description = "Record AI agent trajectories and find which step caused a failure via counterfactual step-ablation replay."
 readme = "README.md"
 license = { text = "MIT" }
@@ -55,7 +55,7 @@ agent_replay = "agent_replay.pytest_plugin"
 packages = ["src/agent_replay"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/agent_replay", "README.md", "LICENSE", "examples", "tests"]
+include = ["src/agent_replay", "README.md", "LICENSE", "examples", "tests", "benchmarks"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

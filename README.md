@@ -124,39 +124,46 @@ Point-of-Commitment: step 3
 
 ## Architecture
 
+The end-to-end pipeline: record a factual run once, then re-run it many times
+under counterfactual interventions to localize — and repair — the failure.
+
+```mermaid
+flowchart TD
+    A["Your agent<br/>ctx.llm / ctx.tool / ctx.memory"]
+    A -->|record| R["RecordContext<br/>runs the policy, captures steps"]
+    R --> T["Trajectory<br/>SCM: state → action → obs → outcome<br/>Merkle-linked step chain"]
+    T -->|"save / load"| S[("CheckpointStore<br/>SQLite + CAS blobs, WAL")]
+    T -->|"replay, per rollout"| RP["ReplayContext<br/>serve cassette by idempotency key<br/>OR resample per ReplayPlan"]
+    RP --> E["AblationEngine<br/>N stochastic rollouts / intervention<br/>serial or parallel (max_workers)"]
+    E --> SC["Attribution scorer"]
+    SC --> P1["Phase 1 — contrastive estimator<br/>+ Point-of-Commitment Rule"]
+    SC --> P2["Phase 2 — Shapley<br/>antithetic, adaptive stopping"]
+    P1 --> RES["AttributionResult<br/>Wilson + bootstrap CIs"]
+    P2 --> RES
+    RES --> REP["Repair search<br/>minimal counterfactual fix"]
+    RES --> OUT["HTML + JSON report<br/>+ plain-language explanation"]
+    REP --> OUT
+
+    classDef store fill:#123020,stroke:#1e4a33,color:#e6e9ef;
+    classDef out fill:#3a1618,stroke:#5a2226,color:#ffd7d7;
+    class S store;
+    class OUT,REP out;
 ```
-                          ┌─────────────────────────────────────────────┐
-                          │                Your agent                    │
-                          │   ctx.llm(...) / ctx.tool(...) / ctx.memory   │
-                          └───────────────┬──────────────────┬───────────┘
-                                          │ record           │ replay (per rollout)
-                                          ▼                  ▼
-        ┌───────────────┐        ┌────────────────┐   ┌──────────────────┐
-        │  RecordContext │  ───►  │   Trajectory   │   │  ReplayContext   │
-        │ runs the policy│        │ (SCM: steps =  │   │ serves cassette  │
-        │ captures steps │        │ state→action→  │   │ OR resamples per │
-        └───────┬────────┘        │  obs→outcome)  │   │  ReplayPlan      │
-                │                 └───────┬────────┘   └────────┬─────────┘
-                ▼                         │                     │
-    ┌──────────────────────┐             │                     ▼
-    │   CheckpointStore     │◄────────────┘         ┌────────────────────────┐
-    │  SQLite + CAS blobs   │  save / load          │     AblationEngine     │
-    │  Merkle step chain    │                       │ N stochastic rollouts  │
-    └──────────────────────┘                        │  per intervention      │
-                                                    └───────────┬────────────┘
-                                                                ▼
-                                              ┌──────────────────────────────────┐
-                                              │        AttributionScorer          │
-                                              │  Phase 1: contrastive estimator   │
-                                              │     + Point-of-Commitment Rule    │
-                                              │  Phase 2: Shapley (antithetic)    │
-                                              │  Wilson + bootstrap CIs           │
-                                              └───────────────┬───────────────────┘
-                                                              ▼
-                                              ┌──────────────────────────────────┐
-                                              │   Repair search (minimality)      │
-                                              │   HTML + JSON attribution report  │
-                                              └──────────────────────────────────┘
+
+**The replay decision — how each live call binds to the cassette.** This is the
+branch-safe core: a held step is served from the recording only when the *same*
+operation actually recurs; otherwise the timeline has diverged and the call is
+resampled live.
+
+```mermaid
+flowchart LR
+    Call["live replay call<br/>kind + name + inputs"] --> Match{"idempotency key<br/>matches an unconsumed<br/>recorded step?"}
+    Match -->|no| Diverge["timeline diverged<br/>→ resample live"]
+    Match -->|yes| Plan{"ReplayPlan.decision(i)"}
+    Plan -->|hold| Serve["serve recorded output<br/>(cassette)"]
+    Plan -->|"force / do()"| Force["inject forced action"]
+    Plan -->|remove| Rm["REMOVED sentinel"]
+    Plan -->|resample| Res["re-run policy<br/>fresh stochastic draw"]
 ```
 
 ### How the causal attribution works
@@ -193,6 +200,8 @@ not depend on them.
 | `ReplayPlan.factual / .ablate_from / .coalition` | Build intervention plans. |
 | `AblationEngine` | Run stochastic rollouts for a plan. |
 | `find_minimal_repair(engine, step)` | Search for a minimal counterfactual repair. |
+| `interop.from_otel_spans / from_jsonl / from_steps` | Import a `Trajectory` from an external trace. |
+| `interop.replayable_agent(traj, resample_fns)` | Make an imported trace attributable. |
 | `CheckpointStore` | The SQLite checkpoint / content-addressable store. |
 
 `method` is `"contrastive"` (Phase 1), `"shapley"` (Phase 2), or `"both"`.
@@ -234,6 +243,57 @@ with instrument.installed("openai", "langchain"):
 
 Not in the registry? Patch any dotted callable — this is how the recipes work,
 so it covers every framework: `instrument.patch("my_fw.LLM.complete", kind="llm")`.
+
+## Import a trace recorded anywhere
+
+Already have traces in LangSmith / Langfuse / AgentOps, an OpenTelemetry export,
+or a JSONL log? `agent_replay.interop` turns them into a first-class `Trajectory`
+you can diff, serve, hash — and attribute. Attribution needs to *re-run* a step's
+policy, which a recorded trace doesn't contain, so you supply a resample policy
+per step kind (or name); steps without one stay observation-only.
+
+```python
+from agent_replay import attribute, interop
+
+traj  = interop.from_otel_spans(otel_spans, session_id="prod-run-42")   # or from_jsonl(...)
+
+# Make it attributable: give the steps you want perturbed a resample policy.
+def llm_policy(ctx, inputs):     # re-draw this step's output from its recorded inputs
+    return call_your_model(inputs["messages"], temperature=0.7)
+
+agent = interop.replayable_agent(traj, resample_fns={"llm": llm_policy})
+result = attribute(traj, agent, my_verifier, rollouts=60)
+print(result.culprit_index)      # which step caused the failure — on an imported trace
+```
+
+`from_otel_spans` follows the OpenTelemetry **GenAI** semantic conventions
+(`gen_ai.*` attributes → `llm` steps, `execute_tool` / `gen_ai.tool.name` →
+`tool` steps) and is deliberately tolerant — unknown spans import as opaque tool
+steps rather than being dropped.
+
+## Proof: the Who&When benchmark
+
+Localizing the *responsible step* in a failed trajectory is the *Who&When* task
+(arXiv:2505.00212), where the strongest LLM-as-judge attributor reaches only
+**~14.2%** step accuracy. `benchmarks/whowhen.py` measures this tool on
+ground-truth-labelled trajectories:
+
+```bash
+python benchmarks/whowhen.py
+```
+
+```
+  causal attribution (this tool)  : 100.0%  (8/8)
+  max-magnitude (no PoC rule)     :  12.5%  (1/8)
+  last-step baseline              :  37.5%  (3/8)
+  LLM-as-judge (Who&When lit.)    :  ~14.2%  (arXiv:2505.00212)
+```
+
+The `max-magnitude` row — highest-|attribution| step *without* the
+Point-of-Commitment rule — lands near the judge baseline, quantifying exactly
+what the PoC rule buys. The harness ships a deterministic synthetic generator so
+it runs offline; point `evaluate()` at `interop`-imported trajectories to run the
+real dataset. See [`benchmarks/README.md`](benchmarks/README.md).
 
 ## Explainable output
 
@@ -311,6 +371,18 @@ result = attribute(traj, agent, v)                                  # sync API, 
 
 Beyond attributing a single failure, agent-replay realizes the *Agent Multiverse*
 vision at the application level (see [`docs/MULTIVERSE_GAPS.md`](docs/MULTIVERSE_GAPS.md)):
+
+```mermaid
+flowchart TD
+    Base["Recorded trajectory<br/>factual, failing"]
+    Base -->|"fork(at_step=i, do= / remove=)"| Child["Child branch<br/>held prefix + intervention<br/>+ live continuation"]
+    Base -->|"resume()"| Live["Continue live<br/>past the recorded horizon"]
+    Base --> DIFF{{"diff(base, child)"}}
+    Child --> DIFF
+    DIFF --> Div["first divergence<br/>+ per-step state diff"]
+    Base -. "parent_session / fork_step (CAS-deduped prefix)" .-> Child
+```
+
 
 ```python
 from agent_replay import fork, resume, diff, faithfulness, drift
