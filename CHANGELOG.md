@@ -4,6 +4,37 @@ All notable changes to `agent-replay` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and the project adheres to
 semantic versioning.
 
+## [0.10.0] — The full intervention algebra
+
+Completes the paper's do-calculus intervention set (`docs/HANDOFF.md` §3.4) via an
+additive **action/observation split** on the step — no existing trajectory,
+hash, or call site changes.
+
+### Added
+- **Action/observation split (`Step.action`).** The SCM distinguishes the policy's
+  *action* from the *observation* it yields (deck slide 9). A new optional
+  `Step.action` field records the action when it differs from the observation
+  (`Step.output`); `Step.action_value` / `Step.observation` resolve either case,
+  and `Step.action_value_hash()` enables "same decision, different observation?"
+  queries. Fully additive: `action` defaults to `None` ("action == output"), so
+  older trajectories, the Merkle hashes, and every call site are unchanged.
+  - Recording API: `ctx.tool/llm/memory(..., observe=fn)` records a distinct
+    action (`produce()`) and observation (`observe(action)`, served downstream).
+    Async `observe` policies are awaited.
+  - Store: nullable `action_hash` column (schema **v2**, idempotent migration);
+    the action blob is only stored when a step actually splits.
+- **`mock-observe` intervention.** `ReplayPlan(observed={i: value})` /
+  `ReplayPlan.mock_observe(i, value)` replaces a step's *observation* downstream
+  while keeping its recorded *action* — distinct from `do`/`force`, which
+  overrides the action. This is how you test memory/context reliance: mock the
+  observation of the step that produces the context ("edit-context").
+- **`swap-model` intervention.** `ReplayPlan(model_override="…")` exposes
+  `ctx.model_hint` to the replayed/forked run so a model-parameterized policy can
+  answer "would a different model have succeeded from step *i*?".
+- **`fork(..., observe=, model=)`** wire both new interventions into the
+  Multiverse; children carry the `mock_observe` / `swap_model` intervention label
+  (and `model_override` in `meta`).
+
 ## [0.9.0] — Systematic blame across many runs
 
 ### Added

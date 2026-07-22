@@ -19,7 +19,9 @@ from .types import AttributionResult, Step, StepKind, Trajectory
 # Bumped whenever the on-disk schema changes in a way loaders must know about.
 # Stored in the SQLite ``user_version`` pragma so old databases can be detected
 # and migrated forward (see ``_migrate``).
-SCHEMA_VERSION = 1
+#   v1: resamplable column
+#   v2: action_hash column (action/observation split)
+SCHEMA_VERSION = 2
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS sessions (
@@ -47,6 +49,7 @@ CREATE TABLE IF NOT EXISTS steps (
     step_hash    TEXT NOT NULL,
     parent_hash  TEXT NOT NULL,
     resamplable  INTEGER NOT NULL DEFAULT 1,
+    action_hash  TEXT,
     PRIMARY KEY (session_id, idx),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
@@ -100,6 +103,9 @@ class CheckpointStore:
             self._conn.execute(
                 "ALTER TABLE steps ADD COLUMN resamplable INTEGER NOT NULL DEFAULT 1"
             )
+        if "action_hash" not in cols:
+            # v2: a nullable action blob hash; NULL means "action == observation".
+            self._conn.execute("ALTER TABLE steps ADD COLUMN action_hash TEXT")
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -152,11 +158,14 @@ class CheckpointStore:
         for step in traj.steps:
             inputs_hash = self.put_blob(step.inputs)
             output_hash = self.put_blob(step.output)
+            # Only persist a separate action blob when the step actually split its
+            # action from its observation (dedupes to nothing otherwise).
+            action_hash = self.put_blob(step.action) if step.action is not None else None
             self._conn.execute(
                 """INSERT INTO steps
                    (session_id, idx, kind, name, inputs_hash, output_hash, step_hash,
-                    parent_hash, resamplable)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    parent_hash, resamplable, action_hash)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     traj.session_id,
                     step.index,
@@ -167,6 +176,7 @@ class CheckpointStore:
                     step.step_hash,
                     step.parent_hash,
                     1 if step.resamplable else 0,
+                    action_hash,
                 ),
             )
         self._conn.commit()
@@ -192,12 +202,22 @@ class CheckpointStore:
         )
         step_rows = self._conn.execute(
             """SELECT idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash,
-                      resamplable
+                      resamplable, action_hash
                FROM steps WHERE session_id = ? ORDER BY idx""",
             (session_id,),
         ).fetchall()
         for row in step_rows:
-            idx, kind, name, inputs_hash, output_hash, step_hash, parent_hash, resamplable = row
+            (
+                idx,
+                kind,
+                name,
+                inputs_hash,
+                output_hash,
+                step_hash,
+                parent_hash,
+                resamplable,
+                action_hash,
+            ) = row
             traj.steps.append(
                 Step(
                     index=idx,
@@ -208,6 +228,7 @@ class CheckpointStore:
                     resamplable=bool(resamplable),
                     parent_hash=parent_hash,
                     step_hash=step_hash,
+                    action=self.get_blob(action_hash) if action_hash is not None else None,
                 )
             )
         return traj

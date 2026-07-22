@@ -29,7 +29,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 
 from ._ambient import bind_context, unbind_context
 from .hashing import content_hash
-from .recorder import AgentContext, AsyncAgentContext, _is_async
+from .recorder import AgentContext, AsyncAgentContext, _is_async, _is_awaitable
 from .types import StepKind, Trajectory
 
 
@@ -69,10 +69,20 @@ class ReplayPlan:
         held: Optional[Set[int]] = None,
         forced: Optional[Dict[int, Any]] = None,
         removed: Optional[Set[int]] = None,
+        observed: Optional[Dict[int, Any]] = None,
+        model_override: Optional[str] = None,
     ) -> None:
         self.held: Set[int] = set(held or set())
         self.forced: Dict[int, Any] = dict(forced or {})
         self.removed: Set[int] = set(removed or set())
+        # ``observed`` implements the paper's *mock-observe* intervention: replace a
+        # step's observation (what it yields downstream) while keeping its recorded
+        # action — distinct from ``forced`` (``do``), which overrides the action
+        # itself. ``model_override`` implements *swap-model*: a hint exposed as
+        # ``ctx.model_hint`` that model-parameterized policies read to answer "would
+        # a different model have succeeded from here?".
+        self.observed: Dict[int, Any] = dict(observed or {})
+        self.model_override: Optional[str] = model_override
 
     @classmethod
     def factual(cls, n: int) -> "ReplayPlan":
@@ -99,9 +109,17 @@ class ReplayPlan:
             return "force"
         if idx in self.removed:
             return "remove"
+        if idx in self.observed:
+            return "mock_observe"
         if idx in self.held:
             return "hold"
         return "resample"
+
+    @classmethod
+    def mock_observe(cls, index: int, observation: Any, *, held: Optional[Set[int]] = None):
+        """Hold ``held`` (default the prefix ``< index``) and mock ``index``'s observation."""
+        prefix = held if held is not None else set(range(index))
+        return cls(held=prefix, observed={index: observation})
 
 
 class ReplayContext(AgentContext):
@@ -125,6 +143,9 @@ class ReplayContext(AgentContext):
         self.plan = plan
         self.match = match
         self.diverged = False
+        # swap-model: model-parameterized policies read this to counterfactually
+        # run under a different model. None when no override is in effect.
+        self.model_hint: Optional[str] = plan.model_override
         # key -> ordered list of recorded indices sharing that op key (handles
         # loops that repeat the same operation). Consumed in recorded order.
         self._by_key: Dict[str, List[int]] = {}
@@ -166,6 +187,9 @@ class ReplayContext(AgentContext):
             return False, self.plan.forced[rec_idx]
         if decision == "remove":
             return False, REMOVED
+        if decision == "mock_observe":
+            # Keep the recorded action; serve a different observation downstream.
+            return False, self.plan.observed[rec_idx]
         if decision == "hold":
             return False, step.output
         # decision == "resample": a step with no genuine policy cannot be
@@ -181,11 +205,13 @@ class ReplayContext(AgentContext):
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         needs_produce, value = self._decide(kind, name, inputs)
         if not needs_produce:
             return value
-        return produce() if produce is not None else None
+        action = produce() if produce is not None else None
+        return observe(action) if observe is not None else action
 
 
 class AsyncReplayContext(AsyncAgentContext):
@@ -198,6 +224,7 @@ class AsyncReplayContext(AsyncAgentContext):
         # Reuse the sync context purely as the matching state machine (its
         # ``_decide`` holds the single source of truth for binding + fate).
         self._m = ReplayContext(trajectory, plan, seed, match=match)
+        self.model_hint: Optional[str] = plan.model_override
 
     @property
     def diverged(self) -> bool:
@@ -210,11 +237,16 @@ class AsyncReplayContext(AsyncAgentContext):
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         needs_produce, value = self._m._decide(kind, name, inputs)
         if not needs_produce:
             return value
-        return await produce() if produce is not None else None
+        action = await produce() if produce is not None else None
+        if observe is None:
+            return action
+        observed = observe(action)
+        return await observed if _is_awaitable(observed) else observed
 
     def _value_op(self, name: str, produce: Callable[[], Any]) -> Any:
         # __now__/__uuid__ are non-resamplable, so _decide always serves the

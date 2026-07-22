@@ -46,6 +46,24 @@ class Step:
     resamplable: bool = True
     parent_hash: str = ""
     step_hash: str = ""
+    # The SCM distinguishes the policy's *action* A_t from the *observation* O_t it
+    # yields (deck slide 9). For most steps these coincide, so ``action`` is None,
+    # meaning "the action is the output". A step recorded with a distinct
+    # ``observe`` policy (e.g. a tool whose call is the action and whose returned
+    # result is the observation) stores the action here while ``output`` holds the
+    # observation. ``action_value`` resolves the effective action either way.
+    # Additive and back-compatible: older trajectories simply have ``action=None``.
+    action: Any = None
+
+    @property
+    def action_value(self) -> Any:
+        """The step's effective action (explicit ``action`` if set, else ``output``)."""
+        return self.action if self.action is not None else self.output
+
+    @property
+    def observation(self) -> Any:
+        """The step's observation — an alias for ``output`` (what flows downstream)."""
+        return self.output
 
     def op_key(self) -> str:
         """Content-addressable identity of the *operation* (kind + name + inputs).
@@ -61,8 +79,17 @@ class Step:
     # output hash. ``op_key`` is the action hash; ``output_hash`` is its counterpart,
     # letting callers ask "same decision, different observation?" and diff cheaply.
     def action_hash(self) -> str:
-        """Alias for :meth:`op_key` — the content hash of the action (kind+name+inputs)."""
+        """Alias for :meth:`op_key` — the content hash of the action (kind+name+inputs).
+
+        This is the *decision* identity used in the Merkle chain and cassette
+        matching. For the hash of the emitted action *value* (to ask "same decision,
+        different observation?"), see :meth:`action_value_hash`.
+        """
         return self.op_key()
+
+    def action_value_hash(self) -> str:
+        """Content hash of the effective action value (:attr:`action_value`)."""
+        return content_hash(self.action_value)
 
     def output_hash(self) -> str:
         """Content hash of the recorded output (the observation)."""
@@ -95,6 +122,7 @@ class Step:
             resamplable=d.get("resamplable", True),
             parent_hash=d.get("parent_hash", ""),
             step_hash=d.get("step_hash", ""),
+            action=d.get("action"),  # back-compat: absent -> None -> action == output
         )
 
 

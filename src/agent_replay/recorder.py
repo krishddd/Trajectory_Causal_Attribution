@@ -47,10 +47,11 @@ class AgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
         """Record/replay an LLM call named ``name``."""
-        return self._op(StepKind.LLM, name, produce, inputs, resamplable)
+        return self._op(StepKind.LLM, name, produce, inputs, resamplable, observe)
 
     def tool(
         self,
@@ -58,10 +59,17 @@ class AgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
-        """Record/replay a tool call named ``name``."""
-        return self._op(StepKind.TOOL, name, produce, inputs, resamplable)
+        """Record/replay a tool call named ``name``.
+
+        Pass ``observe`` to record a distinct **action** and **observation**: the
+        agent's chosen call is ``produce()`` (the action), and ``observe(action)``
+        is what the environment returned (the observation, served downstream). With
+        no ``observe`` the two coincide, exactly as before.
+        """
+        return self._op(StepKind.TOOL, name, produce, inputs, resamplable, observe)
 
     def memory(
         self,
@@ -69,10 +77,11 @@ class AgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
         """Record/replay a memory operation named ``name``."""
-        return self._op(StepKind.MEMORY, name, produce, inputs, resamplable)
+        return self._op(StepKind.MEMORY, name, produce, inputs, resamplable, observe)
 
     # -- deterministic time & entropy -----------------------------------------
 
@@ -100,6 +109,7 @@ class AgentContext:
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         raise NotImplementedError
 
@@ -147,10 +157,20 @@ class RecordContext(AgentContext):
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         idx = self._idx
         self._idx += 1
-        output = produce() if produce is not None else None
+        action = produce() if produce is not None else None
+        # With an ``observe`` policy the action and observation differ: record the
+        # action separately and serve the observation downstream. Otherwise they
+        # coincide and ``action`` stays None ("the action is the output").
+        if observe is not None:
+            output = observe(action)
+            recorded_action = action
+        else:
+            output = action
+            recorded_action = None
         # A step with no policy cannot be re-drawn counterfactually. Default its
         # resamplability from whether a policy was supplied, unless overridden.
         if resamplable is None:
@@ -158,6 +178,8 @@ class RecordContext(AgentContext):
         if self.strict_serialization:
             _check_serializable(kind, name, "inputs", inputs)
             _check_serializable(kind, name, "output", output)
+            if recorded_action is not None:
+                _check_serializable(kind, name, "action", recorded_action)
         step = Step(
             index=idx,
             kind=kind,
@@ -165,6 +187,7 @@ class RecordContext(AgentContext):
             inputs=dict(inputs),
             output=output,
             resamplable=resamplable,
+            action=recorded_action,
         )
         parent = self.steps[-1].step_hash if self.steps else ""
         step.compute_hashes(parent)
@@ -191,9 +214,10 @@ class AsyncAgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
-        return await self._aop(StepKind.LLM, name, produce, inputs, resamplable)
+        return await self._aop(StepKind.LLM, name, produce, inputs, resamplable, observe)
 
     async def tool(
         self,
@@ -201,9 +225,10 @@ class AsyncAgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
-        return await self._aop(StepKind.TOOL, name, produce, inputs, resamplable)
+        return await self._aop(StepKind.TOOL, name, produce, inputs, resamplable, observe)
 
     async def memory(
         self,
@@ -211,9 +236,10 @@ class AsyncAgentContext:
         produce: Optional[Callable[[], Any]] = None,
         *,
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
         **inputs: Any,
     ) -> Any:
-        return await self._aop(StepKind.MEMORY, name, produce, inputs, resamplable)
+        return await self._aop(StepKind.MEMORY, name, produce, inputs, resamplable, observe)
 
     async def _aop(
         self,
@@ -222,6 +248,7 @@ class AsyncAgentContext:
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         raise NotImplementedError
 
@@ -254,15 +281,25 @@ class AsyncRecordContext(AsyncAgentContext):
         produce: Optional[Callable[[], Any]],
         inputs: Dict[str, Any],
         resamplable: Optional[bool] = None,
+        observe: Optional[Callable[[Any], Any]] = None,
     ) -> Any:
         idx = self._idx
         self._idx += 1
-        output = await produce() if produce is not None else None
+        action = await produce() if produce is not None else None
+        if observe is not None:
+            observed = observe(action)
+            output = await observed if _is_awaitable(observed) else observed
+            recorded_action = action
+        else:
+            output = action
+            recorded_action = None
         if resamplable is None:
             resamplable = produce is not None
         if self.strict_serialization:
             _check_serializable(kind, name, "inputs", inputs)
             _check_serializable(kind, name, "output", output)
+            if recorded_action is not None:
+                _check_serializable(kind, name, "action", recorded_action)
         step = Step(
             index=idx,
             kind=kind,
@@ -270,6 +307,7 @@ class AsyncRecordContext(AsyncAgentContext):
             inputs=dict(inputs),
             output=output,
             resamplable=resamplable,
+            action=recorded_action,
         )
         parent = self.steps[-1].step_hash if self.steps else ""
         step.compute_hashes(parent)
@@ -376,6 +414,13 @@ async def arecord(
     if verifier is not None:
         traj.outcome_score = float(verifier(result))
     return traj
+
+
+def _is_awaitable(obj: Any) -> bool:
+    """True if ``obj`` is awaitable (so an async ``observe`` policy is supported)."""
+    import inspect
+
+    return inspect.isawaitable(obj)
 
 
 def _is_async(fn: Callable[..., Any]) -> bool:

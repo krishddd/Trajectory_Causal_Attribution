@@ -398,6 +398,41 @@ traj   = record(agent, {"q": "..."}, session_id="s", verifier=v)   # auto-detect
 result = attribute(traj, agent, v)                                  # sync API, async agent
 ```
 
+## The intervention algebra
+
+Attribution rests on `do()`-calculus interventions on one step. The full set the
+research describes is available, both as `ReplayPlan`s and through `fork`:
+
+| Intervention | What it changes | How |
+|---|---|---|
+| **resample** | re-draw the step's action from its policy | default |
+| **do / force** | override the step's **action** | `fork(..., do=value)` |
+| **remove** | drop the step entirely | `fork(..., remove=True)` |
+| **mock-observe** | override the **observation**, keep the recorded action | `fork(..., observe=value)` |
+| **swap-model** | run the step under a different model | `fork(..., model="gpt-5")` |
+
+The SCM separates the policy's *action* from the *observation* it yields. Record
+both when they differ — the agent's chosen call is the action, the environment's
+return is the observation:
+
+```python
+def agent(ctx, q):
+    result = ctx.tool("search",
+                      produce=lambda: choose_query(q),        # the action
+                      observe=lambda call: run_search(call))  # the observation
+    return {"answer": result}
+```
+
+Then `mock-observe` tests memory/context reliance (keep the action, inject a
+different observation), and `swap-model` asks whether a different model would have
+recovered — a policy reads `ctx.model_hint` to switch:
+
+```python
+from agent_replay import fork
+mocked = fork(agent, traj, at_step=1, observe="empty search results")
+upgraded = fork(agent, traj, at_step=1, model="gpt-5")   # policy reads ctx.model_hint
+```
+
 ## The Multiverse: fork, resume, diff, faithfulness, drift
 
 Beyond attributing a single failure, agent-replay realizes the *Agent Multiverse*

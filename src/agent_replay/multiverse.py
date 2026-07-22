@@ -17,7 +17,13 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, List, Optional
 
 from ._ambient import bind_context, unbind_context
-from .recorder import AgentContext, AsyncAgentContext, _check_serializable, _is_async
+from .recorder import (
+    AgentContext,
+    AsyncAgentContext,
+    _check_serializable,
+    _is_async,
+    _is_awaitable,
+)
 from .replayer import REMOVED, ReplayContext, ReplayPlan
 from .types import Step, StepKind, Trajectory
 
@@ -64,10 +70,16 @@ class ForkContext(AgentContext):
         self._matcher = ReplayContext(parent, plan, seed)
         self.steps: List[Step] = []
         self.strict_serialization = strict_serialization
+        self.model_hint = plan.model_override  # swap-model hint for the live continuation
 
-    def _op(self, kind, name, produce, inputs, resamplable=None):
+    def _op(self, kind, name, produce, inputs, resamplable=None, observe=None):
         needs_produce, value = self._matcher._decide(kind, name, inputs)
-        output = _coerce((produce() if produce is not None else None) if needs_produce else value)
+        if needs_produce:
+            action = produce() if produce is not None else None
+            output = observe(action) if observe is not None else action
+        else:
+            output = value
+        output = _coerce(output)
         rs = resamplable if resamplable is not None else (produce is not None)
         _record_step(self, kind, name, inputs, output, rs)
         return output
@@ -83,12 +95,20 @@ class AsyncForkContext(AsyncAgentContext):
         self._matcher = ReplayContext(parent, plan, seed)
         self.steps: List[Step] = []
         self.strict_serialization = strict_serialization
+        self.model_hint = plan.model_override
 
-    async def _aop(self, kind, name, produce, inputs, resamplable=None):
+    async def _aop(self, kind, name, produce, inputs, resamplable=None, observe=None):
         needs_produce, value = self._matcher._decide(kind, name, inputs)
-        output = _coerce(
-            (await produce() if produce is not None else None) if needs_produce else value
-        )
+        if needs_produce:
+            action = await produce() if produce is not None else None
+            if observe is not None:
+                observed = observe(action)
+                output = await observed if _is_awaitable(observed) else observed
+            else:
+                output = action
+        else:
+            output = value
+        output = _coerce(output)
         rs = resamplable if resamplable is not None else (produce is not None)
         _record_step(self, kind, name, inputs, output, rs)
         return output
@@ -100,18 +120,25 @@ class AsyncForkContext(AsyncAgentContext):
         return output
 
 
-def _plan(at_step: int, do: Any, remove: bool) -> ReplayPlan:
+def _plan(at_step: int, do: Any, remove: bool, observe: Any, model: Optional[str]) -> ReplayPlan:
     held = set(range(at_step))
     forced = {at_step: do} if do is not UNSET else {}
     removed = {at_step} if remove else set()
-    return ReplayPlan(held=held, forced=forced, removed=removed)
+    observed = {at_step: observe} if observe is not UNSET else {}
+    return ReplayPlan(
+        held=held, forced=forced, removed=removed, observed=observed, model_override=model
+    )
 
 
-def _intervention_label(do: Any, remove: bool) -> str:
+def _intervention_label(do: Any, remove: bool, observe: Any, model: Optional[str]) -> str:
     if remove:
         return "remove"
     if do is not UNSET:
         return "do"
+    if observe is not UNSET:
+        return "mock_observe"
+    if model is not None:
+        return "swap_model"
     return "resample"
 
 
@@ -122,19 +149,28 @@ def _finish(
     at_step: int,
     do: Any,
     remove: bool,
+    observe: Any,
+    model: Optional[str],
     session_id: Optional[str],
     seed: int,
     verifier: Optional[Callable[[Any], float]],
 ) -> Trajectory:
-    label = _intervention_label(do, remove)
+    label = _intervention_label(do, remove, observe, model)
     sid = session_id or f"{parent.session_id}::fork@{at_step}:{label}"
+    meta: Dict[str, Any] = {
+        "parent_session": parent.session_id,
+        "fork_step": at_step,
+        "intervention": label,
+    }
+    if model is not None:
+        meta["model_override"] = model
     child = Trajectory(
         session_id=sid,
         task=dict(parent.task),
         steps=ctx.steps,
         seed=seed,
         result=result,
-        meta={"parent_session": parent.session_id, "fork_step": at_step, "intervention": label},
+        meta=meta,
     )
     if verifier is not None:
         child.outcome_score = float(verifier(result))
@@ -148,6 +184,8 @@ def fork(
     *,
     do: Any = UNSET,
     remove: bool = False,
+    observe: Any = UNSET,
+    model: Optional[str] = None,
     seed: int = 0,
     session_id: Optional[str] = None,
     verifier: Optional[Callable[[Any], float]] = None,
@@ -156,9 +194,19 @@ def fork(
 ) -> Trajectory:
     """Fork ``trajectory`` at ``at_step`` into a new counterfactual trajectory.
 
-    Steps ``< at_step`` are held at their recorded actions; the step at ``at_step``
-    is forced to ``do`` (a :func:`do`-intervention), dropped (``remove=True``), or
-    resampled (default); everything after runs live. Returns a complete child
+    Steps ``< at_step`` are held at their recorded actions; the intervention at
+    ``at_step`` is one of:
+
+    * ``do=<value>`` — force the step's **action** (a :func:`do`-intervention);
+    * ``remove=True`` — drop the step entirely;
+    * ``observe=<value>`` — **mock-observe**: keep the recorded action but replace
+      the step's observation downstream (to test memory/context reliance, mock the
+      observation of the step that produces that context);
+    * default — resample the step's policy.
+
+    ``model=<id>`` additionally applies a **swap-model** override, exposed to the
+    live continuation as ``ctx.model_hint`` for model-parameterized policies.
+    Everything after ``at_step`` runs live. Returns a complete child
     :class:`~agent_replay.types.Trajectory` whose ``meta`` links back to the parent.
     """
     if _is_async(agent_fn):
@@ -171,6 +219,8 @@ def fork(
                 at_step,
                 do=do,
                 remove=remove,
+                observe=observe,
+                model=model,
                 seed=seed,
                 session_id=session_id,
                 verifier=verifier,
@@ -179,14 +229,19 @@ def fork(
             )
         )
     ctx = ForkContext(
-        trajectory, _plan(at_step, do, remove), seed, strict_serialization=strict_serialization
+        trajectory,
+        _plan(at_step, do, remove, observe, model),
+        seed,
+        strict_serialization=strict_serialization,
     )
     token = bind_context(ctx)
     try:
         result = agent_fn(ctx, **trajectory.task) if pass_context else agent_fn(**trajectory.task)
     finally:
         unbind_context(token)
-    return _finish(trajectory, ctx, result, at_step, do, remove, session_id, seed, verifier)
+    return _finish(
+        trajectory, ctx, result, at_step, do, remove, observe, model, session_id, seed, verifier
+    )
 
 
 async def afork(
@@ -196,6 +251,8 @@ async def afork(
     *,
     do: Any = UNSET,
     remove: bool = False,
+    observe: Any = UNSET,
+    model: Optional[str] = None,
     seed: int = 0,
     session_id: Optional[str] = None,
     verifier: Optional[Callable[[Any], float]] = None,
@@ -204,7 +261,10 @@ async def afork(
 ) -> Trajectory:
     """Async :func:`fork`."""
     ctx = AsyncForkContext(
-        trajectory, _plan(at_step, do, remove), seed, strict_serialization=strict_serialization
+        trajectory,
+        _plan(at_step, do, remove, observe, model),
+        seed,
+        strict_serialization=strict_serialization,
     )
     token = bind_context(ctx)
     try:
@@ -214,7 +274,9 @@ async def afork(
             result = await agent_fn(**trajectory.task)
     finally:
         unbind_context(token)
-    return _finish(trajectory, ctx, result, at_step, do, remove, session_id, seed, verifier)
+    return _finish(
+        trajectory, ctx, result, at_step, do, remove, observe, model, session_id, seed, verifier
+    )
 
 
 def resume(
